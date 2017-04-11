@@ -1,0 +1,18 @@
+//DHT Humi
+//Thing exec:command:gethumi [ command="/home/pi/scripts/AdafruitDHTHum.py 11 16", interval=60, timeout=20 ]
+//BME Humi
+Thing exec:command:gethumi [ command="/home/pi/scripts/getBMEhumi.sh", interval=10, timeout=5 ]
+
+//DHT Temp
+//Thing exec:command:gettemp [ command="/home/pi/scripts/AdafruitDHTTemp.py 11 16", interval=60, timeout=20 ]
+//BME280 Temp
+Thing exec:command:gettemp [ command="/home/pi/scripts/getBMEtemp.sh", interval=10, timeout=5 ]
+
+Thing exec:command:getwlanip [ command="/home/pi/scripts/getwlan0ip.sh", interval=600, timeout=20 ]
+Thing exec:command:getwlanmac [ command="/home/pi/scripts/getwlan0mac.sh", timeout=20 ]
+Thing exec:command:getssid [ command="/home/pi/scripts/getssid.sh", interval=600, timeout=20 ]
+Thing exec:command:getwifiinfo [ command="/home/pi/scripts/getwifiinfo.sh", interval=600, timeout=20 ]
+
+Thing exec:command:getcputemperature [ command="/home/pi/scripts/getcputemperature.sh", interval=600, timeout=20 ]
+Thing exec:command:getuseddiskspace [ command="/home/pi/scripts/getuseddiskspace.sh", interval=600, timeout=20 ]
+Thing exec:command:gettz [ command="/home/pi/scripts/gettz.sh", interval=600, timeout=20 ]

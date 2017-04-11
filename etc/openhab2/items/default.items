@@ -1,0 +1,51 @@
+Switch Raspi12 "Hot Water" { gpio="pin:12" }
+Switch Raspi23 "Heating" { gpio="pin:23" }
+Switch Raspi18 "Humidity" { gpio="pin:18" }
+
+//Number MyTemp "Temperature [%.1f °C]" <temperature> { channel="exec:command:gettemp:output" }
+String MyTemp "Temperature" <temperature> { channel="exec:command:gettemp:output" }
+Number MyTempProxy "Temperature [%.1f °C]" <temperature> 
+
+//Number MyHumi "Humidity [%.1f %%]" <humidity> { channel="exec:command:gethumi:output" } 
+String MyHumi "Humidity" <humidity> { channel="exec:command:gethumi:output" } 
+Number MyHumiProxy "Humidity [%.1f %%]" <humidity>
+
+Number TargetTemp
+Switch IncTargetTemp "IncTargetTemp"
+Switch DecTargetTemp "DecTargetTemp"
+Number TargetHumi 
+
+
+
+Number TempSetpoint "Temp Setpoint[%.1f °C]"
+Number HeatingBoostTime "Heating Boost Time [%.0f min]"
+//Number Temperature  "Outside Temperature" { channel="yahooweather:weather:berlin:temperature" }
+
+String PowerMode "Power Mode"
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//    SETTINGS START    ///////////////////////////////////////////////////////////////////////////////////////////////
+// check for WAN IP address changes every 10 mins
+String Network_WAN_IP "WAN IP address [%s]" <network> (Network) { http="<[http://icanhazip.com:600000:REGEX((.*?))]" }
+String Network_WLAN_IP { channel="exec:command:getwlanip:output" }
+String Network_WLAN_MAC { channel="exec:command:getwlanmac:output" }
+String Network_SSID { channel="exec:command:getssid:output" }
+String Network_WLAN_INFO { channel="exec:command:getwifiinfo:output" }
+String System_CPU_TEMP { channel="exec:command:getcputemperature:output" }
+String System_Used_Space { channel="exec:command:getuseddiskspace:output" }
+String System_TZ { channel="exec:command:gettz:output" }
+//    SETTINGS END    /////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+/* Archive */
+/*
+Number MyTemp "Temperature [%.1f °C]" <temperature> (All) { exec="<[/home/pi/scripts/AdafruitDHTTemp.py 11 16:60000:REGEX((.*?))]" }
+Number MyHumi "Humidity [%.1f %%]" <humidity> (All) { exec="<[/home/pi/scripts/AdafruitDHTHum.py 11 16:60000:REGEX((.*?))]" }
+Switch Raspi18 "Raspi18" { gpio="pin:18" }
+Switch Raspi27 "Raspi27" { gpio="pin:27" }
+Switch Raspi12 "Raspi12" { exec="ON:gpio write 12 0,OFF:gpio write 12 1" }
+Switch Raspi23 "Raspi23" { exec="ON:gpio write 23 0,OFF:gpio write 23 1" }
+*/
+

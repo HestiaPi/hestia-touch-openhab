@@ -1,0 +1,94 @@
+<html>
+
+<head>
+  <title>HestiaPi Touch Loader</title>
+  <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+  <META HTTP-EQUIV="Expires" CONTENT="-1">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  
+  <script>
+
+  var LoadTimer = -1
+  var CheckTimer = -1
+  var FlagSet = -1
+
+  var PageURL = "http://localhost:8080/habpanel/index.html#/view/HestiaPi"
+
+  var LoadTimeOut = 360000 //360000 = 6min
+  var CheckTimeOut = 20000 //20000 = 20sec
+
+  function PageFrameLoaded()
+  {
+    try
+    {
+      var fTitle = String(MainFrame.document.title).toLowerCase()
+      if ((fTitle.indexOf("habpanel") < 0))
+      {
+        //alert("Not ready yet...")
+        if (FlagSet == -1)
+          FlagSet = 1
+        else 
+          LoadTimeOut = 60000 //start checking faster now
+
+        LoadTimer = window.setTimeout("LoadFrame()", LoadTimeOut);
+      } else {
+        //alert("UI Loaded")
+        clearTimeout(CheckTimer);
+        clearTimeout(LoadTimer);
+        MainFrame.location = "about:blank"
+        window.location.href = PageURL
+      }
+    }
+    catch (e) { alert(e) }
+  }
+
+  function LoadFrame()
+  {
+    MainFrame.location = PageURL
+    CheckTimer = window.setTimeout("PageFrameLoaded()", CheckTimeOut);
+  }
+  </script>
+  
+  
+</head>
+
+
+<BODY topmargin=0 leftmargin=0 rightmargin=0 bottommargin=0 style="overflow:hidden; background:#16141c;" onload="LoadFrame()">
+
+  <script>
+      var loadingtimer = setInterval(function() {
+          var div = document.querySelector("#counter");
+          var count = div.textContent * 1 - 1;
+          div.textContent = count;
+          if (count <= 0) {
+              count =0
+              div.textContent = "";
+              document.querySelector("#counter_text1").textContent = "Loading...";
+              document.querySelector("#counter_text2").textContent = "";
+              clearInterval(loadingtimer);
+          }
+      }, 1000);
+  </script>
+  
+  <DIV name=MainDIV id=MainDIV style="visibility:hidden;position:absolute;top:0px;width:0;height:0px;overflow:hidden">
+    <IFRAME name=MainFrame id=MainFrame width="100%" height="100%"
+    scrolling=no  noresize framespacing=0 frameborder=0 border=0 marginheight=0 marginwidth=0 allowtransparency>
+    </IFRAME>
+  </DIV>
+
+  <div id="counter_text1"  style="overflow:hidden;position: absolute; top: 190px; left: 149px; color:#ccc">Starting in</div>
+  <div id="counter" style="overflow:hidden;position: absolute; top: 190px; left: 235px; color:#ccc">400</div>
+  <div id="counter_text2" style="overflow:hidden;position: absolute; top: 190px; left: 273px;color:#ccc">seconds...</div>
+
+  <div id="WiFi_IP"  style="overflow:hidden;position: absolute; top: 210px; left: 149px; color:#ccc">WiFi IP address: Not available</div>
+  <div id="WiFi_MAC"  style="overflow:hidden;position: absolute; top: 230px; left: 149px; color:#ccc">WiFi MAC address: Not available</div>
+
+
+  <div id="graphics" style="position: absolute; top: 80px; left: 150px;">
+    <img src="logo.png" width="180px">
+  </div>
+
+</BODY>
+
+</html>
