@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ### BEGIN INIT INFO
  # Provides:
  # Required-Start:
@@ -29,6 +29,18 @@ sed -i -e "s/wlanip/$wlanip/g" ./openhabloader.html
 sed -i -e "s/wlanmac/$wlanmac/g" ./openhabloader.html
 
 sudo -u pi /usr/bin/chromium-browser --disable-restore-session-state --disable-web-security --user-data-dir --noerordialogs --disable-session-crashed-bubble --disable-infobars --kiosk /home/pi/scripts/openhabloader.html &
-xinput --set-prop 'ADS7846 Touchscreen' 'Coordinate Transformation Matrix' 0 -1 1 1 0 0 0 0 1
+
+while :
+do
+if (($(echo "$(top -b -n1 | grep "load average:" | awk '{print $(NF-2)}' | cut -d, -f1) > 1.5" | bc -l))); then
+  #echo 'Too busy'
+  sleep 15; #Check again later
+else
+  #echo "Not too busy. Load!"
+  pgrep chromium | xargs kill -9 #Kill all sessions in case something was hung - this will produce a restore prompt unfortunately 
+  sudo -u pi /usr/bin/chromium-browser --disable-restore-session-state --disable-web-security --user-data-dir --noerordialogs --disable-session-crashed-bubble --disable-infobars --kiosk /home/pi/scripts/openhabloader.html &
+  break
+fi
+done
 
 exit 0
