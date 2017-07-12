@@ -1,0 +1,101 @@
+import org.openhab.core.library.types.*
+import org.openhab.core.types.Command 
+import org.openhab.core.types.*
+import org.openhab.core.items.GenericItem 
+import org.openhab.model.script.actions.Timer
+
+var Timer HeatingBoostTimer = null
+var String PreviousMode = "Off"
+
+rule "Initialisation"
+when
+    System started
+then
+    if(TempSetpoint.state == NULL) postUpdate(TempSetpoint, 70)
+    if(TempSetpoint.state < 40) postUpdate(TempSetpoint, 70)
+end
+
+rule "convertproxy"
+when
+  Item MyTemp changed or
+  Item MyHumi changed
+then
+  MyTempProxy.postUpdate(Double::parseDouble(MyTemp.state.toString))
+  MyHumiProxy.postUpdate(Double::parseDouble(MyHumi.state.toString))
+end
+
+rule "SetTempSetpointInc"
+  when
+      Item IncTargetTemp changed
+  then
+    var Number setpoint = TempSetpoint.state as DecimalType
+    setpoint = setpoint + 1
+    postUpdate(TempSetpoint, setpoint)
+end
+
+rule "SetTempSetpointDec"
+  when
+      Item DecTargetTemp changed
+  then
+    var Number setpoint = TempSetpoint.state as DecimalType
+    setpoint = setpoint - 1
+    postUpdate(TempSetpoint, setpoint)
+end
+
+rule "checkcurrtemp"
+when
+  Item TempSetpoint changed or
+  Item MyTempProxy changed
+then
+  if (MyTempProxy.state > TempSetpoint.state){
+    postUpdate(Raspi23, OFF)
+  } else if ((MyTempProxy.state < TempSetpoint.state) &&
+      ((PowerMode.state=="On") || (PowerMode.state=="Boost"))) {
+    postUpdate(Raspi23, ON)
+  }
+end
+
+rule "settargettemp"
+when
+Item IncTargetTemp changed from INACTIVE to ACTIVE
+then
+    TargetTemp = 1   
+end
+
+rule "Power Mode"
+when
+    Item PowerMode changed
+then   
+    //logWarn("Default","PowerMode.state changed to " + PowerMode.state)
+    switch(PowerMode.state) {
+      case "On": {
+        postUpdate(Raspi23, ON)
+        PreviousMode="On"
+      }
+      case "Off": {
+        postUpdate(Raspi23, OFF)
+        PreviousMode="Off"
+      }
+      case "Schedule": {
+        postUpdate(Raspi23, OFF)
+        PreviousMode="Schedule"
+      }
+      case "Boost": {
+        //
+      }
+    }
+end
+    
+
+rule "Boost Heating"
+when
+    Item PowerMode changed to Boost      
+then
+    postUpdate(Raspi23, ON)
+    //logWarn("Default","Setting timer to " + (HeatingBoostTime.state as DecimalType).intValue)
+    HeatingBoostTimer = createTimer(now.plusMinutes((HeatingBoostTime.state as DecimalType).intValue)) [|
+        //postUpdate(Raspi23, OFF)
+        postUpdate(PowerMode, PreviousMode)
+        HeatingBoostTimer=null   // reset the timer
+    ]
+end
