@@ -1,18 +1,26 @@
-import org.openhab.core.library.types.*
-import org.openhab.core.types.Command 
-import org.openhab.core.types.*
-import org.openhab.core.items.GenericItem 
 import org.openhab.model.script.actions.Timer
 
 var Timer HeatingBoostTimer = null
-var String PreviousMode = "Off"
+var Timer HeatingBoostRemTime = null
+var Number HeatingBoostTimeInitial = null
+var String HeatingPreviousMode = "OFF"
+
+var Timer HotWaterBoostTimer = null
+var Timer HotWaterBoostRemTime = null
+var Number HotWaterBoostTimeInitial = null
+var String HotWaterPreviousMode = "OFF"
 
 rule "Initialisation"
 when
     System started
 then
+    MainSwitch.sendCommand("OFF")
+    HeatingMode.sendCommand("OFF")
+    HotWaterMode.sendCommand("OFF")
     if(TempSetpoint.state == NULL) postUpdate(TempSetpoint, 70)
     if(TempSetpoint.state < 40) postUpdate(TempSetpoint, 70)
+    if(HeatingBoostTime.state == NULL) postUpdate(HeatingBoostTime, 10)
+    if(HotWaterBoostTime.state == NULL) postUpdate(HotWaterBoostTime, 10)
 end
 
 rule "convertproxy"
@@ -30,7 +38,7 @@ rule "SetTempSetpointInc"
   then
     var Number setpoint = TempSetpoint.state as DecimalType
     setpoint = setpoint + 1
-    postUpdate(TempSetpoint, setpoint)
+    TempSetpoint.sendCommand(setpoint) //postUpdate(TempSetpoint, setpoint)
 end
 
 rule "SetTempSetpointDec"
@@ -39,7 +47,7 @@ rule "SetTempSetpointDec"
   then
     var Number setpoint = TempSetpoint.state as DecimalType
     setpoint = setpoint - 1
-    postUpdate(TempSetpoint, setpoint)
+    TempSetpoint.sendCommand(setpoint) //postUpdate(TempSetpoint, setpoint)
 end
 
 rule "checkcurrtemp"
@@ -48,54 +56,275 @@ when
   Item MyTempProxy changed
 then
   if (MyTempProxy.state > TempSetpoint.state){
-    postUpdate(Raspi23, OFF)
+    Raspi23.sendCommand(OFF)
   } else if ((MyTempProxy.state < TempSetpoint.state) &&
-      ((PowerMode.state=="On") || (PowerMode.state=="Boost"))) {
-    postUpdate(Raspi23, ON)
+      ((HeatingMode.state=="ON") || (HeatingMode.state=="Boost"))) {
+    Raspi23.sendCommand(ON)
   }
 end
 
-rule "settargettemp"
+rule "Heating Mode"
 when
-Item IncTargetTemp changed from INACTIVE to ACTIVE
+    Item HeatingMode changed
 then
-    TargetTemp = 1   
-end
-
-rule "Power Mode"
-when
-    Item PowerMode changed
-then   
-    //logWarn("Default","PowerMode.state changed to " + PowerMode.state)
-    switch(PowerMode.state) {
-      case "On": {
-        postUpdate(Raspi23, ON)
-        PreviousMode="On"
+    switch(HeatingMode.state) {
+      case "ON": {
+        if (MyTempProxy.state < TempSetpoint.state) {
+          Raspi23.sendCommand(ON)
+        }
+        MainSwitch.sendCommand("ON")
+        HeatingPreviousMode="ON"
       }
-      case "Off": {
-        postUpdate(Raspi23, OFF)
-        PreviousMode="Off"
+      case "OFF": {
+        Raspi23.sendCommand(OFF)
+        HeatingPreviousMode="OFF"
       }
       case "Schedule": {
-        postUpdate(Raspi23, OFF)
-        PreviousMode="Schedule"
+        Raspi23.sendCommand(OFF)
+        MainSwitch.sendCommand("ON")
+        HeatingPreviousMode="Schedule"
       }
       case "Boost": {
-        //
+        MainSwitch.sendCommand("ON")
+        // See below more...
       }
     }
 end
-    
+
+rule "Hot Water Mode"
+when
+    Item HotWaterMode changed
+then
+    switch(HotWaterMode.state) {
+      case "ON": {
+        Raspi12.sendCommand(ON)
+        MainSwitch.sendCommand("ON")
+        HotWaterPreviousMode="ON"
+      }
+      case "OFF": {
+        Raspi12.sendCommand(OFF)
+        HotWaterPreviousMode="OFF"
+      }
+      case "Schedule": {
+        Raspi12.sendCommand(OFF)
+        MainSwitch.sendCommand("ON")
+        HotWaterPreviousMode="Schedule"
+      }
+      case "Boost": {
+        MainSwitch.sendCommand("ON")
+        // See below more...
+      }
+    }
+end
+
+rule "MainSwitch"
+when
+    Item MainSwitch changed
+then
+    switch(MainSwitch.state) {
+      case ON:{
+        // Do nothing
+      }
+      case OFF:{
+        if (HeatingMode.state == "ON") {
+          HeatingPreviousMode = "ON"
+          HeatingMode.sendCommand("OFF")
+        } else if (HeatingMode.state == "Schedule") {
+          HeatingPreviousMode="Schedule"
+          HeatingMode.sendCommand("OFF")
+        } else if (HeatingMode.state == "Boost") {
+          //This should never execute
+          HeatingPreviousMode="Boost"
+          HeatingMode.sendCommand("OFF")
+        }
+
+        if (HotWaterMode.state == "ON") {
+          HotWaterPreviousMode="ON"
+          HotWaterMode.sendCommand("OFF")
+        } else if (HotWaterMode.state == "Schedule") {
+          HotWaterPreviousMode="Schedule"
+          HotWaterMode.sendCommand("OFF")
+        } else if (HotWaterMode.state == "Boost") {
+          //This should never execute
+          HotWaterPreviousMode="Boost"
+          HotWaterMode.sendCommand("OFF")
+        }
+      }
+    }
+end
 
 rule "Boost Heating"
 when
-    Item PowerMode changed to Boost      
+    Item HeatingMode changed to Boost
 then
-    postUpdate(Raspi23, ON)
-    //logWarn("Default","Setting timer to " + (HeatingBoostTime.state as DecimalType).intValue)
-    HeatingBoostTimer = createTimer(now.plusMinutes((HeatingBoostTime.state as DecimalType).intValue)) [|
-        //postUpdate(Raspi23, OFF)
-        postUpdate(PowerMode, PreviousMode)
-        HeatingBoostTimer=null   // reset the timer
+    if (HeatingBoostTimer != null) {
+      HeatingBoostTimer.cancel
+      HeatingBoostTimer = null   // reset the timer
+    }
+    if (HeatingBoostRemTime != null) {
+      HeatingBoostRemTime.cancel
+      HeatingBoostRemTime = null   // reset the timer
+    }
+    HeatingBoostTimeInitial = (HeatingBoostTime.state as DecimalType).intValue;
+    if (MyTempProxy.state > TempSetpoint.state){
+      Raspi23.sendCommand(OFF)
+    } else if (MyTempProxy.state < TempSetpoint.state) {
+      Raspi23.sendCommand(ON)
+    }
+
+    logWarn("Default","Setting heating timer to " + (HeatingBoostTime.state as DecimalType).intValue)
+    HeatingBoostTimer = createTimer(now.plusMinutes(HeatingBoostTimeInitial)) [|
+        HeatingMode.sendCommand(HeatingPreviousMode)
+        HeatingBoostTimer = null   // reset the timer
     ]
+
+    HeatingBoostRemTime = createTimer(now.plusMinutes(1)) [|
+        HeatingBoostTime.sendCommand((HeatingBoostTime.state as DecimalType).intValue -1)
+        HeatingBoostRemTime.reschedule(now.plusMinutes(1))
+    ]
+end
+
+rule "Boost Heating Ended"
+when
+    Item HeatingMode changed from Boost
+then
+    logWarn("Default","Heating Boost finished")
+    HeatingBoostTime.sendCommand(HeatingBoostTimeInitial)
+
+    logInfo("Timer", "Clearing Heating timers...")
+    if (HeatingBoostTimer != null) {
+      HeatingBoostTimer.cancel()
+      HeatingBoostTimer = null
+      logInfo("Timer", "HeatingBoostTimer cleared")
+    }
+
+    if (HeatingBoostRemTime != null) {
+      HeatingBoostRemTime.cancel()
+      HeatingBoostRemTime = null
+      logInfo("Timer", "HeatingBoostRemTime cleared")
+    }
+end
+
+rule "Boost Hot Water"
+when
+    Item HotWaterMode changed to Boost
+then
+    HotWaterBoostTimeInitial = (HotWaterBoostTime.state as DecimalType).intValue;
+    Raspi12.sendCommand(ON)
+
+    logWarn("Default","Setting hot water timer to " + (HotWaterBoostTime.state as DecimalType).intValue)
+    HotWaterBoostTimer = createTimer(now.plusMinutes(HotWaterBoostTimeInitial)) [|
+        HotWaterMode.sendCommand(HotWaterPreviousMode)
+        HotWaterBoostTimer = null   // reset the timer
+    ]
+
+    HotWaterBoostRemTime = createTimer(now.plusMinutes(1)) [|
+        HotWaterBoostTime.sendCommand((HotWaterBoostTime.state as DecimalType).intValue -1)
+        HotWaterBoostRemTime.reschedule(now.plusMinutes(1))
+    ]
+end
+
+rule "Boost Hot Water Ended"
+when
+    Item HotWaterMode changed from Boost
+then
+    logWarn("Default","Hot Water Boost finished")
+    HotWaterBoostTime.sendCommand(HotWaterBoostTimeInitial)
+
+    logInfo("Timer", "Clearing Hot Water timers...")
+    if (HotWaterBoostTimer != null) {
+      HotWaterBoostTimer.cancel()
+      HotWaterBoostTimer = null
+      logInfo("Timer", "HotWaterBoostTimer cleared")
+    }
+
+    if (HotWaterBoostRemTime != null) {
+      HotWaterBoostRemTime.cancel()
+      HotWaterBoostRemTime = null
+      logInfo("Timer", "HotWaterBoostRemTime cleared")
+    }
+end
+
+rule "HeatingBoostTimeDec"
+when
+    Item HeatingBoostTimeDec changed
+then
+  if (HeatingBoostTimeInitial > 19) {
+    HeatingBoostTimeInitial = HeatingBoostTimeInitial - 10
+    if (HeatingMode.state == "Boost") {
+      if (HeatingBoostTimer != null) {
+        HeatingBoostTimer.reschedule(now.plusMinutes((HeatingBoostTimeInitial).intValue))
+      }
+      if (HeatingBoostRemTime != null) {
+        HeatingBoostRemTime.reschedule(now.plusMinutes(1))
+      }
+    }
+  }
+
+  if (((HeatingBoostTime.state as DecimalType).intValue) > 20) {
+    HeatingBoostTime.postUpdate(((HeatingBoostTime.state as DecimalType).intValue) - 10)
+  }
+end
+
+rule "HeatingBoostTimeInc"
+when
+    Item HeatingBoostTimeInc changed
+then
+  if (HeatingBoostTimeInitial < 1440) {
+    HeatingBoostTimeInitial = HeatingBoostTimeInitial + 10
+    if (HeatingMode.state == "Boost") {
+      if (HeatingBoostTimer != null) {
+        HeatingBoostTimer.reschedule(now.plusMinutes((HeatingBoostTimeInitial).intValue))
+      }
+      if (HeatingBoostRemTime != null) {
+        HeatingBoostRemTime.reschedule(now.plusMinutes(1))
+      }
+    }
+  }
+
+  if (((HeatingBoostTime.state as DecimalType).intValue) < 1440) {
+    HeatingBoostTime.postUpdate(((HeatingBoostTime.state as DecimalType).intValue) + 10)
+  }
+end
+
+rule "HotWaterBoostTimeDec"
+when
+    Item HotWaterBoostTimeDec changed
+then
+  if (HotWaterBoostTimeInitial > 19) {
+    HotWaterBoostTimeInitial = HotWaterBoostTimeInitial - 10
+    if (HotWaterMode.state == "Boost") {
+      if (HotWaterBoostTimer != null) {
+        HotWaterBoostTimer.reschedule(now.plusMinutes((HotWaterBoostTimeInitial).intValue))
+      }
+      if (HotWaterBoostRemTime != null) {
+        HotWaterBoostRemTime.reschedule(now.plusMinutes(1))
+      }
+    }
+  }
+
+  if (((HotWaterBoostTime.state as DecimalType).intValue) > 10) {
+    HotWaterBoostTime.postUpdate(((HotWaterBoostTime.state as DecimalType).intValue) - 10)
+  }
+end
+
+rule "HotWaterBoostTimeInc"
+when
+    Item HotWaterBoostTimeInc changed
+then
+  if (HotWaterBoostTimeInitial < 120) {
+    HotWaterBoostTimeInitial = HotWaterBoostTimeInitial + 10
+    if (HotWaterMode.state == "Boost") {
+      if (HotWaterBoostTimer != null) {
+        HotWaterBoostTimer.reschedule(now.plusMinutes((HotWaterBoostTimeInitial).intValue))
+      }
+      if (HotWaterBoostRemTime != null) {
+        HotWaterBoostRemTime.reschedule(now.plusMinutes(1))
+      }
+    }
+  }
+
+  if (((HotWaterBoostTime.state as DecimalType).intValue) < 120) {
+    HotWaterBoostTime.postUpdate(((HotWaterBoostTime.state as DecimalType).intValue) + 10)
+  }
 end
