@@ -248,17 +248,20 @@ rule "HeatingBoostTimeDec"
 when
     Item HeatingBoostTimeDec changed
 then
-  if (HeatingBoostTimeInitial > 1) {
-    HeatingBoostTimeInitial = HeatingBoostTimeInitial - 1
+  if (HeatingBoostTimeInitial > 19) {
+    HeatingBoostTimeInitial = HeatingBoostTimeInitial - 10
     if (HeatingMode.state == "Boost") {
       if (HeatingBoostTimer != null) {
         HeatingBoostTimer.reschedule(now.plusMinutes((HeatingBoostTimeInitial).intValue))
       }
+      if (HeatingBoostRemTime != null) {
+        HeatingBoostRemTime.reschedule(now.plusMinutes(1))
+      }
     }
   }
 
-  if (((HeatingBoostTime.state as DecimalType).intValue) > 1) {
-    HeatingBoostTime.postUpdate(((HeatingBoostTime.state as DecimalType).intValue) - 1)
+  if (((HeatingBoostTime.state as DecimalType).intValue) > 20) {
+    HeatingBoostTime.postUpdate(((HeatingBoostTime.state as DecimalType).intValue) - 10)
   }
 end
 
@@ -267,7 +270,7 @@ when
     Item HeatingBoostTimeInc changed
 then
   if (HeatingBoostTimeInitial < 1440) {
-    HeatingBoostTimeInitial = HeatingBoostTimeInitial + 1
+    HeatingBoostTimeInitial = HeatingBoostTimeInitial + 10
     if (HeatingMode.state == "Boost") {
       if (HeatingBoostTimer != null) {
         HeatingBoostTimer.reschedule(now.plusMinutes((HeatingBoostTimeInitial).intValue))
@@ -279,7 +282,7 @@ then
   }
 
   if (((HeatingBoostTime.state as DecimalType).intValue) < 1440) {
-    HeatingBoostTime.postUpdate(((HeatingBoostTime.state as DecimalType).intValue) + 1)
+    HeatingBoostTime.postUpdate(((HeatingBoostTime.state as DecimalType).intValue) + 10)
   }
 end
 
@@ -287,17 +290,20 @@ rule "HotWaterBoostTimeDec"
 when
     Item HotWaterBoostTimeDec changed
 then
-  if (HotWaterBoostTimeInitial > 1) {
-    HotWaterBoostTimeInitial = HotWaterBoostTimeInitial - 1
+  if (HotWaterBoostTimeInitial > 19) {
+    HotWaterBoostTimeInitial = HotWaterBoostTimeInitial - 10
     if (HotWaterMode.state == "Boost") {
       if (HotWaterBoostTimer != null) {
         HotWaterBoostTimer.reschedule(now.plusMinutes((HotWaterBoostTimeInitial).intValue))
       }
+      if (HotWaterBoostRemTime != null) {
+        HotWaterBoostRemTime.reschedule(now.plusMinutes(1))
+      }
     }
   }
 
-  if (((HotWaterBoostTime.state as DecimalType).intValue) > 1) {
-    HotWaterBoostTime.postUpdate(((HotWaterBoostTime.state as DecimalType).intValue) - 1)
+  if (((HotWaterBoostTime.state as DecimalType).intValue) > 10) {
+    HotWaterBoostTime.postUpdate(((HotWaterBoostTime.state as DecimalType).intValue) - 10)
   }
 end
 
@@ -306,7 +312,7 @@ when
     Item HotWaterBoostTimeInc changed
 then
   if (HotWaterBoostTimeInitial < 120) {
-    HotWaterBoostTimeInitial = HotWaterBoostTimeInitial + 1
+    HotWaterBoostTimeInitial = HotWaterBoostTimeInitial + 10
     if (HotWaterMode.state == "Boost") {
       if (HotWaterBoostTimer != null) {
         HotWaterBoostTimer.reschedule(now.plusMinutes((HotWaterBoostTimeInitial).intValue))
@@ -318,6 +324,6 @@ then
   }
 
   if (((HotWaterBoostTime.state as DecimalType).intValue) < 120) {
-    HotWaterBoostTime.postUpdate(((HotWaterBoostTime.state as DecimalType).intValue) + 1)
+    HotWaterBoostTime.postUpdate(((HotWaterBoostTime.state as DecimalType).intValue) + 10)
   }
 end
