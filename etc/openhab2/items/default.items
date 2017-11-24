@@ -1,17 +1,18 @@
 Switch Raspi12 "Hot Water" { gpio="pin:12", mqtt=">[mosquitto:hestia/local/hotwaterstate:command:ON:1],>[mosquitto:hestia/local/hotwaterstate:command:OFF:0],<[mosquitto:hestia/local/hotwaterstate:state:MAP(binary.map)]" }
 Switch Raspi23 "Heating" { gpio="pin:23", mqtt=">[mosquitto:hestia/local/heatingstate:command:ON:1],>[mosquitto:hestia/local/heatingstate:command:OFF:0],<[mosquitto:hestia/local/heatingstate:state:MAP(binary.map)]" }
-Switch Raspi18 "Humidity" { gpio="pin:18", mqtt=">[mosquitto:hestia/local/humiditystate:command:ON:1],>[mosquitto:hestia/local/humiditystate:command:OFF:0],<[mosquitto:hestia/local/humiditystate:state:MAP(binary.map)]" }
+Switch Raspi18 "Humidity" { gpio="pin:18", mqtt=">[mosquitto:hestia/local/humiditystate/cmnd/POWER:command:*:default],<[mosquitto:hestia/local/humiditystate/POWER:state:default]" }
 
 String MyTemp "Temperature" <temperature> { channel="exec:command:gettemp:output" }
 Number MyTempProxy "Temperature [%.1f °C]" <temperature> { mqtt=">[mosquitto:hestia/local/temperature:state:*:default]" }
 
 String MyHumi "Humidity" <humidity> { channel="exec:command:gethumi:output" }
-Number MyHumiProxy "Humidity [%.1f %%]" <humidity> { mqtt=">[mosquitto:hestia/local/humidity:state:*:default]" }
+Number MyHumiProxy "Humidity [%.0f %%]" <humidity> { mqtt=">[mosquitto:hestia/local/humidity:state:*:default]" }
 
 Number TempSetpoint "Temperature Setpoint[%.1f °C]" { mqtt=">[mosquitto:hestia/local/tempsetpoint:state:*:default],<[mosquitto:hestia/local/settempsetpoint:state:default]"}
 Switch IncTargetTemp "IncTargetTemp"
 Switch DecTargetTemp "DecTargetTemp"
 Number TargetTemp
+Number HumiSetpoint "Humidity Setpoint[%.0f %%]" { mqtt=">[mosquitto:hestia/local/humisetpoint:state:*:default]" }
 Number TargetHumi
 
 Number HeatingBoostTime "Heating Boost Time [%.0f min]"
