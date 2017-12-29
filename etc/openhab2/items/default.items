@@ -1,5 +1,5 @@
 Switch Raspi12 "Hot Water" { gpio="pin:12", mqtt=">[mosquitto:hestia/local/hotwaterstate:command:ON:1],>[mosquitto:hestia/local/hotwaterstate:command:OFF:0],<[mosquitto:hestia/local/hotwaterstate:state:MAP(binary.map)]" }
-Switch Raspi23 "Heating" { gpio="pin:23", mqtt=">[mosquitto:hestia/local/heatingstate/cmnd/POWER:command:*:default],<[mosquitto:hestia/local/heatingstate/POWER:state:default]" }
+Switch Raspi23 "Heating" { gpio="pin:23", mqtt=">[mosquitto:hestia/local/heatingstate:command:ON:1],>[mosquitto:hestia/local/heatingstate:command:OFF:0],<[mosquitto:hestia/local/heatingstate:state:MAP(binary.map)]" }
 Switch Raspi18 "Humidity" { gpio="pin:18", mqtt=">[mosquitto:hestia/local/humiditystate/cmnd/POWER:command:*:default],<[mosquitto:hestia/local/humiditystate/POWER:state:default]" }
 
 String MyTemp "Temperature" <temperature> { channel="exec:command:gettemp:output" }
@@ -13,6 +13,8 @@ Switch IncTargetTemp "IncTargetTemp"
 Switch DecTargetTemp "DecTargetTemp"
 Number TargetTemp
 Number HumiSetpoint "Humidity Setpoint[%.0f %%]" { mqtt=">[mosquitto:hestia/local/humisetpoint:state:*:default]" }
+Switch IncTargetHumi "IncTargetHumi"
+Switch DecTargetHumi "DecTargetHumi"
 Number TargetHumi
 
 Number HeatingBoostTime "Heating Boost Time [%.0f min]"
@@ -21,9 +23,14 @@ Switch HeatingBoostTimeInc "HeatingBoostTimeInc"
 Number HotWaterBoostTime "Hot Water Boost Time [%.0f min]"
 Switch HotWaterBoostTimeDec "HotWaterBoostTimeDec"
 Switch HotWaterBoostTimeInc "HotWaterBoostTimeInc"
+Number HumiBoostTime "Humidity Boost Time [%.0f min]"
+Switch HumiBoostTimeDec "HumiBoostTimeDec"
+Switch HumiBoostTimeInc "HumiBoostTimeInc"
+
 
 String HeatingMode "Heating Mode"
 String HotWaterMode "Hot Water Mode"
+String HumiMode "Humidity Mode"
 Switch MainSwitch "MainSwitch"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
