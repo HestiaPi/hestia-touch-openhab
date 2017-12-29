@@ -331,7 +331,7 @@ then
 
     logWarn("Default","Setting humidity timer to " + (HumiBoostTime.state as DecimalType).intValue)
     HumiBoostTimer = createTimer(now.plusMinutes(HumiBoostTimeInitial)) [|
-        Humi.sendCommand(HumiPreviousMode)
+        HumiMode.sendCommand(HumiPreviousMode)
         HumiBoostTimer = null   // reset the timer
     ]
 
