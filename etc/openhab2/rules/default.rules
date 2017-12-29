@@ -22,7 +22,9 @@ then
     MainSwitch.sendCommand("OFF")
     HeatingMode.sendCommand("OFF")
     HotWaterMode.sendCommand("OFF")
+    HumiMode.sendCommand("OFF")
     if(TempSetpoint.state == NULL) postUpdate(TempSetpoint, 18)
+    if(HumiSetpoint.state == NULL) postUpdate(HumiSetpoint, 50)
     if(HeatingBoostTime.state == NULL) postUpdate(HeatingBoostTime, 10)
     if(HotWaterBoostTime.state == NULL) postUpdate(HotWaterBoostTime, 10)
     if(HumiBoostTime.state == NULL) postUpdate(HumiBoostTime, 10)
@@ -82,7 +84,7 @@ when
     Item DecTargetHumi changed
 then
   var Number setpoint = HumiSetpoint.state as DecimalType
-  setpoint = setpoint - 0.5
+  setpoint = setpoint - 5
   HumiSetpoint.sendCommand(setpoint)
 end
 
@@ -146,7 +148,7 @@ when
 then
     switch(HumiMode.state) {
       case "ON": {
-        if (MyHumiProxy.state < HumiSetpoint.state) {
+        if (MyHumiProxy.state > HumiSetpoint.state) {
           Raspi18.sendCommand(ON)
         }
         MainSwitch.sendCommand("ON")
@@ -321,9 +323,9 @@ then
       HumiBoostRemTime = null   // reset the timer
     }
     HumiBoostTimeInitial = (HumiBoostTime.state as DecimalType).intValue;
-    if (MyHumiProxy.state > HumiSetpoint.state){
+    if (MyHumiProxy.state < HumiSetpoint.state){
       Raspi18.sendCommand(OFF)
-    } else if (MyHumiProxy.state < HumiSetpoint.state) {
+    } else if (MyHumiProxy.state > HumiSetpoint.state) {
       Raspi18.sendCommand(ON)
     }
 
@@ -353,10 +355,10 @@ then
       logInfo("Timer", "HumiBoostTimer cleared")
     }
 
-    if (HeatingBoostRemTime != null) {
-      HeatingBoostRemTime.cancel()
-      HeatingBoostRemTime = null
-      logInfo("Timer", "HeatingBoostRemTime cleared")
+    if (HumiBoostRemTime != null) {
+      HumiBoostRemTime.cancel()
+      HumiBoostRemTime = null
+      logInfo("Timer", "HumiBoostRemTime cleared")
     }
 end
 
