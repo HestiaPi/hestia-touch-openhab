@@ -17,7 +17,8 @@ sitemap default label="Main Menu"
   Frame label="Humidity" {
 //    Switch item=Raspi18
       Switch item=HumiMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
-      Setpoint item=HumiBoostTime minValue=10 maxValue=120 step=10 icon="clock"
       Text item=MyHumiProxy
+      Setpoint item=HumiBoostTime minValue=10 maxValue=120 step=10 icon="clock"
+      Setpoint item=HumiSetpoint minValue=0 maxValue=100 step=5 icon="humidity"
   }
 }
