@@ -10,6 +10,11 @@ var Timer HotWaterBoostRemTime = null
 var Number HotWaterBoostTimeInitial = null
 var String HotWaterPreviousMode = "OFF"
 
+var Timer HumiBoostTimer = null
+var Timer HumiBoostRemTime = null
+var Number HumiBoostTimeInitial = null
+var String HumiPreviousMode = "OFF"
+
 rule "Initialisation"
 when
     System started
@@ -20,6 +25,7 @@ then
     if(TempSetpoint.state == NULL) postUpdate(TempSetpoint, 18)
     if(HeatingBoostTime.state == NULL) postUpdate(HeatingBoostTime, 10)
     if(HotWaterBoostTime.state == NULL) postUpdate(HotWaterBoostTime, 10)
+    if(HumiBoostTime.state == NULL) postUpdate(HumiBoostTime, 10)
 end
 
 rule "convertproxy"
@@ -60,6 +66,24 @@ then
       ((HeatingMode.state=="ON") || (HeatingMode.state=="Boost"))) {
     Raspi23.sendCommand(ON)
   }
+end
+
+rule "SetHumiSetpointInc"
+when
+    Item IncTargetHumi changed
+then
+  var Number setpoint = HumiSetpoint.state as DecimalType
+  setpoint = setpoint + 5
+  HumiSetpoint.sendCommand(setpoint)
+end
+
+rule "SetHumiSetpointDec"
+when
+    Item DecTargetHumi changed
+then
+  var Number setpoint = HumiSetpoint.state as DecimalType
+  setpoint = setpoint - 0.5
+  HumiSetpoint.sendCommand(setpoint)
 end
 
 rule "Heating Mode"
@@ -116,6 +140,34 @@ then
     }
 end
 
+rule "Humidity Mode"
+when
+    Item HumiMode changed
+then
+    switch(HumiMode.state) {
+      case "ON": {
+        if (MyHumiProxy.state < HumiSetpoint.state) {
+          Raspi18.sendCommand(ON)
+        }
+        MainSwitch.sendCommand("ON")
+        HumiPreviousMode="ON"
+      }
+      case "OFF": {
+        Raspi18.sendCommand(OFF)
+        HumiPreviousMode="OFF"
+      }
+      case "Schedule": {
+        Raspi18.sendCommand(OFF)
+        MainSwitch.sendCommand("ON")
+        HumiPreviousMode="Schedule"
+      }
+      case "Boost": {
+        MainSwitch.sendCommand("ON")
+        // See below more...
+      }
+    }
+end
+
 rule "MainSwitch"
 when
     Item MainSwitch changed
@@ -147,6 +199,18 @@ then
           //This should never execute
           HotWaterPreviousMode="Boost"
           HotWaterMode.sendCommand("OFF")
+        }
+        
+        if (HumiMode.state == "ON") {
+          HumiPreviousMode = "ON"
+          HumiMode.sendCommand("OFF")
+        } else if (HumiMode.state == "Schedule") {
+          HumiPreviousMode="Schedule"
+          HumiMode.sendCommand("OFF")
+        } else if (HumiMode.state == "Boost") {
+          //This should never execute
+          HumiPreviousMode="Boost"
+          HumiMode.sendCommand("OFF")
         }
       }
     }
@@ -244,6 +308,58 @@ then
     }
 end
 
+rule "Boost Humidity"
+when
+    Item HumiMode changed to Boost
+then
+    if (HumiBoostTimer != null) {
+      HumiBoostTimer.cancel
+      HumiBoostTimer = null   // reset the timer
+    }
+    if (HumiBoostRemTime != null) {
+      HumiBoostRemTime.cancel
+      HumiBoostRemTime = null   // reset the timer
+    }
+    HumiBoostTimeInitial = (HumiBoostTime.state as DecimalType).intValue;
+    if (MyHumiProxy.state > HumiSetpoint.state){
+      Raspi18.sendCommand(OFF)
+    } else if (MyHumiProxy.state < HumiSetpoint.state) {
+      Raspi18.sendCommand(ON)
+    }
+
+    logWarn("Default","Setting humidity timer to " + (HumiBoostTime.state as DecimalType).intValue)
+    HumiBoostTimer = createTimer(now.plusMinutes(HumiBoostTimeInitial)) [|
+        Humi.sendCommand(HumiPreviousMode)
+        HumiBoostTimer = null   // reset the timer
+    ]
+
+    HumiBoostRemTime = createTimer(now.plusMinutes(1)) [|
+        HumiBoostTime.sendCommand((HumiBoostTime.state as DecimalType).intValue -1)
+        HumiBoostRemTime.reschedule(now.plusMinutes(1))
+    ]
+end
+
+rule "Boost Humidity Ended"
+when
+    Item HumiMode changed from Boost
+then
+    logWarn("Default","Humidity Boost finished")
+    HumiBoostTime.sendCommand(HumiBoostTimeInitial)
+
+    logInfo("Timer", "Clearing Humidity timers...")
+    if (HumiBoostTimer != null) {
+      HumiBoostTimer.cancel()
+      HumiBoostTimer = null
+      logInfo("Timer", "HumiBoostTimer cleared")
+    }
+
+    if (HeatingBoostRemTime != null) {
+      HeatingBoostRemTime.cancel()
+      HeatingBoostRemTime = null
+      logInfo("Timer", "HeatingBoostRemTime cleared")
+    }
+end
+
 rule "HeatingBoostTimeDec"
 when
     Item HeatingBoostTimeDec changed
@@ -325,5 +441,47 @@ then
 
   if (((HotWaterBoostTime.state as DecimalType).intValue) < 120) {
     HotWaterBoostTime.postUpdate(((HotWaterBoostTime.state as DecimalType).intValue) + 10)
+  }
+end
+
+rule "HumiBoostTimeDec"
+when
+    Item HumiBoostTimeDec changed
+then
+  if (HumiBoostTimeInitial > 19) {
+    HumiBoostTimeInitial = HumiBoostTimeInitial - 10
+    if (HumiMode.state == "Boost") {
+      if (HumiBoostTimer != null) {
+        HumiBoostTimer.reschedule(now.plusMinutes((HumiBoostTimeInitial).intValue))
+      }
+      if (HumiBoostRemTime != null) {
+        HumiBoostRemTime.reschedule(now.plusMinutes(1))
+      }
+    }
+  }
+
+  if (((HumiBoostTime.state as DecimalType).intValue) > 20) {
+    HumiBoostTime.postUpdate(((HumiBoostTime.state as DecimalType).intValue) - 10)
+  }
+end
+
+rule "HumiBoostTimeInc"
+when
+    Item HumiBoostTimeInc changed
+then
+  if (HumiBoostTimeInitial < 1440) {
+    HumiBoostTimeInitial = HumiBoostTimeInitial + 10
+    if (HumiMode.state == "Boost") {
+      if (HumiBoostTimer != null) {
+        HumiBoostTimer.reschedule(now.plusMinutes((HumiBoostTimeInitial).intValue))
+      }
+      if (HumiBoostRemTime != null) {
+        HumiBoostRemTime.reschedule(now.plusMinutes(1))
+      }
+    }
+  }
+
+  if (((HumiBoostTime.state as DecimalType).intValue) < 1440) {
+    HumiBoostTime.postUpdate(((HumiBoostTime.state as DecimalType).intValue) + 10)
   }
 end
