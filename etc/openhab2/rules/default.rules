@@ -2,7 +2,7 @@ import org.openhab.model.script.actions.Timer
 
 var Timer HeatingBoostTimer = null
 var Timer HeatingBoostRemTime = null
-var Number HeatingBoostTimeInitial = null
+var Number HeatingBoostTimeInitial = 10
 var String HeatingPreviousMode = "OFF"
 
 var Timer HotWaterBoostTimer = null
@@ -12,7 +12,7 @@ var String HotWaterPreviousMode = "OFF"
 
 var Timer HumiBoostTimer = null
 var Timer HumiBoostRemTime = null
-var Number HumiBoostTimeInitial = null
+var Number HumiBoostTimeInitial = 10
 var String HumiPreviousMode = "OFF"
 
 rule "Initialisation"
@@ -28,6 +28,11 @@ then
     if(HeatingBoostTime.state == NULL) postUpdate(HeatingBoostTime, 10)
     if(HotWaterBoostTime.state == NULL) postUpdate(HotWaterBoostTime, 10)
     if(HumiBoostTime.state == NULL) postUpdate(HumiBoostTime, 10)
+    TempSetpointChart.sendCommand(0);
+    HumiSetpointChart.sendCommand(0);
+    PreviousTempReading.sendCommand(0);
+    PreviousHumiReading.sendCommand(0);
+    chart_period.sendCommand(0);
 end
 
 rule "convertproxy"
@@ -37,6 +42,12 @@ when
 then
   MyTempProxy.postUpdate(Double::parseDouble(MyTemp.state.toString))
   MyHumiProxy.postUpdate(Double::parseDouble(MyHumi.state.toString))
+  if ((Double::parseDouble(MyTemp.state.toString) < (Double::parseDouble(PreviousTempReading.state.toString)) - 0.2) || (Double::parseDouble(MyTemp.state.toString) > (Double::parseDouble(PreviousTempReading.state.toString)) + 0.2)) {
+    PreviousTempReading.postUpdate(Double::parseDouble(MyTemp.state.toString))
+  }
+  if ((Double::parseDouble(MyHumi.state.toString) < (Double::parseDouble(PreviousHumiReading.state.toString)) - 0.2) || (Double::parseDouble(MyHumi.state.toString) > (Double::parseDouble(PreviousHumiReading.state.toString)) + 0.2)) {
+    PreviousHumiReading.postUpdate(Double::parseDouble(MyHumi.state.toString))
+  }
 end
 
 rule "SetTempSetpointInc"
@@ -46,6 +57,7 @@ rule "SetTempSetpointInc"
     var Number setpoint = TempSetpoint.state as DecimalType
     setpoint = setpoint + 0.5
     TempSetpoint.sendCommand(setpoint) //postUpdate(TempSetpoint, setpoint)
+    TempSetpointChart.sendCommand(setpoint)
 end
 
 rule "SetTempSetpointDec"
@@ -55,6 +67,7 @@ rule "SetTempSetpointDec"
     var Number setpoint = TempSetpoint.state as DecimalType
     setpoint = setpoint - 0.5
     TempSetpoint.sendCommand(setpoint) //postUpdate(TempSetpoint, setpoint)
+    TempSetpointChart.sendCommand(setpoint)
 end
 
 rule "checkcurrtemp"
@@ -64,9 +77,11 @@ when
 then
   if (MyTempProxy.state > TempSetpoint.state){
     Raspi23.sendCommand(OFF)
+    TempSetpointChart.sendCommand(0)
   } else if ((MyTempProxy.state < TempSetpoint.state) &&
       ((HeatingMode.state=="ON") || (HeatingMode.state=="Boost"))) {
     Raspi23.sendCommand(ON)
+    TempSetpointChart.sendCommand(TempSetpoint.state)
   }
 end
 
@@ -77,6 +92,7 @@ then
   var Number setpoint = HumiSetpoint.state as DecimalType
   setpoint = setpoint + 5
   HumiSetpoint.sendCommand(setpoint)
+  HumiSetpointChart.sendCommand(setpoint)
 end
 
 rule "SetHumiSetpointDec"
@@ -86,6 +102,7 @@ then
   var Number setpoint = HumiSetpoint.state as DecimalType
   setpoint = setpoint - 5
   HumiSetpoint.sendCommand(setpoint)
+  HumiSetpointChart.sendCommand(setpoint)
 end
 
 rule "Heating Mode"
@@ -96,16 +113,19 @@ then
       case "ON": {
         if (MyTempProxy.state < TempSetpoint.state) {
           Raspi23.sendCommand(ON)
+          TempSetpointChart.sendCommand(TempSetpoint.state)
         }
         MainSwitch.sendCommand("ON")
         HeatingPreviousMode="ON"
       }
       case "OFF": {
         Raspi23.sendCommand(OFF)
+        TempSetpointChart.sendCommand(0)
         HeatingPreviousMode="OFF"
       }
       case "Schedule": {
         Raspi23.sendCommand(OFF)
+        TempSetpointChart.sendCommand(0)
         MainSwitch.sendCommand("ON")
         HeatingPreviousMode="Schedule"
       }
@@ -150,16 +170,19 @@ then
       case "ON": {
         if (MyHumiProxy.state > HumiSetpoint.state) {
           Raspi18.sendCommand(ON)
+          HumiSetpointChart.sendCommand(TempSetpoint.state)
         }
         MainSwitch.sendCommand("ON")
         HumiPreviousMode="ON"
       }
       case "OFF": {
         Raspi18.sendCommand(OFF)
+        HumiSetpointChart.sendCommand(0)
         HumiPreviousMode="OFF"
       }
       case "Schedule": {
         Raspi18.sendCommand(OFF)
+        HumiSetpointChart.sendCommand(0)
         MainSwitch.sendCommand("ON")
         HumiPreviousMode="Schedule"
       }
@@ -233,8 +256,10 @@ then
     HeatingBoostTimeInitial = (HeatingBoostTime.state as DecimalType).intValue;
     if (MyTempProxy.state > TempSetpoint.state){
       Raspi23.sendCommand(OFF)
+      TempSetpointChart.sendCommand(0)
     } else if (MyTempProxy.state < TempSetpoint.state) {
       Raspi23.sendCommand(ON)
+      TempSetpointChart.sendCommand(TempSetpoint.state)
     }
 
     logWarn("Default","Setting heating timer to " + (HeatingBoostTime.state as DecimalType).intValue)
@@ -254,6 +279,9 @@ when
     Item HeatingMode changed from Boost
 then
     logWarn("Default","Heating Boost finished")
+    if ((HeatingBoostTime.state as DecimalType).intValue < 10) {
+      HeatingBoostTimeInitial = 10
+    }
     HeatingBoostTime.sendCommand(HeatingBoostTimeInitial)
 
     logInfo("Timer", "Clearing Heating timers...")
@@ -294,6 +322,9 @@ when
     Item HotWaterMode changed from Boost
 then
     logWarn("Default","Hot Water Boost finished")
+    if ((HotWaterBoostTime.state as DecimalType).intValue < 10) {
+      HotWaterBoostTimeInitial = 10
+    }
     HotWaterBoostTime.sendCommand(HotWaterBoostTimeInitial)
 
     logInfo("Timer", "Clearing Hot Water timers...")
@@ -325,8 +356,10 @@ then
     HumiBoostTimeInitial = (HumiBoostTime.state as DecimalType).intValue;
     if (MyHumiProxy.state < HumiSetpoint.state){
       Raspi18.sendCommand(OFF)
+      HumiSetpointChart.sendCommand(0)
     } else if (MyHumiProxy.state > HumiSetpoint.state) {
       Raspi18.sendCommand(ON)
+      HumiSetpointChart.sendCommand(TempSetpoint.state)
     }
 
     logWarn("Default","Setting humidity timer to " + (HumiBoostTime.state as DecimalType).intValue)
@@ -346,6 +379,9 @@ when
     Item HumiMode changed from Boost
 then
     logWarn("Default","Humidity Boost finished")
+    if ((HumiBoostTime.state as DecimalType).intValue < 10) {
+      HumiBoostTimeInitial = 10
+    }
     HumiBoostTime.sendCommand(HumiBoostTimeInitial)
 
     logInfo("Timer", "Clearing Humidity timers...")
