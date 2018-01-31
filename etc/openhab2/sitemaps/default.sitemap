@@ -1,5 +1,9 @@
 sitemap default label="Main Menu"
 {
+//  Frame label="Xmas Mood" {
+//    Switch item=Raspi16
+//  }
+
   Frame label="Heating" {
 //    Switch item=Raspi23
     Switch item=HeatingMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
@@ -20,5 +24,17 @@ sitemap default label="Main Menu"
       Text item=MyHumiProxy
       Setpoint item=HumiBoostTime minValue=10 maxValue=120 step=10 icon="clock"
       Setpoint item=HumiSetpoint minValue=0 maxValue=100 step=5 icon="humidity"
+  }
+
+  Frame label="History" {
+      Group item=charts label="Charts" icon="chart" {
+      Frame { 
+        Switch item=chart_period label="Period" mappings=[0="Day", 1="Week", 2="Month", 3="Year"]
+        Chart item=charts period=D refresh=120000 visibility=[chart_period==0, chart_period=="Uninitialized"]
+        Chart item=charts period=W refresh=120000 visibility=[chart_period==1]
+        Chart item=charts period=M refresh=120000 visibility=[chart_period==2]
+        Chart item=charts period=Y refresh=120000 visibility=[chart_period==3]
+      }
+    }
   }
 }
