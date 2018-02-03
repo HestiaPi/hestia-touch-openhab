@@ -1,5 +1,9 @@
 sitemap default label="Main Menu"
 {
+//  Frame label="Xmas Mood" {
+//    Switch item=Raspi16
+//  }
+
   Frame label="Heating" {
     Switch item=HeatingMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
     Text item=MyTempProxy
