@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # Script that updates all script files from Gihub
+# Usage: sudo ./update.sh
+
 
 sudo chmod 777 /etc/openhab2/rules /etc/openhab2/sitemaps /etc/openhab2/items;
 sudo chmod 777 /etc/openhab2/rules/default.rules /etc/openhab2/sitemaps/default.sitemap /etc/openhab2/items/default.items;
