@@ -25,7 +25,7 @@ then
     HotWaterMode.sendCommand("OFF")
     HumiMode.sendCommand("OFF")
     if(TempSetpoint.state == NULL) postUpdate(TempSetpoint, 70)
-    if(TempSetpoint.state < 40) postUpdate(TempSetpoint, 70)
+    if(TempSetpoint.state < 32) postUpdate(TempSetpoint, 70)
     if(HumiSetpoint.state == NULL) postUpdate(HumiSetpoint, 50)
     if(HeatingBoostTime.state == NULL) postUpdate(HeatingBoostTime, 10)
     if(HotWaterBoostTime.state == NULL) postUpdate(HotWaterBoostTime, 10)
