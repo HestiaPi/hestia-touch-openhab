@@ -116,7 +116,7 @@ then
     Raspi18.sendCommand(OFF)
     HumiSetpointChart.sendCommand(0)
   } else if ((MyHumiProxy.state > HumiSetpoint.state) &&
-      ((HumidityMode.state=="ON") || (HumidityMode.state=="Boost"))) {
+      ((HumiMode.state=="ON") || (HumiMode.state=="Boost"))) {
     Raspi18.sendCommand(ON)
     HumiSetpointChart.sendCommand(HumiSetpoint.state)
   }
