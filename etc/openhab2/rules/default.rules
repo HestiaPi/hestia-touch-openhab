@@ -15,6 +15,7 @@ var Timer HumiBoostRemTime = null
 var Number HumiBoostTimeInitial = 10
 var String HumiPreviousMode = "OFF"
 
+
 rule "Initialisation"
 when
     System started
@@ -24,6 +25,7 @@ then
     HotWaterMode.sendCommand("OFF")
     HumiMode.sendCommand("OFF")
     if(TempSetpoint.state == NULL) postUpdate(TempSetpoint, 18)
+    if(TempSetpoint.state > 40) postUpdate(TempSetpoint, 18)
     if(HumiSetpoint.state == NULL) postUpdate(HumiSetpoint, 50)
     if(HeatingBoostTime.state == NULL) postUpdate(HeatingBoostTime, 10)
     if(HotWaterBoostTime.state == NULL) postUpdate(HotWaterBoostTime, 10)
@@ -42,10 +44,10 @@ when
 then
   MyTempProxy.postUpdate(Double::parseDouble(MyTemp.state.toString))
   MyHumiProxy.postUpdate(Double::parseDouble(MyHumi.state.toString))
-  if ((Double::parseDouble(MyTemp.state.toString) < (Double::parseDouble(PreviousTempReading.state.toString)) - 0.4) || (Double::parseDouble(MyTemp.state.toString) > (Double::parseDouble(PreviousTempReading.state.toString)) + 0.4)) {
+  if ((Double::parseDouble(MyTemp.state.toString) < (Double::parseDouble(PreviousTempReading.state.toString)) - 0.2) || (Double::parseDouble(MyTemp.state.toString) > (Double::parseDouble(PreviousTempReading.state.toString)) + 0.2)) {
     PreviousTempReading.postUpdate(Double::parseDouble(MyTemp.state.toString))
   }
-  if ((Double::parseDouble(MyHumi.state.toString) < (Double::parseDouble(PreviousHumiReading.state.toString)) - 4) || (Double::parseDouble(MyHumi.state.toString) > (Double::parseDouble(PreviousHumiReading.state.toString)) + 4)) {
+  if ((Double::parseDouble(MyHumi.state.toString) < (Double::parseDouble(PreviousHumiReading.state.toString)) - 0.4) || (Double::parseDouble(MyHumi.state.toString) > (Double::parseDouble(PreviousHumiReading.state.toString)) + 0.4)) {
     PreviousHumiReading.postUpdate(Double::parseDouble(MyHumi.state.toString))
   }
 end
@@ -73,7 +75,7 @@ end
 rule "checkcurrtemp"
 when
   Item TempSetpoint changed or
-  Item MyTempProxy changed
+  Item PreviousTempReading changed
 then
   if (MyTempProxy.state > TempSetpoint.state){
     Raspi23.sendCommand(OFF)
@@ -103,6 +105,21 @@ then
   setpoint = setpoint - 5
   HumiSetpoint.sendCommand(setpoint)
   HumiSetpointChart.sendCommand(setpoint)
+end
+
+rule "checkcurrhumi"
+when
+  Item HumiSetpoint changed or
+  Item PreviousHumiReading changed
+then
+  if (MyHumiProxy.state < HumiSetpoint.state){
+    Raspi18.sendCommand(OFF)
+    HumiSetpointChart.sendCommand(0)
+  } else if ((MyHumiProxy.state > HumiSetpoint.state) &&
+      ((HumiMode.state=="ON") || (HumiMode.state=="Boost"))) {
+    Raspi18.sendCommand(ON)
+    HumiSetpointChart.sendCommand(HumiSetpoint.state)
+  }
 end
 
 rule "Heating Mode"
@@ -245,6 +262,10 @@ rule "Boost Heating"
 when
     Item HeatingMode changed to Boost
 then
+    if ((HeatingBoostTime.state as DecimalType).intValue < 10) {
+      HeatingBoostTimeInitial = 10
+    }
+    HeatingBoostTime.sendCommand(HeatingBoostTimeInitial)
     if (HeatingBoostTimer != null) {
       HeatingBoostTimer.cancel
       HeatingBoostTimer = null   // reset the timer
@@ -253,7 +274,7 @@ then
       HeatingBoostRemTime.cancel
       HeatingBoostRemTime = null   // reset the timer
     }
-    HeatingBoostTimeInitial = (HeatingBoostTime.state as DecimalType).intValue;
+    //HeatingBoostTimeInitial = (HeatingBoostTime.state as DecimalType).intValue;
     if (MyTempProxy.state > TempSetpoint.state){
       Raspi23.sendCommand(OFF)
       TempSetpointChart.sendCommand(0)
@@ -262,7 +283,7 @@ then
       TempSetpointChart.sendCommand(TempSetpoint.state)
     }
 
-    logWarn("Default","Setting heating timer to " + (HeatingBoostTime.state as DecimalType).intValue)
+    logInfo("Default","Setting heating timer to " + (HeatingBoostTime.state as DecimalType).intValue)
     HeatingBoostTimer = createTimer(now.plusMinutes(HeatingBoostTimeInitial)) [|
         HeatingMode.sendCommand(HeatingPreviousMode)
         HeatingBoostTimer = null   // reset the timer
@@ -278,7 +299,7 @@ rule "Boost Heating Ended"
 when
     Item HeatingMode changed from Boost
 then
-    logWarn("Default","Heating Boost finished")
+    logInfo("Default","Heating Boost finished")
     if ((HeatingBoostTime.state as DecimalType).intValue < 10) {
       HeatingBoostTimeInitial = 10
     }
@@ -305,7 +326,7 @@ then
     HotWaterBoostTimeInitial = (HotWaterBoostTime.state as DecimalType).intValue;
     Raspi12.sendCommand(ON)
 
-    logWarn("Default","Setting hot water timer to " + (HotWaterBoostTime.state as DecimalType).intValue)
+    logInfo("Default","Setting hot water timer to " + (HotWaterBoostTime.state as DecimalType).intValue)
     HotWaterBoostTimer = createTimer(now.plusMinutes(HotWaterBoostTimeInitial)) [|
         HotWaterMode.sendCommand(HotWaterPreviousMode)
         HotWaterBoostTimer = null   // reset the timer
@@ -321,7 +342,7 @@ rule "Boost Hot Water Ended"
 when
     Item HotWaterMode changed from Boost
 then
-    logWarn("Default","Hot Water Boost finished")
+    logInfo("Default","Hot Water Boost finished")
     if ((HotWaterBoostTime.state as DecimalType).intValue < 10) {
       HotWaterBoostTimeInitial = 10
     }
@@ -345,6 +366,10 @@ rule "Boost Humidity"
 when
     Item HumiMode changed to Boost
 then
+    if ((HumiBoostTime.state as DecimalType).intValue < 10) {
+      HumiBoostTimeInitial = 10
+    }
+    HumidityBoostTime.sendCommand(HumiBoostTimeInitial)
     if (HumiBoostTimer != null) {
       HumiBoostTimer.cancel
       HumiBoostTimer = null   // reset the timer
@@ -362,7 +387,7 @@ then
       HumiSetpointChart.sendCommand(TempSetpoint.state)
     }
 
-    logWarn("Default","Setting humidity timer to " + (HumiBoostTime.state as DecimalType).intValue)
+    logInfo("Default","Setting humidity timer to " + (HumiBoostTime.state as DecimalType).intValue)
     HumiBoostTimer = createTimer(now.plusMinutes(HumiBoostTimeInitial)) [|
         HumiMode.sendCommand(HumiPreviousMode)
         HumiBoostTimer = null   // reset the timer
@@ -378,7 +403,7 @@ rule "Boost Humidity Ended"
 when
     Item HumiMode changed from Boost
 then
-    logWarn("Default","Humidity Boost finished")
+    logInfo("Default","Humidity Boost finished")
     if ((HumiBoostTime.state as DecimalType).intValue < 10) {
       HumiBoostTimeInitial = 10
     }
