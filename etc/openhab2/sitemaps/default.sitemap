@@ -1,25 +1,19 @@
 sitemap default label="Main Menu"
 {
-//  Frame label="Xmas Mood" {
-//    Switch item=Raspi16
-//  }
-
   Frame label="Heating" {
-//    Switch item=Raspi23
     Switch item=HeatingMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
     Text item=MyTempProxy
     Setpoint item=HeatingBoostTime minValue=10 maxValue=1440 step=10 icon="clock"
-    Setpoint item=TempSetpoint minValue=0 maxValue=40 step=0.5 icon="temperature"
+    /**CELSIUS*/ Setpoint item=TempSetpoint minValue=0 maxValue=40 step=0.5 icon="temperature"
+    //FAHRENHEIT Setpoint item=TempSetpoint minValue=32 maxValue=86 step=1 icon="temperature"
   }
 
   Frame label="Hot Water" {
-//    Switch item=Raspi12
     Switch item=HotWaterMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
     Setpoint item=HotWaterBoostTime minValue=10 maxValue=120 step=10 icon="clock"
   }
 
   Frame label="Humidity" {
-//    Switch item=Raspi18
       Switch item=HumiMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
       Text item=MyHumiProxy
       Setpoint item=HumiBoostTime minValue=10 maxValue=120 step=10 icon="clock"
