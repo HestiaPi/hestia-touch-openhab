@@ -24,8 +24,10 @@ then
     HeatingMode.sendCommand("OFF")
     HotWaterMode.sendCommand("OFF")
     HumiMode.sendCommand("OFF")
-    if(TempSetpoint.state == NULL) postUpdate(TempSetpoint, 18)
-    if(TempSetpoint.state > 40) postUpdate(TempSetpoint, 18)
+    /**CELSIUS*/ if(TempSetpoint.state == NULL) postUpdate(TempSetpoint, 18)
+    /**CELSIUS*/ if(TempSetpoint.state > 40) postUpdate(TempSetpoint, 18)
+    //FAHRENHEIT if(TempSetpoint.state == NULL) postUpdate(TempSetpoint, 70)
+    //FAHRENHEIT if(TempSetpoint.state < 32) postUpdate(TempSetpoint, 70)
     if(HumiSetpoint.state == NULL) postUpdate(HumiSetpoint, 50)
     if(HeatingBoostTime.state == NULL) postUpdate(HeatingBoostTime, 10)
     if(HotWaterBoostTime.state == NULL) postUpdate(HotWaterBoostTime, 10)
@@ -44,9 +46,9 @@ when
 then
   MyTempProxy.postUpdate(Double::parseDouble(MyTemp.state.toString))
   MyHumiProxy.postUpdate(Double::parseDouble(MyHumi.state.toString))
-  if ((Double::parseDouble(MyTemp.state.toString) < (Double::parseDouble(PreviousTempReading.state.toString)) - 0.2) || (Double::parseDouble(MyTemp.state.toString) > (Double::parseDouble(PreviousTempReading.state.toString)) + 0.2)) {
+  /**CELSIUS*/ if ((Double::parseDouble(MyTemp.state.toString) < (Double::parseDouble(PreviousTempReading.state.toString)) - 0.2) || (Double::parseDouble(MyTemp.state.toString) > (Double::parseDouble(PreviousTempReading.state.toString)) + 0.2)) {
     PreviousTempReading.postUpdate(Double::parseDouble(MyTemp.state.toString))
-  }
+  /**CELSIUS*/ }
   if ((Double::parseDouble(MyHumi.state.toString) < (Double::parseDouble(PreviousHumiReading.state.toString)) - 0.4) || (Double::parseDouble(MyHumi.state.toString) > (Double::parseDouble(PreviousHumiReading.state.toString)) + 0.4)) {
     PreviousHumiReading.postUpdate(Double::parseDouble(MyHumi.state.toString))
   }
@@ -57,7 +59,8 @@ rule "SetTempSetpointInc"
       Item IncTargetTemp changed
   then
     var Number setpoint = TempSetpoint.state as DecimalType
-    setpoint = setpoint + 0.5
+    /**CELSIUS*/ setpoint = setpoint + 0.5
+    //FAHRENHEIT setpoint = setpoint + 1
     TempSetpoint.sendCommand(setpoint) //postUpdate(TempSetpoint, setpoint)
     TempSetpointChart.sendCommand(setpoint)
 end
@@ -67,7 +70,8 @@ rule "SetTempSetpointDec"
       Item DecTargetTemp changed
   then
     var Number setpoint = TempSetpoint.state as DecimalType
-    setpoint = setpoint - 0.5
+    /**CELSIUS*/ setpoint = setpoint - 0.5
+    //FAHRENHEIT setpoint = setpoint - 1
     TempSetpoint.sendCommand(setpoint) //postUpdate(TempSetpoint, setpoint)
     TempSetpointChart.sendCommand(setpoint)
 end
