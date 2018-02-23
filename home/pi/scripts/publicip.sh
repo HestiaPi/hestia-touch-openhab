@@ -1,4 +1,9 @@
 #!/bin/bash
+# This will check from ipinfo.io if your public IP has changed and only then it will push it to dtdns.com
+# Make sure this script is executble (sudo chmod +x /home/pi/scripts/publicip.sh) and add it to crontab
+#sudo crontab -e
+#[add this at the end, to check every hour]
+#0 * * * * /home/pi/scripts/publicip.sh
 
 publicip=$(wget --timeout=10 http://ipinfo.io/ip -qO -)
 touch /tmp/publicip
