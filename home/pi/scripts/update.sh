@@ -13,15 +13,9 @@ wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/bme280.py;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/bme280C.py;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/bme280F.py;
-wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/defaultC.rules;
-wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/defaultF.rules;
-wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/defaultC.sitemap;
-wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/defaultF.sitemap;
-wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/defaultC.items;
-wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/defaultF.items;
 sudo mv /home/pi/scripts/update/* /home/pi/scripts/;
 cd /home/pi/scripts/;
-sudo chmod 777 F2C.sh C2F.sh bme280.py bme280C.py bme280F.py defaultC.rules defaultF.rules defaultC.sitemap defaultF.sitemap defaultC.items defaultF.items;
+sudo chmod 777 F2C.sh C2F.sh bme280.py bme280C.py bme280F.py;
 cd /home/pi/scripts/update;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/AdafruitDHTHum.py;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/AdafruitDHTTemp.py;
@@ -39,9 +33,10 @@ wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/openhabloader.sh;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/packitupandgo.sh;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/update.sh;
+wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/publicip.sh;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/wpa_supplicant.conf;
 sudo mv /home/pi/scripts/update/* /home/pi/scripts/;
 cd /home/pi/scripts/;
-sudo chmod 755 AdafruitDHTHum.py AdafruitDHTTemp.py getBMEhumi.sh getBMEtemp.sh getcputemperature.sh getssid.sh gettz.sh getuseddiskspace.sh getwifiinfo.sh getwlan0ip.sh getwlan0mac.sh openhabloader.sh packitupandgo.sh update.sh;
+sudo chmod 755 AdafruitDHTHum.py AdafruitDHTTemp.py getBMEhumi.sh getBMEtemp.sh getcputemperature.sh getssid.sh gettz.sh getuseddiskspace.sh getwifiinfo.sh getwlan0ip.sh getwlan0mac.sh openhabloader.sh packitupandgo.sh update.sh publicip.sh;
 sudo chmod 644 openhabloader.blank.html openhabloader.html wpa_supplicant.conf;
 rmdir /home/pi/scripts/update;
