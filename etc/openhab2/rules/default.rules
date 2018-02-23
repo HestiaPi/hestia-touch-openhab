@@ -82,11 +82,11 @@ when
   Item PreviousTempReading changed
 then
   if (MyTempProxy.state > TempSetpoint.state){
-    Raspi23.sendCommand(OFF)
+    HeatingPin23.sendCommand(OFF)
     TempSetpointChart.sendCommand(0)
   } else if ((MyTempProxy.state < TempSetpoint.state) &&
       ((HeatingMode.state=="ON") || (HeatingMode.state=="Boost"))) {
-    Raspi23.sendCommand(ON)
+    HeatingPin23.sendCommand(ON)
     TempSetpointChart.sendCommand(TempSetpoint.state)
   }
 end
@@ -117,11 +117,11 @@ when
   Item PreviousHumiReading changed
 then
   if (MyHumiProxy.state < HumiSetpoint.state){
-    Raspi18.sendCommand(OFF)
+    HumidityPin18.sendCommand(OFF)
     HumiSetpointChart.sendCommand(0)
   } else if ((MyHumiProxy.state > HumiSetpoint.state) &&
       ((HumiMode.state=="ON") || (HumiMode.state=="Boost"))) {
-    Raspi18.sendCommand(ON)
+    HumidityPin18.sendCommand(ON)
     HumiSetpointChart.sendCommand(HumiSetpoint.state)
   }
 end
@@ -133,19 +133,19 @@ then
     switch(HeatingMode.state) {
       case "ON": {
         if (MyTempProxy.state < TempSetpoint.state) {
-          Raspi23.sendCommand(ON)
+          HeatingPin23.sendCommand(ON)
           TempSetpointChart.sendCommand(TempSetpoint.state)
         }
         MainSwitch.sendCommand("ON")
         HeatingPreviousMode="ON"
       }
       case "OFF": {
-        Raspi23.sendCommand(OFF)
+        HeatingPin23.sendCommand(OFF)
         TempSetpointChart.sendCommand(0)
         HeatingPreviousMode="OFF"
       }
       case "Schedule": {
-        Raspi23.sendCommand(OFF)
+        HeatingPin23.sendCommand(OFF)
         TempSetpointChart.sendCommand(0)
         MainSwitch.sendCommand("ON")
         HeatingPreviousMode="Schedule"
@@ -163,16 +163,16 @@ when
 then
     switch(HotWaterMode.state) {
       case "ON": {
-        Raspi12.sendCommand(ON)
+        HotWaterPin12.sendCommand(ON)
         MainSwitch.sendCommand("ON")
         HotWaterPreviousMode="ON"
       }
       case "OFF": {
-        Raspi12.sendCommand(OFF)
+        HotWaterPin12.sendCommand(OFF)
         HotWaterPreviousMode="OFF"
       }
       case "Schedule": {
-        Raspi12.sendCommand(OFF)
+        HotWaterPin12.sendCommand(OFF)
         MainSwitch.sendCommand("ON")
         HotWaterPreviousMode="Schedule"
       }
@@ -190,19 +190,19 @@ then
     switch(HumiMode.state) {
       case "ON": {
         if (MyHumiProxy.state > HumiSetpoint.state) {
-          Raspi18.sendCommand(ON)
+          HumidityPin18.sendCommand(ON)
           HumiSetpointChart.sendCommand(TempSetpoint.state)
         }
         MainSwitch.sendCommand("ON")
         HumiPreviousMode="ON"
       }
       case "OFF": {
-        Raspi18.sendCommand(OFF)
+        HumidityPin18.sendCommand(OFF)
         HumiSetpointChart.sendCommand(0)
         HumiPreviousMode="OFF"
       }
       case "Schedule": {
-        Raspi18.sendCommand(OFF)
+        HumidityPin18.sendCommand(OFF)
         HumiSetpointChart.sendCommand(0)
         MainSwitch.sendCommand("ON")
         HumiPreviousMode="Schedule"
@@ -280,10 +280,10 @@ then
     }
     //HeatingBoostTimeInitial = (HeatingBoostTime.state as DecimalType).intValue;
     if (MyTempProxy.state > TempSetpoint.state){
-      Raspi23.sendCommand(OFF)
+      HeatingPin23.sendCommand(OFF)
       TempSetpointChart.sendCommand(0)
     } else if (MyTempProxy.state < TempSetpoint.state) {
-      Raspi23.sendCommand(ON)
+      HeatingPin23.sendCommand(ON)
       TempSetpointChart.sendCommand(TempSetpoint.state)
     }
 
@@ -328,7 +328,7 @@ when
     Item HotWaterMode changed to Boost
 then
     HotWaterBoostTimeInitial = (HotWaterBoostTime.state as DecimalType).intValue;
-    Raspi12.sendCommand(ON)
+    HotWaterPin12.sendCommand(ON)
 
     logInfo("Default","Setting hot water timer to " + (HotWaterBoostTime.state as DecimalType).intValue)
     HotWaterBoostTimer = createTimer(now.plusMinutes(HotWaterBoostTimeInitial)) [|
@@ -384,10 +384,10 @@ then
     }
     HumiBoostTimeInitial = (HumiBoostTime.state as DecimalType).intValue;
     if (MyHumiProxy.state < HumiSetpoint.state){
-      Raspi18.sendCommand(OFF)
+      HumidityPin18.sendCommand(OFF)
       HumiSetpointChart.sendCommand(0)
     } else if (MyHumiProxy.state > HumiSetpoint.state) {
-      Raspi18.sendCommand(ON)
+      HumidityPin18.sendCommand(ON)
       HumiSetpointChart.sendCommand(TempSetpoint.state)
     }
 
