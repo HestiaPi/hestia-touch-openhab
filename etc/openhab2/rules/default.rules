@@ -7,7 +7,7 @@ var String HeatingPreviousMode = "OFF"
 
 var Timer HotWaterBoostTimer = null
 var Timer HotWaterBoostRemTime = null
-var Number HotWaterBoostTimeInitial = null
+var Number HotWaterBoostTimeInitial = 10
 var String HotWaterPreviousMode = "OFF"
 
 var Timer HumiBoostTimer = null
@@ -49,7 +49,7 @@ then
   /**CELSIUS*/ if ((Double::parseDouble(MyTemp.state.toString) < (Double::parseDouble(PreviousTempReading.state.toString)) - 0.2) || (Double::parseDouble(MyTemp.state.toString) > (Double::parseDouble(PreviousTempReading.state.toString)) + 0.2)) {
     PreviousTempReading.postUpdate(Double::parseDouble(MyTemp.state.toString))
   /**CELSIUS*/ }
-  if ((Double::parseDouble(MyHumi.state.toString) < (Double::parseDouble(PreviousHumiReading.state.toString)) - 2) || (Double::parseDouble(MyHumi.state.toString) > (Double::parseDouble(PreviousHumiReading.state.toString)) + 2)) {
+  if ((Double::parseDouble(MyHumi.state.toString) < (Double::parseDouble(PreviousHumiReading.state.toString)) - 3) || (Double::parseDouble(MyHumi.state.toString) > (Double::parseDouble(PreviousHumiReading.state.toString)) + 3)) {
     PreviousHumiReading.postUpdate(Double::parseDouble(MyHumi.state.toString))
   }
 end
@@ -286,17 +286,22 @@ then
       HeatingPin23.sendCommand(ON)
       TempSetpointChart.sendCommand(TempSetpoint.state)
     }
-
-    logInfo("Default","Setting heating timer to " + (HeatingBoostTime.state as DecimalType).intValue)
-    HeatingBoostTimer = createTimer(now.plusMinutes(HeatingBoostTimeInitial)) [|
-        HeatingMode.sendCommand(HeatingPreviousMode)
-        HeatingBoostTimer = null   // reset the timer
-    ]
-
+   
     HeatingBoostRemTime = createTimer(now.plusMinutes(1)) [|
         HeatingBoostTime.sendCommand((HeatingBoostTime.state as DecimalType).intValue -1)
         HeatingBoostRemTime.reschedule(now.plusMinutes(1))
     ]
+
+    logInfo("Default","Setting heating timer to " + (HeatingBoostTime.state as DecimalType).intValue)
+    HeatingBoostTimer = createTimer(now.plusMinutes(HeatingBoostTimeInitial)) [|
+        if (HeatingBoostRemTime != null) {
+          HeatingBoostRemTime.cancel
+          HeatingBoostRemTime = null   // reset the timer
+        }
+        HeatingMode.sendCommand(HeatingPreviousMode)
+        HeatingBoostTimer = null   // reset the timer
+    ]
+
 end
 
 rule "Boost Heating Ended"
@@ -330,16 +335,30 @@ then
     HotWaterBoostTimeInitial = (HotWaterBoostTime.state as DecimalType).intValue;
     HotWaterPin12.sendCommand(ON)
 
-    logInfo("Default","Setting hot water timer to " + (HotWaterBoostTime.state as DecimalType).intValue)
-    HotWaterBoostTimer = createTimer(now.plusMinutes(HotWaterBoostTimeInitial)) [|
-        HotWaterMode.sendCommand(HotWaterPreviousMode)
-        HotWaterBoostTimer = null   // reset the timer
-    ]
-
+    if (HotWaterBoostTimer != null) {
+      HotWaterBoostTimer.cancel
+      HotWaterBoostTimer = null   // reset the timer
+    }
+    if (HotWaterBoostRemTime != null) {
+      HotWaterBoostRemTime.cancel
+      HotWaterBoostRemTime = null   // reset the timer
+    }
+    
     HotWaterBoostRemTime = createTimer(now.plusMinutes(1)) [|
         HotWaterBoostTime.sendCommand((HotWaterBoostTime.state as DecimalType).intValue -1)
         HotWaterBoostRemTime.reschedule(now.plusMinutes(1))
     ]
+     
+    logInfo("Default","Setting hot water timer to " + HotWaterBoostTimeInitial)
+    HotWaterBoostTimer = createTimer(now.plusMinutes(HotWaterBoostTimeInitial)) [|
+        if (HotWaterBoostRemTime != null) {
+          HotWaterBoostRemTime.cancel
+          HotWaterBoostRemTime = null   // reset the timer
+        }
+        HotWaterMode.sendCommand(HotWaterPreviousMode)
+        HotWaterBoostTimer = null   // reset the timer
+    ]
+
 end
 
 rule "Boost Hot Water Ended"
@@ -391,16 +410,21 @@ then
       HumiSetpointChart.sendCommand(TempSetpoint.state)
     }
 
-    logInfo("Default","Setting humidity timer to " + (HumiBoostTime.state as DecimalType).intValue)
-    HumiBoostTimer = createTimer(now.plusMinutes(HumiBoostTimeInitial)) [|
-        HumiMode.sendCommand(HumiPreviousMode)
-        HumiBoostTimer = null   // reset the timer
-    ]
-
     HumiBoostRemTime = createTimer(now.plusMinutes(1)) [|
         HumiBoostTime.sendCommand((HumiBoostTime.state as DecimalType).intValue -1)
         HumiBoostRemTime.reschedule(now.plusMinutes(1))
     ]
+        
+    logInfo("Default","Setting humidity timer to " + HumiBoostTimeInitial)    
+    HumiBoostTimer = createTimer(now.plusMinutes(HumiBoostTimeInitial)) [|
+        if (HumiBoostRemTime != null) {
+          HumiBoostRemTime.cancel
+          HumiBoostRemTime = null   // reset the timer
+        }
+        HumiMode.sendCommand(HumiPreviousMode)
+        HumiBoostTimer = null   // reset the timer
+    ]
+
 end
 
 rule "Boost Humidity Ended"
