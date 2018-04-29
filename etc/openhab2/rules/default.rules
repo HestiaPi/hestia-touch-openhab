@@ -42,16 +42,19 @@ end
 rule "convertproxy"
 when
   Item MyTemp changed or
-  Item MyHumi changed
+  Item MyHumi changed or 
+  Item MyPressure changed
 then
   MyTempProxy.postUpdate(Double::parseDouble(MyTemp.state.toString))
   MyHumiProxy.postUpdate(Double::parseDouble(MyHumi.state.toString))
+  MyPressureProxy.postUpdate(Double::parseDouble(MyPressure.state.toString))
   /**CELSIUS*/ if ((Double::parseDouble(MyTemp.state.toString) < (Double::parseDouble(PreviousTempReading.state.toString)) - 0.2) || (Double::parseDouble(MyTemp.state.toString) > (Double::parseDouble(PreviousTempReading.state.toString)) + 0.2)) {
     PreviousTempReading.postUpdate(Double::parseDouble(MyTemp.state.toString))
   /**CELSIUS*/ }
   if ((Double::parseDouble(MyHumi.state.toString) < (Double::parseDouble(PreviousHumiReading.state.toString)) - 3) || (Double::parseDouble(MyHumi.state.toString) > (Double::parseDouble(PreviousHumiReading.state.toString)) + 3)) {
     PreviousHumiReading.postUpdate(Double::parseDouble(MyHumi.state.toString))
   }
+  PreviousPressureReading.postUpdate(Double::parseDouble(MyPressure.state.toString))
 end
 
 rule "SetTempSetpointInc"
