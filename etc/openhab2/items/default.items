@@ -10,8 +10,8 @@ Number MyTempProxy "Temperature [%.1f °C]" <temperature> { mqtt=">[mosquitto:he
 String MyHumi "Humidity" <humidity> { channel="exec:command:gethumi:output" }
 Number MyHumiProxy "Humidity [%.0f %%]" <humidity> { mqtt=">[mosquitto:hestia/local/humidity:state:*:default]" }
 
-String MyPressure “Pressure” <pressure> { channel=“exec:command:getpress:output” }
-Number MyPressureProxy “Pressure [%.2f hPa]” { mqtt=">[mosquitto:hestia/local/pressure:state:*:default]" }
+String MyPressure "Pressure" <pressure> { channel="exec:command:getpress:output" }
+Number MyPressureProxy "Pressure [%.2f hPa]" { mqtt=">[mosquitto:hestia/local/pressure:state:*:default]" }
 
 Number TempSetpoint "Temperature Setpoint[%.1f °C]" { mqtt=">[mosquitto:hestia/local/tempsetpoint:state:*:default],<[mosquitto:hestia/local/settempsetpoint:state:default]"}
 Number TempSetpointChart "Heating Setpoint" (charts)
