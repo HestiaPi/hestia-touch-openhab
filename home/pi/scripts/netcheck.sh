@@ -2,8 +2,10 @@
 # From https://www.raspberrypi.org/forums/viewtopic.php?t=20149
 # cron script for checking WLAN connectivity
 #
-# to enable, make sure the script is executable
-#  sudo chmod a+x /home/pi/scripts/netcheck.sh
+# to enable, download it over SSH
+# wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/netcheck.sh -O /home/pi/scripts/netcheck.sh
+# and make the script is executable
+# sudo chmod a+x /home/pi/scripts/netcheck.sh
 # and then type
 # sudo crontab -e
 # and add this at the end to check every 10 minutes
