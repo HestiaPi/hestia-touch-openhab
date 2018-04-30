@@ -32,11 +32,6 @@ sitemap default label="Main Menu"
         Chart item=charts period=W refresh=120000 visibility=[chart_period==1]
         Chart item=charts period=M refresh=120000 visibility=[chart_period==2]
         Chart item=charts period=Y refresh=120000 visibility=[chart_period==3]
-      }
-    }
-    Group item=pressure_chart label="Pressure" icon="chart" {
-      Frame { 
-        Switch item=chart_period label="Period" mappings=[0="Day", 1="Week", 2="Month", 3="Year"]
         Chart item=pressure_chart period=D refresh=120000 visibility=[chart_period==0, chart_period=="Uninitialized"]
         Chart item=pressure_chart period=W refresh=120000 visibility=[chart_period==1]
         Chart item=pressure_chart period=M refresh=120000 visibility=[chart_period==2]
