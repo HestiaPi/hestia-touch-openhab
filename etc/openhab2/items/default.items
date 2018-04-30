@@ -1,4 +1,5 @@
 Group charts
+Group pressure_chart
 
 Switch HotWaterPin12 "Hot Water" { gpio="pin:12", mqtt=">[mosquitto:hestia/local/hotwaterstate:command:ON:1],>[mosquitto:hestia/local/hotwaterstate:command:OFF:0],<[mosquitto:hestia/local/hotwaterstate:state:MAP(binary.map)]" }
 Switch HeatingPin23 "Heating" { gpio="pin:23", mqtt=">[mosquitto:hestia/local/heatingstate:command:ON:1],>[mosquitto:hestia/local/heatingstate:command:OFF:0],<[mosquitto:hestia/local/heatingstate:state:MAP(binary.map)]" }
@@ -25,7 +26,7 @@ Switch IncTargetHumi "IncTargetHumi"
 Switch DecTargetHumi "DecTargetHumi"
 Number TargetHumi
 Number PreviousHumiReading "Humidity" <humidity> (charts) 
-Number PreviousPressureReading "Pressure" <pressure> (charts) 
+Number PreviousPressureReading "Pressure" <pressure> (pressure_chart) 
 
 Number HeatingBoostTime "Heating Boost Time [%.0f min]"
 Switch HeatingBoostTimeDec "HeatingBoostTimeDec"
