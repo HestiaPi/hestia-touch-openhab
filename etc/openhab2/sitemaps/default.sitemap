@@ -21,7 +21,7 @@ sitemap default label="Main Menu"
   }
   
   Frame label="Air Pressure" {
-    Text item=MyPressureProxy
+    Text item=MyPressureProxy icon="pressure"
   }
   
   Frame label="History" {
