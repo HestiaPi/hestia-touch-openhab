@@ -5,5 +5,5 @@ Strategies {
 }
 
 Items {
-  TempSetpointChart,PreviousTempReading,HumiSetpointChart,PreviousHumiReading : strategy = everyMinute
+  TempSetpointChart,PreviousTempReading,HumiSetpointChart,PreviousHumiReading,PreviousPressureReading : strategy = everyMinute
 }
