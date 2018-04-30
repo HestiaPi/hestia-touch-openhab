@@ -4,18 +4,20 @@
 # Usage: sudo ./update.sh
 
 
-sudo chmod 777 /etc/openhab2/rules /etc/openhab2/sitemaps /etc/openhab2/items;
-sudo chmod 777 /etc/openhab2/rules/default.rules /etc/openhab2/sitemaps/default.sitemap /etc/openhab2/items/default.items /etc/openhab2/things/default.things;
+sudo chmod 777 /etc/openhab2/rules /etc/openhab2/sitemaps /etc/openhab2/items /etc/openhab2/persistence;
+sudo chmod 777 /etc/openhab2/rules/default.rules /etc/openhab2/sitemaps/default.sitemap /etc/openhab2/items/default.items /etc/openhab2/things/default.things /etc/openhab2/persistence/rrd4j.persist;
 mkdir /home/pi/scripts/update;
 cd /home/pi/scripts/update;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/etc/openhab2/rules/default.rules;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/etc/openhab2/sitemaps/default.sitemap;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/etc/openhab2/items/default.items;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/etc/openhab2/things/default.things;
+wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/etc/openhab2/persistence/rrd4j.persist;
 sudo mv default.rules /etc/openhab2/rules/default.rules;
 sudo mv default.sitemap /etc/openhab2/sitemaps/default.sitemap;
 sudo mv default.items /etc/openhab2/items/default.items;
 sudo mv default.things /etc/openhab2/things/default.things;
+sudo mv rrd4j.persist /etc/openhab2/persistence/rrd4j.persist;
 cd /home/pi/scripts/update;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/F2C.sh;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/C2F.sh;
