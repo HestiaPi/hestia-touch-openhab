@@ -4,7 +4,7 @@
 #
 # to enable, download it over SSH
 # wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/netcheck.sh -O /home/pi/scripts/netcheck.sh
-# and make the script is executable
+# and make the script executable
 # sudo chmod a+x /home/pi/scripts/netcheck.sh
 # and then type
 # sudo crontab -e
