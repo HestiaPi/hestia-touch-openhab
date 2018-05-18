@@ -35,8 +35,6 @@ Switch MainSwitch "MainSwitch"
 // mappings=[0="Day", 1="Week", 2="Month", 3="Year"]
 Number chart_period "Period"
 
-//Switch Raspi16 "Xmas Tree" { gpio="pin:16", mqtt=">[mosquitto:hestia/local/xmasstate/cmnd/POWER:command:*:default],<[mosquitto:hestia/local/xmasstate/POWER:state:default]" }
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    SETTINGS START    ///////////////////////////////////////////////////////////////////////////////////////////////
 String Network_WAN_IP "WAN IP address [%s]" <network> (Network) { http="<[http://icanhazip.com:600000:REGEX((.*?))]" }
