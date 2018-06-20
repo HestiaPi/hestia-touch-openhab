@@ -21,4 +21,4 @@ fi
 sudo cp /home/pi/scripts/habpanel.hvac.config /var/lib/openhab2/config/org/openhab/habpanel.config
 
 cp /home/pi/scripts/bme280F.py /home/pi/scripts/bme280.py;
-sudo service openhab2 restart;
+sudo reboot;
