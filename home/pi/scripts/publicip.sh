@@ -11,5 +11,6 @@ touch /tmp/publicip
   then
   echo $publicip > /tmp/publicip  # overwrite for next run
   # Run dyndns updater
-  /usr/bin/wget -O - -q -t 1 "http://www.dtdns.com/api/autodns.cfm?id=[YOUR-DTDNS-DOMAIN]&pw=[YOUR-DTDNS-PASS]&client=HestiaPiDDNSUpdater"
+  #/usr/bin/wget -O - -q -t 1 "http://www.dtdns.com/api/autodns.cfm?id=[YOUR-DTDNS-DOMAIN]&pw=[YOUR-DTDNS-PASS]&client=HestiaPiDDNSUpdater"
+  /usr/bin/wget -O - -q -t 1 "http://[USERNAME]:[PASSWORD]@dynupdate.no-ip.com/nic/update?hostname=[YOUR-HOSTNAME]"
 fi
