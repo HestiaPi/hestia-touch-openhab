@@ -8,6 +8,16 @@
  # Short-Description: Start Chromium in Kiosk mode with HAB Panel UI
  ### END INIT INFO
 
+# Copied from https://www.raspberrypi.org/forums/viewtopic.php?f=29&t=174434&start=25#p1307919
+# Expand the filesystem if < 3.5 GB
+PARTSIZE=$( df | sed -n '/root/{s/  */ /gp}' | cut -d ' ' -f2 )
+THRESHOLD=3679731
+
+if (("$PARTSIZE" < "$THRESHOLD")) ; then
+    sudo raspi-config --expand-rootfs && reboot
+fi
+
+
 cd /home/pi/scripts/
 
 wlan=$(/sbin/ifconfig wlan0 | grep inet\ addr | wc -l)
