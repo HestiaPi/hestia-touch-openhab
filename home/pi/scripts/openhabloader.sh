@@ -17,10 +17,15 @@ if (("$PARTSIZE" < "$THRESHOLD")) ; then
     sudo raspi-config --expand-rootfs && reboot
 fi
 
-
 cd /home/pi/scripts/
 
-wlan=$(/sbin/ifconfig wlan0 | grep inet\ addr | wc -l)
+distro=$(sed 's/\..*//' /etc/debian_version)
+if [ $distro -eq 9 ]; then
+  wlan=$(/sbin/ifconfig wlan0 | grep inet\  | wc -l)
+else
+  wlan=$(/sbin/ifconfig wlan0 | grep inet\ addr | wc -l)
+fi
+
 wlanip="Not available"
 wlanmac="Not available"
 
