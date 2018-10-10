@@ -3,7 +3,7 @@ Group pressure_chart
 
 Switch HotWaterPin12 "Hot Water" { gpio="pin:12", mqtt=">[mosquitto:hestia/local/hotwaterstate:command:ON:1],>[mosquitto:hestia/local/hotwaterstate:command:OFF:0],<[mosquitto:hestia/local/hotwaterstate:state:MAP(binary.map)]" }
 Switch HeatingPin23 "Heating" { gpio="pin:23", mqtt=">[mosquitto:hestia/local/heatingstate:command:ON:1],>[mosquitto:hestia/local/heatingstate:command:OFF:0],<[mosquitto:hestia/local/heatingstate:state:MAP(binary.map)]" }
-Switch HumidityPin18 "Humidity" { gpio="pin:18", mqtt=">[mosquitto:hestia/local/humiditystate/cmnd/POWER:command:*:default],<[mosquitto:hestia/local/humiditystate/POWER:state:default]" }
+Switch HumidityPin18 "Humidity" { gpio="pin:18", mqtt=">[mosquitto:hestia/local/cmnd/humiditystate/POWER:command:*:default],<[mosquitto:hestia/local/stat/humiditystate/POWER:state:default]" }
 
 String MyTemp "Temperature" <temperature> { channel="exec:command:gettemp:output" }
 Number MyTempProxy "Temperature [%.1f °C]" <temperature> { mqtt=">[mosquitto:hestia/local/temperature:state:*:default]" }
