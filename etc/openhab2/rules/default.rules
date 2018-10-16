@@ -194,7 +194,7 @@ then
       case "ON": {
         if (MyHumiProxy.state > HumiSetpoint.state) {
           HumidityPin18.sendCommand(ON)
-          HumiSetpointChart.sendCommand(TempSetpoint.state)
+          HumiSetpointChart.sendCommand(HumiSetpoint.state)
         }
         MainSwitch.sendCommand("ON")
         HumiPreviousMode="ON"
@@ -395,7 +395,7 @@ then
     if (((HumiBoostTime.state as DecimalType).intValue < 10) || (HumiBoostTimeInitial < 10)) {
       HumiBoostTimeInitial = 10
     }
-    HumidityBoostTime.sendCommand(HumiBoostTimeInitial)
+    HumiBoostTime.sendCommand(HumiBoostTimeInitial)
     if (HumiBoostTimer != null) {
       HumiBoostTimer.cancel
       HumiBoostTimer = null   // reset the timer
@@ -410,7 +410,7 @@ then
       HumiSetpointChart.sendCommand(0)
     } else if (MyHumiProxy.state > HumiSetpoint.state) {
       HumidityPin18.sendCommand(ON)
-      HumiSetpointChart.sendCommand(TempSetpoint.state)
+      HumiSetpointChart.sendCommand(HumiSetpoint.state)
     }
 
     HumiBoostRemTime = createTimer(now.plusMinutes(1)) [|
