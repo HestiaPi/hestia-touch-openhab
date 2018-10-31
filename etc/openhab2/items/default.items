@@ -40,7 +40,7 @@ Switch HumiBoostTimeInc "HumiBoostTimeInc"
 
 String HeatingMode "Heating Mode"
 String HotWaterMode "Hot Water Mode"
-String HumiMode "Humidity Mode" { mqtt="<[mosquitto:hestia/local/humiditystate/stat/POWER:state:default]" }
+String HumiMode "Humidity Mode" { mqtt="<[mosquitto:hestia/local/stat/humiditystate/POWER:state:default]" }
 Switch MainSwitch "MainSwitch"
 
 // To choose a proper chart period in a sitemap
