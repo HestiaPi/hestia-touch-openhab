@@ -313,6 +313,7 @@ when
 then
     logInfo("Default","Heating Boost finished")
     if (((HeatingBoostTime.state as DecimalType).intValue < 10) || (HeatingBoostTimeInitial < 10)) {
+      sendNotification("your-myopenhab-account@email.com", "Your house should be warm now!")
       HeatingBoostTimeInitial = 10
     }
     HeatingBoostTime.sendCommand(HeatingBoostTimeInitial)
@@ -370,6 +371,7 @@ when
 then
     logInfo("Default","Hot Water Boost finished")
     if (((HotWaterBoostTime.state as DecimalType).intValue < 10) || (HotWaterBoostTimeInitial < 10)) {
+      sendNotification("your-myopenhab-account@email.com", "Hot Water is ready!")
       HotWaterBoostTimeInitial = 10
     }
     HotWaterBoostTime.sendCommand(HotWaterBoostTimeInitial)
