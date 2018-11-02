@@ -5,6 +5,8 @@
 
 sudo chmod 777 /etc/openhab2/rules /etc/openhab2/sitemaps /etc/openhab2/items /etc/openhab2/persistence /etc/openhab2/transform;
 sudo chmod 777 /etc/openhab2/rules/default.rules /etc/openhab2/sitemaps/default.sitemap /etc/openhab2/items/default.items /etc/openhab2/things/default.things /etc/openhab2/persistence/rrd4j.persist /etc/openhab2/transform/binary.map;
+sudo mkdir /etc/openhab2/html/hestiapi;
+sudo chmod 777 /etc/openhab2/html /etc/openhab2/html/hestiapi;
 mkdir /home/pi/scripts/update;
 cd /home/pi/scripts/update;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/etc/openhab2/rules/default.rules;
@@ -13,12 +15,15 @@ wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/etc/openhab2/it
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/etc/openhab2/things/default.things;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/etc/openhab2/persistence/rrd4j.persist;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/etc/openhab2/transform/binary.map;
+wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/etc/openhab2/html/hestiapi/hestiapi.css;
 sudo mv default.rules /etc/openhab2/rules/default.rules;
 sudo mv default.sitemap /etc/openhab2/sitemaps/default.sitemap;
 sudo mv default.items /etc/openhab2/items/default.items;
 sudo mv default.things /etc/openhab2/things/default.things;
 sudo mv rrd4j.persist /etc/openhab2/persistence/rrd4j.persist;
 sudo mv binary.map /etc/openhab2/transform/binary.map;
+sudo mv hestiapi.css /etc/openhab2/html/hestiapi/hestiapi.css;
+sudo chmod 777 /etc/openhab2/html/hestiapi/hestiapi.css;
 cd /home/pi/scripts/update;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/F2C.sh;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/C2F.sh;
@@ -45,6 +50,7 @@ wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/getwlan0ip.sh;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/getwlan0mac.sh;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/habpanel.hvac.config;
+wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/habpanel.nohvac.config;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/HVACEnable.sh;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/HVACDisable.sh;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/netcheck.sh;
@@ -60,3 +66,4 @@ cd /home/pi/scripts/;
 sudo chmod 755 AdafruitDHTHum.py AdafruitDHTTemp.py getBMEhumi.sh getBMEtemp.sh getBMEpress.sh getcputemperature.sh getssid.sh gettz.sh getuseddiskspace.sh getwifiinfo.sh getwlan0ip.sh getwlan0mac.sh HVACEnable.sh HVACDisable.sh netcheck.sh openhabloader.sh packitupandgo.sh update.sh publicip.sh;
 sudo chmod 644 openhabloader.blank.html openhabloader.html wpa_supplicant.conf;
 rmdir /home/pi/scripts/update;
+
