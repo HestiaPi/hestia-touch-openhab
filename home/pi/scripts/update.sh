@@ -19,6 +19,8 @@ wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/etc/openhab2/ht
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/default.hvac.items;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/default.hvac.rules;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/default.hvac.sitemap;
+wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/habpanel.hvac.config;
+wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/habpanel.nohvac.config;
 
 echo "Choose UI:"
 select yn in "HVAC (US)" "Standard (EU)"; do
@@ -30,11 +32,13 @@ select yn in "HVAC (US)" "Standard (EU)"; do
               sudo mv default.hvac.rules /etc/openhab2/rules/default.rules;
               sudo mv default.hvac.sitemap /etc/openhab2/sitemaps/default.sitemap;
               sudo mv default.hvac.items /etc/openhab2/items/default.items;
+              sudo cp habpanel.hvac.config /var/lib/openhab2/config/org/openhab/habpanel.config;
               break;;
         "Standard (EU)" )  echo Loading Standard elements...;
              sudo mv default.rules /etc/openhab2/rules/default.rules;
              sudo mv default.sitemap /etc/openhab2/sitemaps/default.sitemap;
              sudo mv default.items /etc/openhab2/items/default.items;
+             sudo cp habpanel.nohvac.config /var/lib/openhab2/config/org/openhab/habpanel.config;
              break;;
     esac
 done
@@ -66,8 +70,6 @@ wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/getwifiinfo.sh;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/getwlan0ip.sh;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/getwlan0mac.sh;
-wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/habpanel.hvac.config;
-wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/habpanel.nohvac.config;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/HVACEnable.sh;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/HVACDisable.sh;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/netcheck.sh;
