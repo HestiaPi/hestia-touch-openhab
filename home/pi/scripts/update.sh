@@ -16,9 +16,29 @@ wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/etc/openhab2/th
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/etc/openhab2/persistence/rrd4j.persist;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/etc/openhab2/transform/binary.map;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/etc/openhab2/html/hestiapi/hestiapi.css;
-sudo mv default.rules /etc/openhab2/rules/default.rules;
-sudo mv default.sitemap /etc/openhab2/sitemaps/default.sitemap;
-sudo mv default.items /etc/openhab2/items/default.items;
+wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/default.hvac.items;
+wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/default.hvac.rules;
+wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/default.hvac.sitemap;
+
+echo "Choose UI:"
+select yn in "HVAC (US)" "Standard (EU)"; do
+    case $yn in
+        "HVAC (US)" )  echo Loading HVAC elements...;
+              sudo mv default.rules /home/pi/scripts/default.nohvac.rules;
+              sudo mv default.sitemap /home/pi/scripts/default.nohvac.sitemap;
+              sudo mv default.items /home/pi/scripts/default.nohvac.items;
+              sudo mv default.hvac.rules /etc/openhab2/rules/default.rules;
+              sudo mv default.hvac.sitemap /etc/openhab2/sitemaps/default.sitemap;
+              sudo mv default.hvac.items /etc/openhab2/items/default.items;
+              break;;
+        "Standard (EU)" )  echo Loading Standard elements...;
+             sudo mv default.rules /etc/openhab2/rules/default.rules;
+             sudo mv default.sitemap /etc/openhab2/sitemaps/default.sitemap;
+             sudo mv default.items /etc/openhab2/items/default.items;
+             break;;
+    esac
+done
+
 sudo mv default.things /etc/openhab2/things/default.things;
 sudo mv rrd4j.persist /etc/openhab2/persistence/rrd4j.persist;
 sudo mv binary.map /etc/openhab2/transform/binary.map;
@@ -36,9 +56,6 @@ sudo chmod 777 F2C.sh C2F.sh bme280.py bme280C.py bme280F.py;
 cd /home/pi/scripts/update;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/AdafruitDHTHum.py;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/AdafruitDHTTemp.py;
-wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/default.hvac.items;
-wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/default.hvac.rules;
-wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/default.hvac.sitemap;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/getBMEhumi.sh;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/getBMEtemp.sh;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/getBMEpress.sh;
@@ -67,3 +84,10 @@ sudo chmod 755 AdafruitDHTHum.py AdafruitDHTTemp.py getBMEhumi.sh getBMEtemp.sh 
 sudo chmod 644 openhabloader.blank.html openhabloader.html wpa_supplicant.conf;
 rmdir /home/pi/scripts/update;
 
+echo "Choose temperature Unit:"
+select yn in "Fahrenheit (F)" "Celsius (C)"; do
+    case $yn in
+        "Fahrenheit (F)" ) echo Using F unit...; sudo /home/pi/scripts/C2F.sh; break;;
+        "Celsius (C)" ) echo Using C unit; sudo /home/pi/scripts/F2C.sh; break;;
+    esac
+done
