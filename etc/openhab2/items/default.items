@@ -3,7 +3,7 @@ Group pressure_chart
 
 Switch HotWaterPin12 "Hot Water" { gpio="pin:12", mqtt=">[mosquitto:hestia/local/hotwaterstate:command:ON:1],>[mosquitto:hestia/local/hotwaterstate:command:OFF:0],<[mosquitto:hestia/local/hotwaterstate:state:MAP(binary.map)]" }
 Switch HeatingPin23 "Heating" { gpio="pin:23", mqtt=">[mosquitto:hestia/local/heatingstate:command:ON:1],>[mosquitto:hestia/local/heatingstate:command:OFF:0],<[mosquitto:hestia/local/heatingstate:state:MAP(binary.map)]" }
-Switch HumidityPin18 "Humidity" { gpio="pin:18", mqtt=">[mosquitto:hestia/local/cmnd/humiditystate/POWER:command:*:default],<[mosquitto:hestia/local/stat/humiditystate/POWER:state:default]" }
+Switch HumidityPin18 "Humidity" { gpio="pin:18", mqtt=">[mosquitto:hestia/local/cmnd/humiditystate/POWER:command:*:default]" }
 
 String MyTemp "Temperature" <temperature> { channel="exec:command:gettemp:output" }
 Number MyTempProxy "Temperature [%.1f °C]" <temperature> { mqtt=">[mosquitto:hestia/local/temperature:state:*:default]" }
@@ -25,8 +25,8 @@ Number HumiSetpointChart "Humidity Setpoint" (charts)
 Switch IncTargetHumi "IncTargetHumi"
 Switch DecTargetHumi "DecTargetHumi"
 Number TargetHumi
-Number PreviousHumiReading "Humidity" <humidity> (charts) 
-Number PreviousPressureReading "Pressure" <pressure> (pressure_chart) 
+Number PreviousHumiReading "Humidity" <humidity> (charts)
+Number PreviousPressureReading "Pressure" <pressure> (pressure_chart)
 
 Number HeatingBoostTime "Heating Boost Time [%.0f min]"
 Switch HeatingBoostTimeDec "HeatingBoostTimeDec"
@@ -40,8 +40,10 @@ Switch HumiBoostTimeInc "HumiBoostTimeInc"
 
 String HeatingMode "Heating Mode"
 String HotWaterMode "Hot Water Mode"
-String HumiMode "Humidity Mode" { mqtt="<[mosquitto:hestia/local/stat/humiditystate/POWER:state:default]" }
+String HumiMode "Humidity Mode"
 Switch MainSwitch "MainSwitch"
+
+String HumiTopic "Humidity Topic" { mqtt="<[mosquitto:hestia/local/stat/humiditystate/POWER:state:default]" }
 
 // To choose a proper chart period in a sitemap
 // mappings=[0="Day", 1="Week", 2="Month", 3="Year"]
