@@ -28,7 +28,7 @@ Switch IncTargetHumi "IncTargetHumi"
 Switch DecTargetHumi "DecTargetHumi"
 Number TargetHumi
 Number PreviousHumiReading "Humidity" <humidity> (charts, chart_humi)
-//Number PreviousPressureReading "Pressure" <pressure> (chart_press)
+Number PreviousPressureReading "Pressure" <pressure> (chart_press)
 
 Number HeatingBoostTime "Heating Boost Time [%.0f min]"
 Switch HeatingBoostTimeDec "HeatingBoostTimeDec"
