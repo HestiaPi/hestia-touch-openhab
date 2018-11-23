@@ -48,11 +48,13 @@ rule "SetTempMinSetpointInc"
 when
 	Item IncTargetTempMin changed
 then
-	var Number minSetpoint = TempMinSetpoint.state as DecimalType
-	//CELSIUS minSetpoint = minSetpoint + 0.5
-	/**FAHRENHEIT*/ minSetpoint = minSetpoint + 1
-	TempMinSetpoint.sendCommand(minSetpoint) //postUpdate(TempMinSetpoint, minSetpoint)
-	TempMinSetpointChart.sendCommand(minSetpoint)
+  if (TempMinSetpoint.state < TempMaxSetpoint.state) {
+    var Number minSetpoint = TempMinSetpoint.state as DecimalType
+    //CELSIUS minSetpoint = minSetpoint + 0.5
+    /**FAHRENHEIT*/ minSetpoint = minSetpoint + 1
+    TempMinSetpoint.sendCommand(minSetpoint) //postUpdate(TempMinSetpoint, minSetpoint)
+    TempMinSetpointChart.sendCommand(minSetpoint)
+  }
 end
 
 rule "SetTempMinSetpointDec"
@@ -81,11 +83,31 @@ rule "SetTempMaxSetpointDec"
 when
 	Item DecTargetTempMax changed
 then
-	var Number maxSetpoint = TempMaxSetpoint.state as DecimalType
-	//CELSIUS maxSetpoint = maxSetpoint - 0.5
-	/**FAHRENHEIT*/ maxSetpoint = maxSetpoint - 1
-	TempMaxSetpoint.sendCommand(maxSetpoint) //postUpdate(TempMaxSetpoint, maxSetpoint)
-	TempMaxSetpointChart.sendCommand(maxSetpoint)
+  if (TempMinSetpoint.state < TempMaxSetpoint.state) {
+    var Number maxSetpoint = TempMaxSetpoint.state as DecimalType
+    //CELSIUS maxSetpoint = maxSetpoint - 0.5
+    /**FAHRENHEIT*/ maxSetpoint = maxSetpoint - 1
+    TempMaxSetpoint.sendCommand(maxSetpoint) //postUpdate(TempMaxSetpoint, maxSetpoint)
+    TempMaxSetpointChart.sendCommand(maxSetpoint)
+  }
+end
+
+rule "BlockSetpointOverlapUp"
+when
+	Item TempMinSetpoint changed
+then
+  if (TempMinSetpoint.state > TempMaxSetpoint.state) {
+	  TempMaxSetpoint.sendCommand(TempMinSetpoint.state as DecimalType)
+	}
+end
+
+rule "BlockSetpointOverlapDown"
+when
+	Item TempMaxSetpoint changed
+then
+  if (TempMinSetpoint.state > TempMaxSetpoint.state) {
+	  TempMinSetpoint.sendCommand(TempMaxSetpoint.state as DecimalType)
+	}
 end
 
 rule "checkcurrtemp"
@@ -101,7 +123,7 @@ then
 	else if((MyTempProxy.state < TempMinSetpoint.state) && (HeatingMode.state=="ON")) {
 		HeatingPin.sendCommand(ON)
 		FanPin.sendCommand(ON)
-		TempMinSetpointChart.sendCommand(TempMinSetpoint.state)
+		TempMinSetpointChart.sendCommand(TempMinSetpoint.state as DecimalType)
 	}
 	if(MyTempProxy.state < TempMaxSetpoint.state) {
 		CoolingPin.sendCommand(OFF)
@@ -110,7 +132,7 @@ then
 	else if((MyTempProxy.state > TempMaxSetpoint.state) && (CoolingMode.state=="ON")) {
 		CoolingPin.sendCommand(ON)
 		FanPin.sendCommand(ON)
-		TempMaxSetpointChart.sendCommand(TempMaxSetpoint.state)
+		TempMaxSetpointChart.sendCommand(TempMaxSetpoint.state as DecimalType)
 	}
 		if((MyTempProxy.state > TempMinSetpoint.state) && (MyTempProxy.state < TempMaxSetpoint.state)) {
 		FanPin.sendCommand(OFF)
@@ -129,7 +151,7 @@ then
 	}
 	else if((MyHumiProxy.state > HumiSetpoint.state) && ((HumiMode.state=="ON") || (HumiMode.state=="Boost"))) {
 	HumidityPin18.sendCommand(ON)
-	HumiSetpointChart.sendCommand(HumiSetpoint.state)
+	HumiSetpointChart.sendCommand(HumiSetpoint.state as DecimalType)
 	}
 end
 */
@@ -143,7 +165,7 @@ then
 			if(MyTempProxy.state < TempMinSetpoint.state) {
 				HeatingPin.sendCommand(ON)
 				FanPin.sendCommand(ON)
-				TempMinSetpointChart.sendCommand(TempMinSetpoint.state)
+				TempMinSetpointChart.sendCommand(TempMinSetpoint.state as DecimalType)
 			}
 			MainSwitch.sendCommand("ON")
 			CoolingMode.sendCommand("OFF")
@@ -172,7 +194,7 @@ then
 			if(MyTempProxy.state > TempMaxSetpoint.state) {
 				CoolingPin.sendCommand(ON)
 				FanPin.sendCommand(ON)
-				TempMaxSetpointChart.sendCommand(TempMaxSetpoint.state)
+				TempMaxSetpointChart.sendCommand(TempMaxSetpoint.state as DecimalType)
 			}
 			MainSwitch.sendCommand("ON")
 			HeatingMode.sendCommand("OFF")
