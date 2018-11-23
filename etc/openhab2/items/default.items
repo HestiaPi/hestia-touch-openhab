@@ -1,5 +1,7 @@
 Group charts
-Group pressure_chart
+Group chart_temp
+Group chart_humi
+Group chart_press
 
 Switch HotWaterPin12 "Hot Water" { gpio="pin:12", mqtt=">[mosquitto:hestia/local/hotwaterstate:command:ON:1],>[mosquitto:hestia/local/hotwaterstate:command:OFF:0],<[mosquitto:hestia/local/hotwaterstate:state:MAP(binary.map)]" }
 Switch HeatingPin23 "Heating" { gpio="pin:23", mqtt=">[mosquitto:hestia/local/heatingstate:command:ON:1],>[mosquitto:hestia/local/heatingstate:command:OFF:0],<[mosquitto:hestia/local/heatingstate:state:MAP(binary.map)]" }
@@ -15,18 +17,18 @@ String MyPressure "Pressure" <pressure> { channel="exec:command:getpress:output"
 Number MyPressureProxy "Pressure [%.2f hPa]" { mqtt=">[mosquitto:hestia/local/pressure:state:*:default]" }
 
 Number TempSetpoint "Temperature Setpoint[%.1f °C]" { mqtt=">[mosquitto:hestia/local/tempsetpoint:state:*:default],<[mosquitto:hestia/local/settempsetpoint:state:default]"}
-Number TempSetpointChart "Heating Setpoint" (charts)
+Number TempSetpointChart "Heating Setpoint" (charts, chart_temp)
 Switch IncTargetTemp "IncTargetTemp"
 Switch DecTargetTemp "DecTargetTemp"
 Number TargetTemp
-Number PreviousTempReading "Temperature" <temperature> (charts)
+Number PreviousTempReading "Temperature" <temperature> (charts, chart_temp)
 Number HumiSetpoint "Humidity Setpoint[%.0f %%]" { mqtt=">[mosquitto:hestia/local/humisetpoint:state:*:default]" }
-Number HumiSetpointChart "Humidity Setpoint" (charts)
+Number HumiSetpointChart "Humidity Setpoint" (charts, chart_humi)
 Switch IncTargetHumi "IncTargetHumi"
 Switch DecTargetHumi "DecTargetHumi"
 Number TargetHumi
-Number PreviousHumiReading "Humidity" <humidity> (charts)
-Number PreviousPressureReading "Pressure" <pressure> (pressure_chart)
+Number PreviousHumiReading "Humidity" <humidity> (charts, chart_humi)
+//Number PreviousPressureReading "Pressure" <pressure> (chart_press)
 
 Number HeatingBoostTime "Heating Boost Time [%.0f min]"
 Switch HeatingBoostTimeDec "HeatingBoostTimeDec"
