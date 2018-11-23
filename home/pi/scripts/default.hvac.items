@@ -1,4 +1,6 @@
 Group charts
+Group chart_temp
+Group chart_humi
 
 Switch HeatingPin "Heating" { gpio="pin:12", mqtt=">[mosquitto:hestia/local/heatingstate:command:ON:1],>[mosquitto:hestia/local/heatingstate:command:OFF:0],<[mosquitto:hestia/local/heatingstate:state:MAP(binary.map)]" }
 Switch CoolingPin "Cooling" { gpio="pin:23", mqtt=">[mosquitto:hestia/local/coolingstate:command:ON:1],>[mosquitto:hestia/local/coolingstate:command:OFF:0],<[mosquitto:hestia/local/coolingstate:state:MAP(binary.map)]" }
@@ -10,21 +12,22 @@ Number MyTempProxy "Temperature [%.0f °F]" <temperature> { mqtt=">[mosquitto:he
 String MyHumi "Humidity" <humidity> { channel="exec:command:gethumi:output" }
 Number MyHumiProxy "Humidity [%.0f %%]" <humidity> { mqtt=">[mosquitto:hestia/local/humidity:state:*:default]" }
 
-Number TempMinSetpoint "Temperature Min Setpoint[%.0f °F]" { mqtt=">[mosquitto:hestia/local/tempminsetpoint:state:*:default],<[mosquitto:hestia/local/settempminsetpoint:state:default]"}
-Number TempMinSetpointChart "Temperature Min Setpoint" (charts)
-Switch IncTargetTempMin "IncTargetTempMin"
-Switch DecTargetTempMin "DecTargetTempMin"
-Number TargetTempMin
 
 Number TempMaxSetpoint "Temperature Max Setpoint[%.0f °F]" { mqtt=">[mosquitto:hestia/local/tempmaxsetpoint:state:*:default],<[mosquitto:hestia/local/settempmaxsetpoint:state:default]"}
-Number TempMaxSetpointChart "Temperature Max Setpoint" (charts)
+Number TempMaxSetpointChart "Temperature Max Setpoint" (charts, chart_temp)
 Switch IncTargetTempMax "IncTargetTempMax"
 Switch DecTargetTempMax "DecTargetTempMax"
 Number TargetTempMax
 
-Number PreviousTempReading "Temperature" <temperature> (charts)
+Number PreviousTempReading "Temperature" <temperature> (charts, chart_temp)
 
-Number PreviousHumiReading "Humidity" <humidity> (charts) 
+Number TempMinSetpoint "Temperature Min Setpoint[%.0f °F]" { mqtt=">[mosquitto:hestia/local/tempminsetpoint:state:*:default],<[mosquitto:hestia/local/settempminsetpoint:state:default]"}
+Number TempMinSetpointChart "Temperature Min Setpoint" (charts, chart_temp)
+Switch IncTargetTempMin "IncTargetTempMin"
+Switch DecTargetTempMin "DecTargetTempMin"
+Number TargetTempMin
+
+Number PreviousHumiReading "Humidity" <humidity> (charts, chart_humi)
 
 String HeatingMode "Heating Mode"
 String CoolingMode "Cooling Mode"
