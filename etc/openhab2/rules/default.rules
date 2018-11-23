@@ -324,7 +324,7 @@ then
       HeatingBoostRemTime.cancel
       HeatingBoostRemTime = null   // reset the timer
     }
-    //HeatingBoostTimeInitial = (HeatingBoostTime.state as DecimalType).intValue;
+    HeatingBoostTimeInitial = (HeatingBoostTime.state as DecimalType).intValue;
     if (MyTempProxy.state > TempSetpoint.state){
       HeatingPin23.sendCommand(OFF)
       TempSetpointChart.sendCommand(0)
