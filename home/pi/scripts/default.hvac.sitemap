@@ -1,24 +1,29 @@
 sitemap default label="Thermostat" {
-	Frame label="Temperature" {
-		Switch item=HeatingMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/]
-		Switch item=CoolingMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/]
-		Text item=MyHumiProxy
-		Text item=MyTempProxy
-		//Setpoint item=HeatingBoostTime minValue=10 maxValue=1440 step=10 icon="clock"
-		//CELSIUS Setpoint item=TempMaxSetpoint minValue=0 maxValue=40 step=0.5 icon="temperature"
-		/**FAHRENHEIT*/ Setpoint item=TempMaxSetpoint minValue=32 maxValue=90 step=1 icon="temperature"
-		//CELSIUS Setpoint item=TempMinSetpoint minValue=0 maxValue=40 step=0.5 icon="temperature"
-		/**FAHRENHEIT*/ Setpoint item=TempMinSetpoint minValue=32 maxValue=90 step=1 icon="temperature"
-	}
+  Frame label="Temperature" {
+    Switch item=HeatingMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/]
+    Switch item=CoolingMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/]
+    Text item=MyHumiProxy
+    Text item=MyTempProxy
+    //Setpoint item=HeatingBoostTime minValue=10 maxValue=1440 step=10 icon="clock"
+    //CELSIUS Setpoint item=TempMaxSetpoint minValue=0 maxValue=40 step=0.5 icon="temperature"
+    /**FAHRENHEIT*/ Setpoint item=TempMaxSetpoint minValue=32 maxValue=90 step=1 icon="temperature"
+    //CELSIUS Setpoint item=TempMinSetpoint minValue=0 maxValue=40 step=0.5 icon="temperature"
+    /**FAHRENHEIT*/ Setpoint item=TempMinSetpoint minValue=32 maxValue=90 step=1 icon="temperature"
+  }
 	Frame label="History" {
-		Group item=charts label="Charts" icon="chart" {
-			Frame {
-				Switch item=chart_period label="Period" mappings=[0="Day", 1="Week", 2="Month", 3="Year"]
-				Chart item=charts period=D refresh=120000 visibility=[chart_period==0, chart_period=="Uninitialized"]
-				Chart item=charts period=W refresh=120000 visibility=[chart_period==1]
-				Chart item=charts period=M refresh=120000 visibility=[chart_period==2]
-				Chart item=charts period=Y refresh=120000 visibility=[chart_period==3]
-			}
-		}
+    Group item=charts label="Charts" icon="chart" {
+      Frame {
+        Switch item=chart_period label="Period" mappings=[0="Day", 1="Week", 2="Month", 3="Year"]
+        Chart item=chart_temp period=D refresh=120000 visibility=[chart_period==0, chart_period=="Uninitialized"]
+        Chart item=chart_temp period=W refresh=120000 visibility=[chart_period==1]
+        Chart item=chart_temp period=M refresh=120000 visibility=[chart_period==2]
+        Chart item=chart_temp period=Y refresh=120000 visibility=[chart_period==3]
+
+        Chart item=chart_humi period=D refresh=120000 visibility=[chart_period==0, chart_period=="Uninitialized"]
+        Chart item=chart_humi period=W refresh=120000 visibility=[chart_period==1]
+        Chart item=chart_humi period=M refresh=120000 visibility=[chart_period==2]
+        Chart item=chart_humi period=Y refresh=120000 visibility=[chart_period==3]
+      }
+    }
 	}
 }
