@@ -91,7 +91,7 @@ then
   } else if ((MyTempProxy.state < TempSetpoint.state) &&
       ((HeatingMode.state=="ON") || (HeatingMode.state=="Boost"))) {
     HeatingPin23.sendCommand(ON)
-    TempSetpointChart.sendCommand(TempSetpoint.state)
+    TempSetpointChart.sendCommand(TempSetpoint.state as DecimalType)
   }
 end
 
@@ -126,7 +126,7 @@ then
   } else if ((MyHumiProxy.state > HumiSetpoint.state) &&
       ((HumiMode.state=="ON") || (HumiMode.state=="Boost"))) {
     HumidityPin18.sendCommand(ON)
-    HumiSetpointChart.sendCommand(HumiSetpoint.state)
+    HumiSetpointChart.sendCommand(HumiSetpoint.state as DecimalType)
   }
 end
 
@@ -138,7 +138,7 @@ then
       case "ON": {
         if (MyTempProxy.state < TempSetpoint.state) {
           HeatingPin23.sendCommand(ON)
-          TempSetpointChart.sendCommand(TempSetpoint.state)
+          TempSetpointChart.sendCommand(TempSetpoint.state as DecimalType)
         }
         MainSwitch.sendCommand("ON")
         HeatingPreviousMode="ON"
@@ -195,7 +195,7 @@ then
       case "ON": {
         if (MyHumiProxy.state > HumiSetpoint.state) {
           HumidityPin18.sendCommand(ON)
-          HumiSetpointChart.sendCommand(HumiSetpoint.state)
+          HumiSetpointChart.sendCommand(HumiSetpoint.state as DecimalType)
         }
         MainSwitch.sendCommand("ON")
         HumiPreviousMode="ON"
@@ -228,7 +228,7 @@ then
       }
       case OFF: {
         HumiTopic.sendCommand("OFF")
-        HumiTopicTimer = createTimer(now.plusSeconds(1), [|
+        HumiTopicTimer = createTimer(now.plusSeconds(5), [|
             HumiTopicTimer = null
         ])
       }
@@ -247,7 +247,7 @@ then
 
         if (MyHumiProxy.state < HumiSetpoint.state) {
           HumidityPin18.sendCommand(OFF)
-          HumiTopicTimer = createTimer(now.plusSeconds(1), [|
+          HumiTopicTimer = createTimer(now.plusSeconds(5), [|
               HumiTopicTimer = null
           ])
         }
@@ -330,7 +330,7 @@ then
       TempSetpointChart.sendCommand(0)
     } else if (MyTempProxy.state < TempSetpoint.state) {
       HeatingPin23.sendCommand(ON)
-      TempSetpointChart.sendCommand(TempSetpoint.state)
+      TempSetpointChart.sendCommand(TempSetpoint.state as DecimalType)
     }
 
     HeatingBoostRemTime = createTimer(now.plusMinutes(1)) [|
@@ -455,7 +455,7 @@ then
       HumiSetpointChart.sendCommand(0)
     } else if (MyHumiProxy.state > HumiSetpoint.state) {
       HumidityPin18.sendCommand(ON)
-      HumiSetpointChart.sendCommand(HumiSetpoint.state)
+      HumiSetpointChart.sendCommand(HumiSetpoint.state as DecimalType)
     }
 
     HumiBoostRemTime = createTimer(now.plusMinutes(1)) [|
