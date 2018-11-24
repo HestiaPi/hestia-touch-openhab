@@ -308,6 +308,13 @@ then
     }
 end
 
+rule "HeatingBoostTime changed"
+when
+    Item HeatingBoostTime changed
+then
+    HeatingBoostTimeInitial = (HeatingBoostTime.state as DecimalType).intValue
+end
+
 rule "Boost Heating"
 when
     Item HeatingMode changed to Boost
