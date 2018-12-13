@@ -337,6 +337,8 @@ then
     }
 
     HeatingBoostTimeInitial = (HeatingBoostTime.state as DecimalType).intValue;
+//    sendNotification("your-myopenhab-account@email.com", "Heating started for " + HeatingBoostTimeInitial + " minutes")
+    
 
     if (MyTempProxy.state > TempSetpoint.state){
       HeatingPin23.sendCommand(OFF)
@@ -359,7 +361,7 @@ then
         }
         HeatingMode.sendCommand(HeatingPreviousMode)
         HeatingBoostTimer = null   // reset the timer
-//        sendNotification("your-myopenhab-account@email.com", "Your house should be warm now!")
+//        sendNotification("your-myopenhab-account@email.com", "Your house should be warm now ("+MyTempProxy.state+")")
     ]
 
 end
@@ -418,6 +420,8 @@ then
 
     HotWaterBoostTimeInitial = (HotWaterBoostTime.state as DecimalType).intValue;
     HotWaterPin12.sendCommand(ON)
+//    sendNotification("your-myopenhab-account@email.com", "Hot water started for " + HotWaterBoostTimeInitial + " minutes")
+
 
     HotWaterBoostRemTime = createTimer(now.plusMinutes(1)) [|
         HotWaterBoostTime.sendCommand((HotWaterBoostTime.state as DecimalType).intValue -1)
@@ -432,7 +436,7 @@ then
         }
         HotWaterMode.sendCommand(HotWaterPreviousMode)
         HotWaterBoostTimer = null   // reset the timer
-//        sendNotification("your-myopenhab-account@email.com", "Hot Water is ready!")
+//        sendNotification("your-myopenhab-account@email.com", "Hot Water is ready (" + HotWaterBoostTimeInitial + " minutes)")
     ]
 
 end
