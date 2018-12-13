@@ -93,3 +93,11 @@ select yn in "Fahrenheit (F)" "Celsius (C)"; do
         "Celsius (C)" ) echo Using C unit; sudo /home/pi/scripts/F2C.sh; break;;
     esac
 done
+
+echo "Please reboot to update LCD UI"
+select yn in "Reboot now" "Don't reboot"; do
+    case $yn in
+        "Reboot now" ) echo Rebooting...; sudo reboot; break;;
+        "Don't reboot" ) echo Done; break;;
+    esac
+done
