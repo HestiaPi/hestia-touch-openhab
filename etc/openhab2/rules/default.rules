@@ -227,10 +227,10 @@ then
         HumiTopic.sendCommand("ON")
       }
       case OFF: {
-        HumiTopic.sendCommand("OFF")
         HumiTopicTimer = createTimer(now.plusSeconds(5), [|
             HumiTopicTimer = null
         ])
+        HumiTopic.sendCommand("OFF")
       }
     }
 end
@@ -246,10 +246,10 @@ then
         }
 
         if (MyHumiProxy.state < HumiSetpoint.state) {
-          HumidityPin18.sendCommand(OFF)
           HumiTopicTimer = createTimer(now.plusSeconds(5), [|
               HumiTopicTimer = null
           ])
+          HumidityPin18.sendCommand(OFF)
         }
       }
       case "OFF": {
