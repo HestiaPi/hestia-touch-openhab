@@ -361,7 +361,6 @@ then
         }
         HeatingMode.sendCommand(HeatingPreviousMode)
         HeatingBoostTimer = null   // reset the timer
-//        sendNotification("your-myopenhab-account@email.com", "Your house should be warm now ("+MyTempProxy.state+")")
     ]
 
 end
@@ -371,6 +370,7 @@ when
     Item HeatingMode changed from Boost
 then
     logInfo("Default","Heating Boost finished")
+//    sendNotification("your-myopenhab-account@email.com", "Your house should be warm now ("+MyTempProxy.state+")")
     if (((HeatingBoostTime.state as DecimalType).intValue < 10) || (HeatingBoostTimeInitial < 10)) {
       HeatingBoostTimeInitial = 10
     }
