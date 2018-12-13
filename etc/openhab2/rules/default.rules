@@ -436,7 +436,7 @@ then
         }
         HotWaterMode.sendCommand(HotWaterPreviousMode)
         HotWaterBoostTimer = null   // reset the timer
-//        sendNotification("your-myopenhab-account@email.com", "Hot Water is ready (" + HotWaterBoostTimeInitial + " minutes)")
+//        sendNotification("your-myopenhab-account@email.com", "Hot Water is ready!")
     ]
 
 end
