@@ -3,16 +3,19 @@ import org.openhab.model.script.actions.Timer
 var Timer HeatingBoostTimer = null
 var Timer HeatingBoostRemTime = null
 var Number HeatingBoostTimeInitial = 10
+var Number HeatingBoostTimeInitialUI = 10
 var String HeatingPreviousMode = "OFF"
 
 var Timer HotWaterBoostTimer = null
 var Timer HotWaterBoostRemTime = null
 var Number HotWaterBoostTimeInitial = 10
+var Number HotWaterBoostTimeInitialUI = 10
 var String HotWaterPreviousMode = "OFF"
 
 var Timer HumiBoostTimer = null
 var Timer HumiBoostRemTime = null
 var Number HumiBoostTimeInitial = 10
+var Number HumiBoostTimeInitialUI = 10
 var String HumiPreviousMode = "OFF"
 var Timer HumiTopicTimer = null
 
@@ -337,6 +340,7 @@ then
     }
 
     HeatingBoostTimeInitial = (HeatingBoostTime.state as DecimalType).intValue;
+    HeatingBoostTimeInitialUI = HeatingBoostTimeInitial
 //    sendNotification("your-myopenhab-account@email.com", "Heating started for " + HeatingBoostTimeInitial + " minutes")
     
 
@@ -374,7 +378,7 @@ then
     if (((HeatingBoostTime.state as DecimalType).intValue < 10) || (HeatingBoostTimeInitial < 10)) {
       HeatingBoostTimeInitial = 10
     }
-    HeatingBoostTime.sendCommand(HeatingBoostTimeInitial)
+    HeatingBoostTime.sendCommand(HeatingBoostTimeInitialUI)
 
     logInfo("Timer", "Clearing Heating timers...")
     if (HeatingBoostTimer != null) {
@@ -419,6 +423,7 @@ then
     }
 
     HotWaterBoostTimeInitial = (HotWaterBoostTime.state as DecimalType).intValue;
+    HotWaterBoostTimeInitialUI = HotWaterBoostTimeInitial
     HotWaterPin12.sendCommand(ON)
 //    sendNotification("your-myopenhab-account@email.com", "Hot water started for " + HotWaterBoostTimeInitial + " minutes")
 
@@ -449,7 +454,7 @@ then
     if (((HotWaterBoostTime.state as DecimalType).intValue < 10) || (HotWaterBoostTimeInitial < 10)) {
       HotWaterBoostTimeInitial = 10
     }
-    HotWaterBoostTime.sendCommand(HotWaterBoostTimeInitial)
+    HotWaterBoostTime.sendCommand(HotWaterBoostTimeInitialUI)
 
     logInfo("Timer", "Clearing Hot Water timers...")
     if (HotWaterBoostTimer != null) {
@@ -494,6 +499,7 @@ then
     }
 
     HumiBoostTimeInitial = (HumiBoostTime.state as DecimalType).intValue;
+    HumiBoostTimeInitialUI = HumiBoostTimeInitial
 
     if (MyHumiProxy.state < HumiSetpoint.state){
       HumidityPin18.sendCommand(OFF)
@@ -529,7 +535,7 @@ then
     if (((HumiBoostTime.state as DecimalType).intValue < 10) || (HumiBoostTimeInitial < 10)) {
       HumiBoostTimeInitial = 10
     }
-    HumiBoostTime.sendCommand(HumiBoostTimeInitial)
+    HumiBoostTime.sendCommand(HumiBoostTimeInitialUI)
 
     logInfo("Timer", "Clearing Humidity timers...")
     if (HumiBoostTimer != null) {
@@ -559,7 +565,8 @@ then
     HeatingBoostTimeInitial = 10
     HeatingBoostTime.postUpdate(10)
   }
-
+  HeatingBoostTimeInitialUI = HeatingBoostTimeInitial
+  
   if (HeatingMode.state == "Boost") {
     if (HeatingBoostTimer != null) {
       HeatingBoostTimer.reschedule(now.plusMinutes((HeatingBoostTimeInitial).intValue))
@@ -583,7 +590,8 @@ then
       HeatingBoostTimeInitial = HeatingBoostTimeInitial + 10
       HeatingBoostTime.postUpdate(((HeatingBoostTime.state as DecimalType).intValue) + 10)
     }
-
+    HeatingBoostTimeInitialUI = HeatingBoostTimeInitial
+    
     if (HeatingMode.state == "Boost") {
       if (HeatingBoostTimer != null) {
         HeatingBoostTimer.reschedule(now.plusMinutes((HeatingBoostTimeInitial).intValue))
@@ -610,6 +618,7 @@ then
     HotWaterBoostTimeInitial = 10
     HotWaterBoostTime.postUpdate(10)
   }
+  HotWaterBoostTimeInitialUI = HotWaterBoostTimeInitial
 
   if (HotWaterMode.state == "Boost") {
     if (HotWaterBoostTimer != null) {
@@ -634,6 +643,8 @@ then
       HotWaterBoostTimeInitial = HotWaterBoostTimeInitial + 10
       HotWaterBoostTime.postUpdate(((HotWaterBoostTime.state as DecimalType).intValue) + 10)
     }
+    HotWaterBoostTimeInitialUI = HotWaterBoostTimeInitial
+    
     if (HotWaterMode.state == "Boost") {
       if (HotWaterBoostTimer != null) {
         HotWaterBoostTimer.reschedule(now.plusMinutes((HotWaterBoostTimeInitial).intValue))
@@ -660,6 +671,7 @@ then
     HumiBoostTimeInitial = 10
     HumiBoostTime.postUpdate(10)
   }
+  HumiBoostTimeInitialUI = HumiBoostTimeInitial
 
   if (HumiMode.state == "Boost") {
     if (HumiBoostTimer != null) {
@@ -684,6 +696,7 @@ then
       HumiBoostTimeInitial = HumiBoostTimeInitial + 10
       HumiBoostTime.postUpdate(((HumiBoostTime.state as DecimalType).intValue) + 10)
     }
+    HumiBoostTimeInitialUI = HumiBoostTimeInitial
 
     if (HumiMode.state == "Boost") {
       if (HumiBoostTimer != null) {
