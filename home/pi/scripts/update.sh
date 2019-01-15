@@ -1,7 +1,58 @@
 #!/bin/bash
 
 # Script that updates all script files from Gihub
-# Usage: sudo ./update.sh
+# Usage: sudo ./update.sh [OPTIONS]
+# If no options are specified, user will be prompted
+# 1: Load HVAC UI, F unit and don not reboot
+# 2: Load Standard UI, C unit and don not reboot
+# 3: Update only the update script and exit
+
+if [ "$1" = "1" ]; then
+  echo "HVAC selected";
+  UI=1;
+  Unit=1;
+  DoReboot=2;
+elif [ "$1" = "2" ]; then
+  echo "Standard selected";
+  UI=2;
+  Unit=2;
+  DoReboot=2;
+elif [ "$1" = "3" ]; then
+  echo "Updating update script...";
+  wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/update.sh -O /home/pi/scripts/update.sh --backups=1;
+  sudo chmod 755 update.sh;
+  exit 0;
+else
+  echo "Choose UI:";
+  select yn in "HVAC (US)" "Standard (EU)"; do
+      case $yn in
+          "HVAC (US)" )  echo Loading HVAC elements...; UI=1;
+                break;;
+          "Standard (EU)" )  echo Loading Standard elements...; UI=2;
+               break;;
+      esac
+  done
+
+  echo "Choose temperature Unit:";
+  select yn in "Fahrenheit (F)" "Celsius (C)"; do
+      case $yn in
+          "Fahrenheit (F)" ) echo Using F unit...; Unit=1; break;;
+          "Celsius (C)" ) echo Using C unit; Unit=2; break;;
+      esac
+  done
+
+  echo "Please reboot to update LCD UI";
+  select yn in "Reboot now" "Don't reboot"; do
+      case $yn in
+          "Reboot now" ) echo Will reboot; DoReboot=1; break;;
+          "Don't reboot" ) echo Will not reboot; DoReboot=2; break;;
+      esac
+  done
+fi
+echo "Update started";
+
+
+# Generic code goes here
 
 sudo chmod 777 /etc/openhab2/rules /etc/openhab2/sitemaps /etc/openhab2/items /etc/openhab2/persistence /etc/openhab2/transform;
 sudo chmod 777 /etc/openhab2/rules/default.rules /etc/openhab2/sitemaps/default.sitemap /etc/openhab2/items/default.items /etc/openhab2/things/default.things /etc/openhab2/persistence/rrd4j.persist /etc/openhab2/transform/binary.map;
@@ -22,26 +73,29 @@ wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/habpanel.hvac.config;
 wget https://github.com/HestiaPi/hestia-touch-openhab/raw/master/home/pi/scripts/habpanel.nohvac.config;
 
-echo "Choose UI:"
-select yn in "HVAC (US)" "Standard (EU)"; do
-    case $yn in
-        "HVAC (US)" )  echo Loading HVAC elements...;
-              sudo mv default.rules /home/pi/scripts/default.nohvac.rules;
-              sudo mv default.sitemap /home/pi/scripts/default.nohvac.sitemap;
-              sudo mv default.items /home/pi/scripts/default.nohvac.items;
-              sudo mv default.hvac.rules /etc/openhab2/rules/default.rules;
-              sudo mv default.hvac.sitemap /etc/openhab2/sitemaps/default.sitemap;
-              sudo mv default.hvac.items /etc/openhab2/items/default.items;
-              sudo cp habpanel.hvac.config /var/lib/openhab2/config/org/openhab/habpanel.config;
-              break;;
-        "Standard (EU)" )  echo Loading Standard elements...;
-             sudo mv default.rules /etc/openhab2/rules/default.rules;
-             sudo mv default.sitemap /etc/openhab2/sitemaps/default.sitemap;
-             sudo mv default.items /etc/openhab2/items/default.items;
-             sudo cp habpanel.nohvac.config /var/lib/openhab2/config/org/openhab/habpanel.config;
-             break;;
-    esac
-done
+
+if [ "$UI" = "1" ]; then
+  echo "Loading HVAC Ui elements...";
+  sudo mv default.rules /home/pi/scripts/default.nohvac.rules;
+  sudo mv default.sitemap /home/pi/scripts/default.nohvac.sitemap;
+  sudo mv default.items /home/pi/scripts/default.nohvac.items;
+  sudo mv default.hvac.rules /etc/openhab2/rules/default.rules;
+  sudo mv default.hvac.sitemap /etc/openhab2/sitemaps/default.sitemap;
+  sudo mv default.hvac.items /etc/openhab2/items/default.items;
+  sudo cp habpanel.hvac.config /var/lib/openhab2/config/org/openhab/habpanel.config;
+  echo "HVAC UI elements loaded!";
+elif [ "$UI" = "2" ]; then
+  echo "Loading Standard Ui elements...";
+  sudo mv default.rules /etc/openhab2/rules/default.rules;
+  sudo mv default.sitemap /etc/openhab2/sitemaps/default.sitemap;
+  sudo mv default.items /etc/openhab2/items/default.items;
+  sudo cp habpanel.nohvac.config /var/lib/openhab2/config/org/openhab/habpanel.config;
+  echo "Standard UI elements loaded!";
+else
+  echo "Invalid selection"
+fi
+
+# Generic code goes here
 
 sudo mv default.things /etc/openhab2/things/default.things;
 sudo mv rrd4j.persist /etc/openhab2/persistence/rrd4j.persist;
@@ -86,18 +140,18 @@ sudo chmod 755 AdafruitDHTHum.py AdafruitDHTTemp.py getBMEhumi.sh getBMEtemp.sh 
 sudo chmod 644 openhabloader.blank.html openhabloader.html wpa_supplicant.conf;
 rmdir /home/pi/scripts/update;
 
-echo "Choose temperature Unit:"
-select yn in "Fahrenheit (F)" "Celsius (C)"; do
-    case $yn in
-        "Fahrenheit (F)" ) echo Using F unit...; sudo /home/pi/scripts/C2F.sh; break;;
-        "Celsius (C)" ) echo Using C unit; sudo /home/pi/scripts/F2C.sh; break;;
-    esac
-done
 
-echo "Please reboot to update LCD UI"
-select yn in "Reboot now" "Don't reboot"; do
-    case $yn in
-        "Reboot now" ) echo Rebooting...; sudo reboot; break;;
-        "Don't reboot" ) echo Done; break;;
-    esac
-done
+if [ "$Unit" = "1" ]; then
+  echo "Using F unit..."; sudo /home/pi/scripts/C2F.sh;
+elif [ "$Unit" = "2" ]; then
+  echo "Using C unit..."; sudo /home/pi/scripts/F2C.sh;
+else
+  echo "Invalid unit selection"
+fi
+
+if [ "$DoReboot" = "1" ]; then
+  echo "Rebooting..."; sudo reboot;
+elif [ "$DoReboot" = "2" ]; then
+  echo "Update completed!";
+  exit 0;
+fi
