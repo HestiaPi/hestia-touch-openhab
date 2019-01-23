@@ -3,7 +3,7 @@ Group chart_temp
 Group chart_humi
 Group chart_press
 
-Switch HotWaterPin12 "Hot Water" { gpio="pin:12", mqtt=">[mosquitto:hestia/local/hotwaterstate:command:ON:1],>[mosquitto:hestia/local/hotwaterstate:command:OFF:0],<[mosquitto:hestia/local/hotwaterstate:state:MAP(binary.map)]" }
+Switch HotWaterPin12 "Hot Water" { gpio="pin:12", mqtt=">[mosquitto:hestia/local/cmnd/hotwaterstate/POWER:command:*:default],<[mosquitto:hestia/local/hotwaterstate:state:MAP(binary.map)]" }
 Switch HeatingPin23 "Heating" { gpio="pin:23", mqtt=">[mosquitto:hestia/local/heatingstate:command:ON:1],>[mosquitto:hestia/local/heatingstate:command:OFF:0],<[mosquitto:hestia/local/heatingstate:state:MAP(binary.map)]" }
 Switch HumidityPin18 "Humidity" { gpio="pin:18", mqtt=">[mosquitto:hestia/local/cmnd/humiditystate/POWER:command:*:default]" }
 
