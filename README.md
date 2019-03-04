@@ -1,2 +1,2 @@
-# hestia-touch-openhab
-OpenHAB2 files for HestiaPi Touch model
+# Documentation
+See our [wiki](https://github.com/HestiaPi/hestia-touch-openhab/wiki).
