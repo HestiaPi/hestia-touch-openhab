@@ -20,4 +20,5 @@ HestiaPi Touch is compatible with many devices and home automation systems and c
 # Support us
 
 HestiaPi is and will always be open source and open hardware. 
+
 Please consider supporting us through our [crowdfunding campaign](https://www.crowdsupply.com/makeopenstuff/hestiapi-touch).
