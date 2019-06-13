@@ -2,6 +2,9 @@
 
 ![HestiaPi Touch](https://www.crowdsupply.com/img/a204/hestiapi-black-white-standing-2_jpg_project-main.jpg "HestiaPi Touch")
 
+[![License](https://img.shields.io/github/license/HestiaPi/hestia-touch-openhab.svg)](https://github.com/HestiaPi/hestia-touch-openhab/blob/master/LICENSE)
+[![Chat](https://img.shields.io/discourse/https/community.hestiapi.com/posts.svg)](https://community.hestiapi.com/)
+
 HestiaPi Touch is a completely open source smart thermostat for your home. With it, you can monitor your home’s temperature, relative humidity, and atmospheric pressure. You can also control your heating, ventilation, air conditioning, hot water, and more from anywhere you have an Internet connection. 
 
 You can do all this securely and with confidence your private data stays private. 
