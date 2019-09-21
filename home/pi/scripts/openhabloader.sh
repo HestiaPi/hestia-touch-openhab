@@ -46,7 +46,7 @@ sed -i -e "s/wlanmac/$wlanmac/g" ./openhabloader.html
 pgrep chromium | xargs kill -9 #Kill all sessions in case something was hung - this will produce a restore prompt unfortunately
 sudo sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' /home/pi/.config/chromium/Default/Preferences
 sudo sed -i 's/"exit_type":"Crashed"/"exit_type":"None"/' /home/pi/.config/chromium/Default/Preferences
-sudo -u pi /usr/bin/chromium-browser --disable-restore-session-state --disable-web-security --user-data-dir --noerordialogs --disable-session-crashed-bubble --disable-infobars --kiosk /home/pi/scripts/openhabloader.html &
+#sudo -u pi /usr/bin/chromium-browser --disable-restore-session-state --disable-web-security --user-data-dir --noerordialogs --disable-session-crashed-bubble --disable-infobars --kiosk /home/pi/scripts/openhabloader.html &
 
 while :
 do
@@ -58,7 +58,7 @@ else
   pgrep chromium | xargs kill -9 #Kill all sessions in case something was hung - this will produce a restore prompt unfortunately
   sudo sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' /home/pi/.config/chromium/Default/Preferences
   sudo sed -i 's/"exit_type":"Crashed"/"exit_type":"None"/' /home/pi/.config/chromium/Default/Preferences
-  sudo -u pi /usr/bin/chromium-browser --disable-restore-session-state --disable-web-security --user-data-dir --noerordialogs --disable-session-crashed-bubble --disable-infobars --kiosk /home/pi/scripts/openhabloader.html &
+#  sudo -u pi /usr/bin/chromium-browser --disable-restore-session-state --disable-web-security --user-data-dir --noerordialogs --disable-session-crashed-bubble --disable-infobars --kiosk /home/pi/scripts/openhabloader.html &
   break
 fi
 done
