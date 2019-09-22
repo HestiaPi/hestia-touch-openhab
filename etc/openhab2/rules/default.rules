@@ -1634,7 +1634,7 @@ when
 then
     logInfo("Default","Backup complete!")
     BackupButton.postUpdate("Backup complete!")
-    RestoreButton.postUpdate(executeCommandLine("/home/pi/scripts/getbackuptimestamp.sh",10000));
+    BackupTimestampCommand.postUpdate(executeCommandLine("/home/pi/scripts/getbackuptimestamp.sh",10000));
     createTimer(now.plusSeconds(10)) [|
       BackupButton.postUpdate("")
     ]
@@ -1644,9 +1644,60 @@ rule "RestoreButtonChanged"
 when
   Item RestoreButton received command ON
 then
-    logInfo("Default","RestoreButton Selected")
-    RestoreButton.postUpdate("Restoring & restarting twice...")
-    RestoreCommand.sendCommand("ON")
+      if ((BackupTimestampCommand.state == NULL) || (BackupTimestampCommand.state == UNDEF)) {
+        BackupTimestampCommand.postUpdate(executeCommandLine("/home/pi/scripts/getbackuptimestamp.sh",10000));
+      } else if (BackupTimestampCommand.state == "No backup found.") {
+        RestoreButton.postUpdate("No backup found.")
+      } else {
+      logInfo("Default","RestoreButton Selected")
+      RestoreButton.postUpdate("Restoring & restarting twice...")
+      RestoreCommand.sendCommand("ON")
+    }
+end
+
+rule "BackupTimestampCommand Changed"
+when
+  Item BackupTimestampCommand received command ON
+then
+  BackupTimestampCommand.postUpdate(executeCommandLine("/home/pi/scripts/getbackuptimestamp.sh",10000));
+end
+
+
+
+rule "GitInstalledVersion Changed"
+when
+  Item GitInstalledVersion received command ON
+then
+  GitInstalledVersion.postUpdate(executeCommandLine("cat /home/pi/scripts/gitinstalledversion",10000));
+end
+
+rule "GitLatestVersion Changed"
+when
+  Item GitLatestVersion received command ON
+then
+  GitLatestVersion.postUpdate("Checking GitHub...");
+  GitLatestVersion.postUpdate(executeCommandLine("sudo /home/pi/scripts/getgitlatestversion.sh",10000));
+end
+
+rule "GitInstallLatestVersion Changed"
+when
+  Item GitInstallLatestVersion received command ON
+then
+  if (((GitInstalledVersion.state == NULL) || (GitInstalledVersion.state == UNDEF)) ||
+  ((GitLatestVersion.state == NULL) || (GitLatestVersion.state == UNDEF)) ||
+  (GitInstalledVersion.state.toString == GitLatestVersion.state.toString)) {
+    GitInstalledVersion.postUpdate(executeCommandLine("cat /home/pi/scripts/gitinstalledversion",10000));
+    GitLatestVersion.postUpdate(executeCommandLine("sudo /home/pi/scripts/getgitlatestversion.sh",10000));
+  }
+  if (GitInstalledVersion.state.toString == GitLatestVersion.state.toString){
+    GitInstallLatestVersion.postUpdate("You have the latest version.");
+    createTimer(now.plusSeconds(30)) [|
+      GitInstallLatestVersion.postUpdate("")
+    ]
+  } else {
+    GitInstallLatestVersion.postUpdate("Updating...");
+  }
+
 end
 
 rule "Monitor WAN IP"
