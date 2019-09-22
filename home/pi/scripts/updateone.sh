@@ -3,7 +3,7 @@
 ### PREPARE UPDATE FOLDER
 sudo mkdir /home/pi/scripts/gitupdate;
 cd /home/pi/scripts/gitupdate;
-git clone --single-branch --branch ONE https://github.com/HestiaPi/hestia-touch-openhab.git;
+sudo git clone --single-branch --branch ONE https://github.com/HestiaPi/hestia-touch-openhab.git;
 cd /home/pi/scripts/gitupdate/hestia-touch-openhab
 sudo rm -rf .git LICENSE README.md;
 
@@ -24,7 +24,7 @@ sudo chmod 755 AdafruitDHTHum.py AdafruitDHTTemp.py *.sh;
 sudo chmod 644 openhabloader.blank.html openhabloader.html wpa_supplicant.conf;
 
 ### STORE VERSION NUMBER LOCALLY
-curl --silent "https://api.github.com/repos/hestiapi/hestia-touch-openhab/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' > /home/pi/scripts/gitinstalledversion;
+sudo curl --silent "https://api.github.com/repos/hestiapi/hestia-touch-openhab/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' > /home/pi/scripts/gitinstalledversion;
 sudo rm -rf /home/pi/scripts/gitupdate;
 sudo reboot;
 
