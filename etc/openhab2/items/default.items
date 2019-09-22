@@ -98,17 +98,22 @@ String System_TZ_Set "Timezone [%s]" <time>
 
 String TempUnit "Temperature Unit []" <temperature> { channel="exec:command:gettempunit:output" }
 
+
+String BackupButton "Backup [%s]"
+Switch BackupCommand "Backup" { channel="exec:command:backupcommand:run" }
+String BackupTimestampCommand "Last Backup [%s]" <calendar> { channel="exec:command:getbackuptimestampcommand:output" }
+
+String RestoreButton "Restore [%s]" <switch>
+Switch RestoreCommand "Restore" { channel="exec:command:restorecommand:run" }
+
+String GitInstalledVersion "Installed version [%s]" <shield>
+String GitLatestVersion "Latest version [%s]" <returnpipe>
+String GitInstallLatestVersion "Update & restart [%s]" <returnpipe>
+
 String RebootButton "Reboot" <switch>
 String ShutdownButton "Shutdown" <switch>
 Switch RebootCommand "Reboot" { channel="exec:command:rebootcommand:run" }
 Switch ShutdownCommand "Shutdown" { channel="exec:command:shutdowncommand:run" }
-
-String BackupButton "Backup [%s]" <switch>
-Switch BackupCommand "Backup" { channel="exec:command:backupcommand:run" }
-Switch BackupTimestampCommand { channel="exec:command:getbackuptimestampcommand:output" }
-
-String RestoreButton "Restore [%s]" <switch>
-Switch RestoreCommand "Restore" { channel="exec:command:restorecommand:run" }
 
 Number Heating2Time "Delay [%.0f min]" <clock>
 Number Heating2Delta "Threshold [%.1f °C]" <temperature>
