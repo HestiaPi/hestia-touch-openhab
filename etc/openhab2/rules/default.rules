@@ -1695,7 +1695,10 @@ then
       GitInstallLatestVersion.postUpdate("")
     ]
   } else {
-    GitInstallLatestVersion.postUpdate("Updating...");
+    GitInstallLatestVersion.postUpdate("Updating & restarting...");
+    var String results = executeCommandLine("/home/pi/scripts/updateone.sh",30000)
+    results = results + "" // hide validation issue
+    results = ""
   }
 
 end
