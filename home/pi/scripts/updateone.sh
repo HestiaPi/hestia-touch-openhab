@@ -11,7 +11,7 @@ sudo rm -rf .git LICENSE README.md;
 cd /etc/openhab2;
 sudo chmod 777 rules sitemaps items persistence transform;
 sudo chmod 777 rules/default.rules sitemaps/default.sitemap items/default.items things/default.things persistence/rrd4j.persist transform/binary.map;
-rsync -rtcsOa /home/pi/scripts/gitupdate/hestia-touch-openhab/ /;
+sudo rsync -rtcsOa /home/pi/scripts/gitupdate/hestia-touch-openhab/ /;
 #sudo mkdir html/hestiapi;
 #sudo chmod 777 html html/hestiapi;
 
@@ -26,6 +26,6 @@ sudo chmod 644 openhabloader.blank.html openhabloader.html wpa_supplicant.conf;
 ### STORE VERSION NUMBER LOCALLY
 curl --silent "https://api.github.com/repos/hestiapi/hestia-touch-openhab/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' > /home/pi/scripts/gitinstalledversion;
 sudo rm -rf /home/pi/scripts/gitupdate;
-#sudo reboot;
+sudo reboot;
 
 exit 0;
