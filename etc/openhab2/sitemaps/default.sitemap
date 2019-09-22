@@ -37,12 +37,18 @@ sitemap default label="Main Menu"
   Frame label="Configuration" {
     Text item=SettingsPage label="Settings" {
       Frame {
-        Group item=settings label="Maintenance" icon="switch" {
+        Group item=settings label="Maintenance" icon="error" {
           Frame {
-            Switch item=BackupButton mappings=["ON"="Backup"]
-            Switch item=RestoreButton mappings=["ON"="Restore"]
-            Switch item=RebootButton mappings=["ON"="Reboot"]
-            Switch item=ShutdownButton mappings=["ON"="Shutdown"]
+            Switch item=BackupButton icon="lock" mappings=["ON"="Backup"]
+            Switch item=BackupTimestampCommand mappings=["ON"="Check"]
+            Switch item=RestoreButton icon="lock" mappings=["ON"="Restore"]
+
+            Switch item=GitInstalledVersion mappings=["ON"="Check"]
+            Switch item=GitLatestVersion mappings=["ON"="Check"]
+            Switch item=GitInstallLatestVersion mappings=["ON"="Update"]
+
+            Switch item=RebootButton icon="sunrise" mappings=["ON"="Reboot"]
+            Switch item=ShutdownButton icon="sunset" mappings=["ON"="Shutdown"]
           }
         }
         Group item=settings label="2nd Stage Heating" icon="heating" {
