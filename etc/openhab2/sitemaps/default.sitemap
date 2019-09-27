@@ -20,7 +20,7 @@ sitemap default label="Main Menu"
 
   Frame label="Fan" visibility=[SystemType=="US"] {
     Switch item=FanMode mappings=[ "ON"="ON", "OFF"="OFF", "AUTO"="AUTO"]
-  }
+  } 
 
   Frame label="Hot Water" visibility=[SystemType=="EU"] {
     Switch item=HotWaterMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
@@ -28,7 +28,7 @@ sitemap default label="Main Menu"
   }
 
   Frame label="Humidity" visibility=[SystemType=="EU"] {
-    Switch item=HumiMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
+    Switch item=HumidityMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
     Text item=MyHumiProxy
     Setpoint item=HumiBoostTime minValue=10 maxValue=120 step=10 icon="clock"
     Setpoint item=HumiSetpoint minValue=0 maxValue=100 step=5 icon="humidity"
@@ -39,6 +39,7 @@ sitemap default label="Main Menu"
       Frame {
         Group item=settings label="Maintenance" icon="error" {
           Frame {
+            Switch item=MainSwitch
             Switch item=BackupButton icon="lock" mappings=["ON"="Backup"]
             Switch item=BackupTimestampCommand mappings=["ON"="Check"]
             Switch item=RestoreButton icon="lock" mappings=["ON"="Restore"]
@@ -58,7 +59,7 @@ sitemap default label="Main Menu"
           }
         }
         Switch item=TempUnit mappings=["F"="°F", "C"="°C"]
-        Switch item=HumidityMode mappings=["Dehumidify"="Dehumidify", "Humidify"="Humidify"]
+        Switch item=HumidityType mappings=["Dehumidify"="Dehumidify", "Humidify"="Humidify"]
         Switch item=SystemType mappings=["US"="HVAC", "EU"="Generic"]
         Switch item=Season mappings=["WINTER"="WINTER", "SUMMER"="SUMMER"]
         Selection item=System_TZ_Set mappings=[  // THIS IS UNAVOIDABLY UGLY - START SCROLLING NOW
