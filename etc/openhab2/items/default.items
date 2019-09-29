@@ -4,13 +4,6 @@ Group chart_humi
 Group chart_press
 Group settings
 
-/**
-//US
-Switch HeatingPin23 "Heating" { gpio="pin:12", channel="mqtt:topic:mosquitto:HeatingPin23:switch" }
-Switch Heating2Pin16 "Heating2" { gpio="pin:16", channel="mqtt:topic:mosquitto:Heating2Pin16:switch" }
-Switch CoolingPin23 "Cooling" { gpio="pin:23", channel="mqtt:topic:mosquitto:CoolingPin23:switch" }
-Switch FanPin18 "Fan" { gpio="pin:18", channel="mqtt:topic:mosquitto:FanPin18:switch" }
-/**/
 Switch HeatingPin "Heating" { channel="mqtt:topic:mosquitto:HeatingPin:switch" }
 Switch Heating2Pin "Heating2" { channel="mqtt:topic:mosquitto:Heating2Pin:switch" }
 Switch CoolingPin "Cooling" { channel="mqtt:topic:mosquitto:CoolingPin:switch" }
