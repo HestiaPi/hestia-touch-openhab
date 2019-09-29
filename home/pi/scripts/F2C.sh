@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm -f "/home/pi/scripts/bme280.py";
+sudo rm -f "/home/pi/scripts/bme280.py";
 cp /home/pi/scripts/bme280C.py /home/pi/scripts/bme280.py;
 #sed -i 's/\/\/CELSIUS/\/**CELSIUS*\//g' /etc/openhab2/sitemaps/default.sitemap;
 #sed -i 's/\/\*\*FAHRENHEIT\*\//\/\/FAHRENHEIT/g' /etc/openhab2/sitemaps/default.sitemap;

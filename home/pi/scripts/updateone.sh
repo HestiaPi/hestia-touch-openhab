@@ -17,6 +17,7 @@ sudo rsync -rtcsOa /home/pi/scripts/gitupdate/hestia-touch-openhab/ /;
 
 ### SET PERMISSIONS
 cd /home/pi/scripts/;
+sudo chmod a+w /home/pi/scripts/;
 sudo touch gitinstalledversion humiditymode season systemtype tempunit;
 sudo chmod 777 gitinstalledversion humiditymode season systemtype tempunit;
 sudo chmod 777 F2C.sh C2F.sh bme280.py bme280C.py bme280F.py;

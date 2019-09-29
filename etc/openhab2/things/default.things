@@ -10,29 +10,29 @@ Thing exec:command:gettemp [ command="/home/pi/scripts/getBMEtemp.sh", interval=
 //BME280 atmospheric pressure
 Thing exec:command:getpress [ command="/home/pi/scripts/getBMEpress.sh", interval=60, timeout=5 ]
 
-Thing exec:command:getwlanip [ command="/home/pi/scripts/getwlan0ip.sh", interval=600, timeout=20 ]
-Thing exec:command:getwlanmac [ command="/home/pi/scripts/getwlan0mac.sh", interval=0, timeout=20 ]
-Thing exec:command:getssid [ command="/home/pi/scripts/getssid.sh", interval=600, timeout=20 ]
-Thing exec:command:getwifiinfo [ command="/home/pi/scripts/getwifiinfo.sh", interval=600, timeout=20 ]
+Thing exec:command:getwlanip [ command="/home/pi/scripts/getwlan0ip.sh", interval=600, timeout=60 ]
+Thing exec:command:getwlanmac [ command="/home/pi/scripts/getwlan0mac.sh", interval=0, timeout=60 ]
+Thing exec:command:getssid [ command="/home/pi/scripts/getssid.sh", interval=600, timeout=60 ]
+Thing exec:command:getwifiinfo [ command="/home/pi/scripts/getwifiinfo.sh", interval=600, timeout=60 ]
 
-Thing exec:command:getcputemperature [ command="/home/pi/scripts/getcputemperature.sh", interval=600, timeout=20 ]
-Thing exec:command:getuseddiskspace [ command="/home/pi/scripts/getuseddiskspace.sh", interval=600, timeout=20 ]
-Thing exec:command:getuptime [command="/home/pi/scripts/getuptime.sh", interval=300, timeout=15, autorun=false]
-Thing exec:command:getcpuload [command="/home/pi/scripts/getcpuload.sh", interval=300, timeout=15, autorun=false]
-Thing exec:command:gettz [ command="/home/pi/scripts/gettz.sh", interval=0, timeout=20, autorun=true]
+Thing exec:command:getcputemperature [ command="/home/pi/scripts/getcputemperature.sh", interval=600, timeout=60, autorun=true]
+Thing exec:command:getuseddiskspace [ command="/home/pi/scripts/getuseddiskspace.sh", interval=600, timeout=60, autorun=true ]
+Thing exec:command:getuptime [command="/home/pi/scripts/getuptime.sh", interval=300, timeout=60, autorun=true]
+Thing exec:command:getcpuload [command="/home/pi/scripts/getcpuload.sh", interval=300, timeout=60, autorun=true]
+Thing exec:command:gettz [ command="/home/pi/scripts/gettz.sh", interval=0, timeout=60, autorun=true]
 
-Thing exec:command:gettempunit [command="/home/pi/scripts/gettempunit.sh", interval=0, timeout=15, autorun=true]
-Thing exec:command:gethumiditymode [command="/home/pi/scripts/gethumiditymode.sh", interval=0, timeout=15, autorun=true]
-Thing exec:command:getsystemtype [command="/home/pi/scripts/getsystemtype.sh", interval=0, timeout=15, autorun=true]
-Thing exec:command:getseason [command="/home/pi/scripts/getseason.sh", interval=0, timeout=15, autorun=true]
+Thing exec:command:gettempunit [command="/home/pi/scripts/gettempunit.sh", interval=0, timeout=60, autorun=true]
+Thing exec:command:gethumiditymode [command="/home/pi/scripts/gethumiditymode.sh", interval=0, timeout=60, autorun=true]
+Thing exec:command:getsystemtype [command="/home/pi/scripts/getsystemtype.sh", interval=0, timeout=60, autorun=true]
+Thing exec:command:getseason [command="/home/pi/scripts/getseason.sh", interval=0, timeout=60, autorun=true]
 
-Thing exec:command:rebootcommand [command="/home/pi/scripts/reboot.sh", interval=0, timeout=15, autorun=false]
-Thing exec:command:shutdowncommand [command="/home/pi/scripts/shutdown.sh", interval=0, timeout=15, autorun=false]
+Thing exec:command:rebootcommand [command="/home/pi/scripts/reboot.sh", interval=0, timeout=60, autorun=false]
+Thing exec:command:shutdowncommand [command="/home/pi/scripts/shutdown.sh", interval=0, timeout=60, autorun=false]
 Thing exec:command:backupcommand [command="/home/pi/scripts/backup.sh", interval=0, timeout=120, autorun=false]
 Thing exec:command:getbackuptimestampcommand [command="/home/pi/scripts/getbackuptimestamp.sh", interval=0, timeout=150, autorun=false]
 Thing exec:command:restorecommand [command="/home/pi/scripts/restore.sh &", interval=0, timeout=120, autorun=false]
 
-Bridge mqtt:broker:mosquitto "Mosquitto MQTT Broker" [ host="localhost", secure=false, port=1883, clientID="mosquitto"]
+Bridge mqtt:broker:mosquitto "Mosquitto MQTT Broker" [ host="localhost", secure=false, port=1883, clientID="mosquitto", retainMessages=true]
 {
 
 // PIN STATE START
@@ -111,7 +111,8 @@ Bridge mqtt:broker:mosquitto "Mosquitto MQTT Broker" [ host="localhost", secure=
     Channels:
       Type string : string "HeatingMode" [
         commandTopic="hestia/local/cmnd/heatingmode",
-        stateTopic="hestia/local/stat/heatingmode"
+        stateTopic="hestia/local/stat/heatingmode",
+        retained=true
       ]
   }
 
@@ -119,7 +120,8 @@ Bridge mqtt:broker:mosquitto "Mosquitto MQTT Broker" [ host="localhost", secure=
     Channels:
     Type string : string "CoolingMode" [
     commandTopic="hestia/local/cmnd/coolingmode",
-    stateTopic="hestia/local/stat/coolingmode"
+    stateTopic="hestia/local/stat/coolingmode",
+    retained=true
     ]
   }
 
@@ -127,7 +129,8 @@ Bridge mqtt:broker:mosquitto "Mosquitto MQTT Broker" [ host="localhost", secure=
     Channels:
     Type string : string "FanMode" [
     commandTopic="hestia/local/cmnd/fanmode",
-    stateTopic="hestia/local/stat/fanmode"
+    stateTopic="hestia/local/stat/fanmode",
+    retained=true
     ]
   }
 
@@ -135,7 +138,8 @@ Bridge mqtt:broker:mosquitto "Mosquitto MQTT Broker" [ host="localhost", secure=
     Channels:
       Type string : string "HotWaterMode" [
         commandTopic="hestia/local/cmnd/hotwatermode",
-        stateTopic="hestia/local/stat/hotwatermode"
+        stateTopic="hestia/local/stat/hotwatermode",
+        retained=true
       ]
   }
 
@@ -143,7 +147,8 @@ Bridge mqtt:broker:mosquitto "Mosquitto MQTT Broker" [ host="localhost", secure=
     Channels:
       Type string : string "HumidityMode" [
         commandTopic="hestia/local/cmnd/humiditymode",
-        stateTopic="hestia/local/stat/humiditymode"
+        stateTopic="hestia/local/stat/humiditymode",
+        retained=true
       ]
   }
 // MODES END
@@ -178,7 +183,8 @@ Bridge mqtt:broker:mosquitto "Mosquitto MQTT Broker" [ host="localhost", secure=
       Channels:
       Type number : temperature "TempSetpoint" [
         commandTopic="hestia/local/tempsetpoint",
-        stateTopic="hestia/local/settempsetpoint"
+        stateTopic="hestia/local/settempsetpoint",
+        retained=true
       ]
   }
 
@@ -187,7 +193,8 @@ Bridge mqtt:broker:mosquitto "Mosquitto MQTT Broker" [ host="localhost", secure=
       Channels:
       Type number : humidity "HumiSetpoint" [
         commandTopic="hestia/local/humisetpoint",
-        stateTopic="hestia/local/sethumisetpoint"
+        stateTopic="hestia/local/sethumisetpoint",
+        retained=true
       ]
   }
 
@@ -196,77 +203,88 @@ Bridge mqtt:broker:mosquitto "Mosquitto MQTT Broker" [ host="localhost", secure=
   Thing mqtt:topic:mosquitto:Network_WAN_IP_Topic {
     Channels:
       Type string : string "Network_WAN_IP_Topic" [
-        commandTopic="hestia/local/wanip"
+        commandTopic="hestia/local/wanip",
+        retained=true
       ]
   }
 
   Thing mqtt:topic:mosquitto:Network_WLAN_IP_Topic {
     Channels:
       Type string : string "Network_WLAN_IP_Topic" [
-        commandTopic="hestia/local/wlanip"
+        commandTopic="hestia/local/wlanip",
+        retained=true
       ]
   }
 
   Thing mqtt:topic:mosquitto:Network_SSID_Topic {
     Channels:
       Type string : string "Network_SSID_Topic" [
-        commandTopic="hestia/local/ssid"
+        commandTopic="hestia/local/ssid",
+        retained=true
       ]
   }
 
   Thing mqtt:topic:mosquitto:Network_WLAN_INFO_Topic {
     Channels:
       Type string : string "Network_WLAN_INFO_Topic" [
-        commandTopic="hestia/local/wlaninfo"
+        commandTopic="hestia/local/wlaninfo",
+        retained=true
       ]
   }
 
   Thing mqtt:topic:mosquitto:Network_WLAN_MAC_Topic {
     Channels:
       Type string : string "Network_WLAN_MAC_Topic" [
-        commandTopic="hestia/local/wlanmac"
+        commandTopic="hestia/local/wlanmac",
+        retained=true
       ]
   }
 
   Thing mqtt:topic:mosquitto:System_CPU_TEMP_Topic {
     Channels:
       Type string : string "System_CPU_TEMP_Topic" [
-        commandTopic="hestia/local/cputemp"
+        commandTopic="hestia/local/cputemp",
+        retained=true
       ]
   }
 
   Thing mqtt:topic:mosquitto:System_CPU_LOAD_Topic {
     Channels:
       Type string : string "System_CPU_LOAD_Topic" [
-        commandTopic="hestia/local/cpuload"
+        commandTopic="hestia/local/cpuload",
+        retained=true
       ]
   }
 
   Thing mqtt:topic:mosquitto:System_Used_Space_Topic {
     Channels:
       Type string : string "System_Used_Space_Topic" [
-        commandTopic="hestia/local/useddisk"
+        commandTopic="hestia/local/useddisk",
+        retained=true
       ]
   }
 
   Thing mqtt:topic:mosquitto:TempUnit_Topic {
     Channels:
       Type string : string "TempUnit_Topic" [
-        commandTopic="hestia/local/tempunit"
+        commandTopic="hestia/local/tempunit",
+        retained=true
       ]
   }
 
   Thing mqtt:topic:mosquitto:SystemType_Topic {
     Channels:
       Type string : string "SystemType_Topic" [
-        commandTopic="hestia/local/systemtype"
+        commandTopic="hestia/local/systemtype",
+        retained=true
       ]
   }
 
   Thing mqtt:topic:mosquitto:Season_Topic {
     Channels:
       Type string : string "Season_Topic" [
-        commandTopic="hestia/local/season"
+        commandTopic="hestia/local/season",
+        retained=true
       ]
   }
 }
