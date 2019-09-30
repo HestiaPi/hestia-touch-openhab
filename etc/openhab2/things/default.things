@@ -198,6 +198,37 @@ Bridge mqtt:broker:mosquitto "Mosquitto MQTT Broker" [ host="localhost", secure=
       ]
   }
 
+  // BoostTime
+  Thing mqtt:topic:mosquitto:HeatingBoostTime {
+    Channels:
+    Type number : string "HeatingBoostTime" [
+      commandTopic="hestia/heatingboostremtime"
+    ]
+  }
+
+  Thing mqtt:topic:mosquitto:CoolingBoostTime {
+    Channels:
+    Type number : string "CoolingBoostTime" [
+      commandTopic="hestia/coolingboostremtime"
+    ]
+  }
+
+  Thing mqtt:topic:mosquitto:HotWaterBoostTime {
+    Channels:
+    Type number : string "HotWaterBoostTime" [
+      commandTopic="hestia/hotwaterboostremtime"
+    ]
+  }
+
+  Thing mqtt:topic:mosquitto:HumiBoostTime {
+    Channels:
+    Type number : string "HumiBoostTime" [
+      commandTopic="hestia/humidityboostremtime"
+    ]
+  }
+
+
+
 // SETTINGS PAGE
 
   Thing mqtt:topic:mosquitto:Network_WAN_IP_Topic {

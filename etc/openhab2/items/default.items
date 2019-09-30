@@ -1,5 +1,5 @@
 Group charts
-Group chart_temp 
+Group chart_temp
 Group chart_humi
 Group chart_press
 Group settings
@@ -48,18 +48,18 @@ Number HumiSetpointChart "Humidity Setpoint" (charts, chart_humi)
 Number PreviousHumiReading "Humidity" <humidity> (charts, chart_humi)
 Number PreviousPressureReading "Pressure" <pressure> (chart_press)
 
-Number HeatingBoostTime "Heating Boost Time [%.0f min]"
+Number HeatingBoostTime "Heating Boost Time [%.0f min]" { channel="mqtt:topic:mosquitto:HeatingBoostTime:string" }
 //Switch HeatingBoostTimeDec "HeatingBoostTimeDec"  //todo: was for HABpanel - should be deleted
 //Switch HeatingBoostTimeInc "HeatingBoostTimeInc"  //todo: was for HABpanel - should be deleted
-Number HotWaterBoostTime "Hot Water Boost Time [%.0f min]"
-//Switch HotWaterBoostTimeDec "HotWaterBoostTimeDec"  //todo: was for HABpanel - should be deleted
-//Switch HotWaterBoostTimeInc "HotWaterBoostTimeInc"  //todo: was for HABpanel - should be deleted
-Number HumiBoostTime "Humidity Boost Time [%.0f min]"
-//Switch HumiBoostTimeDec "HumiBoostTimeDec"  //todo: was for HABpanel - should be deleted
-//Switch HumiBoostTimeInc "HumiBoostTimeInc"  //todo: was for HABpanel - should be deleted
-Number CoolingBoostTime "Cooling Boost Time [%.0f min]"
+Number CoolingBoostTime "Cooling Boost Time [%.0f min]" { channel="mqtt:topic:mosquitto:CoolingBoostTime:string" }
 //Switch CoolingBoostTimeDec "CoolingBoostTimeDec"  //todo: was for HABpanel - should be deleted
 //Switch CoolingBoostTimeInc "CoolingBoostTimeInc"  //todo: was for HABpanel - should be deleted
+Number HotWaterBoostTime "Hot Water Boost Time [%.0f min]" { channel="mqtt:topic:mosquitto:HotWaterBoostTime:string" }
+//Switch HotWaterBoostTimeDec "HotWaterBoostTimeDec"  //todo: was for HABpanel - should be deleted
+//Switch HotWaterBoostTimeInc "HotWaterBoostTimeInc"  //todo: was for HABpanel - should be deleted
+Number HumiBoostTime "Humidity Boost Time [%.0f min]" { channel="mqtt:topic:mosquitto:HumiBoostTime:string" }
+//Switch HumiBoostTimeDec "HumiBoostTimeDec"  //todo: was for HABpanel - should be deleted
+//Switch HumiBoostTimeInc "HumiBoostTimeInc"  //todo: was for HABpanel - should be deleted
 String HeatingMode "Heating Mode []" { channel="mqtt:topic:mosquitto:HeatingMode:string" }
 String CoolingMode "Cooling Mode []" { channel="mqtt:topic:mosquitto:CoolingMode:string" }
 String FanMode "Fan Mode []" { channel="mqtt:topic:mosquitto:FanMode:string" }
