@@ -31,7 +31,7 @@ sitemap default label="Main Menu"
     Switch item=HumidityMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
     Text item=MyHumiProxy
     Setpoint item=HumiBoostTime minValue=10 maxValue=120 step=10 icon="clock"
-    Setpoint item=HumiSetpoint minValue=0 maxValue=100 step=5 icon="humidity"
+    Setpoint item=HumiSetpoint minValue=0 maxValue=100 step=1 icon="humidity"
   }
 
   Frame label="Configuration" {
