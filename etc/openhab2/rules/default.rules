@@ -548,38 +548,6 @@ then
   PreviousPressureReading.postUpdate(Double::parseDouble(MyPressure.state.toString))
 end
 
-
-/* OBSOLETE from HABPanel */
-/*
-rule "SetTempSetpointInc"
-  when
-      Item IncTargetTemp changed
-  then
-    var Number setpoint = TempSetpoint.state as DecimalType
-    if (TempUnit.state == "C") {
-      setpoint = setpoint + 0.5
-    } else {
-      setpoint = setpoint + 1
-    }
-    TempSetpoint.sendCommand(setpoint) //postUpdate(TempSetpoint, setpoint)
-    TempSetpointChart.sendCommand(setpoint)
-end
-
-rule "SetTempSetpointDec"
-  when
-      Item DecTargetTemp changed
-  then
-    var Number setpoint = TempSetpoint.state as DecimalType
-    if (TempUnit.state == "C") {
-      setpoint = setpoint - 0.5
-    } else {
-      setpoint = setpoint - 1
-    }
-    TempSetpoint.sendCommand(setpoint) //postUpdate(TempSetpoint, setpoint)
-    TempSetpointChart.sendCommand(setpoint)
-end
-/**/
-
 rule "checkcurrtemp"
 when
   Item TempSetpoint changed or
@@ -636,29 +604,6 @@ then
   }
 end
 
-/* OBSOLETE from HABPanel */
-/*
-rule "SetHumiSetpointInc"
-when
-    Item IncTargetHumi changed
-then
-  var Number setpoint = HumiSetpoint.state as DecimalType
-  setpoint = setpoint + 5
-  HumiSetpoint.sendCommand(setpoint)
-  HumiSetpointChart.sendCommand(setpoint)
-end
-
-rule "SetHumiSetpointDec"
-when
-    Item DecTargetHumi changed
-then
-  var Number setpoint = HumiSetpoint.state as DecimalType
-  setpoint = setpoint - 5
-  HumiSetpoint.sendCommand(setpoint)
-  HumiSetpointChart.sendCommand(setpoint)
-end
-/**/
-
 rule "checkcurrhumi"
 when
   Item HumiSetpoint changed or
@@ -681,6 +626,7 @@ then
     if(HeatingBoostTime.state == NULL) postUpdate(HeatingBoostTime, 10)
     switch(HeatingMode.state) {
       case "ON": {
+        if (FanMode.state == "OFF") FanMode.sendCommand("AUTO");
         if (MyTempProxy.state < TempSetpoint.state) {
           HeatingPin.sendCommand(ON)
 
@@ -746,6 +692,7 @@ when
 then
     switch(CoolingMode.state) {
       case "ON": {
+        if (FanMode.state == "OFF") FanMode.sendCommand("AUTO");
         CoolingPin.sendCommand(ON)
         TempSetpointChart.sendCommand(TempSetpoint.state as DecimalType)
 
@@ -775,8 +722,10 @@ then
         HeatingPreviousMode="ON"
       }
       case "OFF": {
-        FanPin.sendCommand(OFF)
-        HeatingPreviousMode="OFF"
+        if ((HeatingMode.state == "OFF") && (CoolingMode.state == "OFF")) {
+          FanPin.sendCommand(OFF)
+          HeatingPreviousMode="OFF"
+        }
       }
       case "AUTO": {
         MainSwitch.sendCommand("ON")
@@ -973,6 +922,7 @@ rule "Boost Heating"
 when
     Item HeatingMode changed to Boost
 then
+    if (FanMode.state == "OFF") FanMode.sendCommand("AUTO");
     if((HeatingBoostTime.state == NULL) || (HeatingBoostTime.state == UNDEF)) HeatingBoostTime.sendCommand(10)
     if (HeatingBoostTimer !== null) {
       HeatingBoostTimer.cancel
@@ -1070,6 +1020,7 @@ rule "Boost Cooling"
 when
     Item CoolingMode changed to Boost
 then
+    if (FanMode.state == "OFF") FanMode.sendCommand("AUTO");
     if((CoolingBoostTime.state == NULL) || (CoolingBoostTime.state == UNDEF)) CoolingBoostTime.sendCommand(10)
     if (CoolingBoostTimer !== null) {
       CoolingBoostTimer.cancel
@@ -1294,165 +1245,6 @@ then
     }
 end
 
-rule "HeatingBoostTimeDec"
-when
-    Item HeatingBoostTimeDec changed
-then
-  if ((HeatingBoostTime.state as DecimalType).intValue > 19) {
-    HeatingBoostTimeInitial = HeatingBoostTimeInitial - 10
-    HeatingBoostTime.postUpdate(((HeatingBoostTime.state as DecimalType).intValue) - 10)
-  } else if ((HeatingBoostTime.state as DecimalType).intValue < 11) {
-    HeatingBoostTimeInitial = HeatingBoostTimeInitial - 1
-    HeatingBoostTime.postUpdate(((HeatingBoostTime.state as DecimalType).intValue) - 1)
-  } else if ((HeatingBoostTime.state as DecimalType).intValue < 20) {
-    HeatingBoostTimeInitial = 10
-    HeatingBoostTime.postUpdate(10)
-  }
-  HeatingBoostTimeInitialUI = HeatingBoostTimeInitial
-
-  if (HeatingMode.state == "Boost") {
-    if (HeatingBoostTimer !== null) {
-      HeatingBoostTimer.reschedule(now.plusMinutes((HeatingBoostTimeInitial).intValue))
-    }
-    if (HeatingBoostRemTime !== null) {
-      HeatingBoostRemTime.reschedule(now.plusMinutes(1))
-    }
-  }
-
-end
-
-rule "HeatingBoostTimeInc"
-when
-    Item HeatingBoostTimeInc changed
-then
-  if ((HeatingBoostTime.state as DecimalType).intValue < 1440) {
-    if ((HeatingBoostTime.state as DecimalType).intValue < 10) {
-      HeatingBoostTimeInitial = 10
-      HeatingBoostTime.postUpdate(10)
-    } else {
-      HeatingBoostTimeInitial = HeatingBoostTimeInitial + 10
-      HeatingBoostTime.postUpdate(((HeatingBoostTime.state as DecimalType).intValue) + 10)
-    }
-    HeatingBoostTimeInitialUI = HeatingBoostTimeInitial
-
-    if (HeatingMode.state == "Boost") {
-      if (HeatingBoostTimer !== null) {
-        HeatingBoostTimer.reschedule(now.plusMinutes((HeatingBoostTimeInitial).intValue))
-      }
-      if (HeatingBoostRemTime !== null) {
-        HeatingBoostRemTime.reschedule(now.plusMinutes(1))
-      }
-    }
-  }
-
-end
-
-rule "HotWaterBoostTimeDec"
-when
-    Item HotWaterBoostTimeDec changed
-then
-  if ((HotWaterBoostTime.state as DecimalType).intValue > 19) {
-    HotWaterBoostTimeInitial = HotWaterBoostTimeInitial - 10
-    HotWaterBoostTime.postUpdate(((HotWaterBoostTime.state as DecimalType).intValue) - 10)
-  } else if ((HotWaterBoostTime.state as DecimalType).intValue < 11) {
-    HotWaterBoostTimeInitial = HotWaterBoostTimeInitial - 1
-    HotWaterBoostTime.postUpdate(((HotWaterBoostTime.state as DecimalType).intValue) - 1)
-  } else if ((HotWaterBoostTime.state as DecimalType).intValue < 20) {
-    HotWaterBoostTimeInitial = 10
-    HotWaterBoostTime.postUpdate(10)
-  }
-  HotWaterBoostTimeInitialUI = HotWaterBoostTimeInitial
-
-  if (HotWaterMode.state == "Boost") {
-    if (HotWaterBoostTimer !== null) {
-      HotWaterBoostTimer.reschedule(now.plusMinutes((HotWaterBoostTimeInitial).intValue))
-    }
-    if (HotWaterBoostRemTime !== null) {
-      HotWaterBoostRemTime.reschedule(now.plusMinutes(1))
-    }
-  }
-
-end
-
-rule "HotWaterBoostTimeInc"
-when
-    Item HotWaterBoostTimeInc changed
-then
-  if ((HotWaterBoostTime.state as DecimalType).intValue < 1440) {
-    if ((HotWaterBoostTime.state as DecimalType).intValue < 10) {
-      HotWaterBoostTimeInitial = 10
-      HotWaterBoostTime.postUpdate(10)
-    } else {
-      HotWaterBoostTimeInitial = HotWaterBoostTimeInitial + 10
-      HotWaterBoostTime.postUpdate(((HotWaterBoostTime.state as DecimalType).intValue) + 10)
-    }
-    HotWaterBoostTimeInitialUI = HotWaterBoostTimeInitial
-
-    if (HotWaterMode.state == "Boost") {
-      if (HotWaterBoostTimer !== null) {
-        HotWaterBoostTimer.reschedule(now.plusMinutes((HotWaterBoostTimeInitial).intValue))
-      }
-      if (HotWaterBoostRemTime !== null) {
-        HotWaterBoostRemTime.reschedule(now.plusMinutes(1))
-      }
-    }
-  }
-
-end
-
-rule "HumiBoostTimeDec"
-when
-    Item HumiBoostTimeDec changed
-then
-  if ((HumiBoostTime.state as DecimalType).intValue > 19) {
-    HumiBoostTimeInitial = HumiBoostTimeInitial - 10
-    HumiBoostTime.postUpdate(((HumiBoostTime.state as DecimalType).intValue) - 10)
-  } else if ((HumiBoostTime.state as DecimalType).intValue < 11) {
-    HumiBoostTimeInitial = HumiBoostTimeInitial - 1
-    HumiBoostTime.postUpdate(((HumiBoostTime.state as DecimalType).intValue) - 1)
-  } else if ((HumiBoostTime.state as DecimalType).intValue < 20) {
-    HumiBoostTimeInitial = 10
-    HumiBoostTime.postUpdate(10)
-  }
-  HumiBoostTimeInitialUI = HumiBoostTimeInitial
-
-  if (HumidityMode.state == "Boost") {
-    if (HumiBoostTimer !== null) {
-      HumiBoostTimer.reschedule(now.plusMinutes((HumiBoostTimeInitial).intValue))
-    }
-    if (HumiBoostRemTime !== null) {
-      HumiBoostRemTime.reschedule(now.plusMinutes(1))
-    }
-  }
-
-end
-
-rule "HumiBoostTimeInc"
-when
-    Item HumiBoostTimeInc changed
-then
-  if ((HumiBoostTime.state as DecimalType).intValue < 1440) {
-    if ((HumiBoostTime.state as DecimalType).intValue < 10) {
-      HumiBoostTimeInitial = 10
-      HumiBoostTime.postUpdate(10)
-    } else {
-      HumiBoostTimeInitial = HumiBoostTimeInitial + 10
-      HumiBoostTime.postUpdate(((HumiBoostTime.state as DecimalType).intValue) + 10)
-    }
-    HumiBoostTimeInitialUI = HumiBoostTimeInitial
-
-    if (HumidityMode.state == "Boost") {
-      if (HumiBoostTimer !== null) {
-        HumiBoostTimer.reschedule(now.plusMinutes((HumiBoostTimeInitial).intValue))
-      }
-      if (HumiBoostRemTime !== null) {
-        HumiBoostRemTime.reschedule(now.plusMinutes(1))
-      }
-    }
-  }
-
-end
-
 rule "FanControl"
 when
   Item HeatingPin changed or
@@ -1669,8 +1461,6 @@ then
   BackupTimestampCommand.postUpdate(executeCommandLine("/home/pi/scripts/getbackuptimestamp.sh",10000));
 end
 
-
-
 rule "GitInstalledVersion Changed"
 when
   Item GitInstalledVersion received command ON
@@ -1707,7 +1497,6 @@ then
     results = results + "" // hide validation issue
     results = ""
   }
-
 end
 
 rule "Monitor WAN IP"
