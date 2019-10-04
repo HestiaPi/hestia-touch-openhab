@@ -19,6 +19,12 @@ fi
 
 cd /home/pi/scripts/
 
+model=$(cat /proc/cpuinfo | grep "ARMv6" | wc -l)
+if [ $model -ne 1 ]; then
+  # This is a fast Pi, wait for WiFi to start
+  sleep 10;
+fi
+
 distro=$(sed 's/\..*//' /etc/debian_version)
 if [ $distro -eq 9 ]; then
   wlan=$(/sbin/ifconfig wlan0 | grep inet\  | wc -l)
