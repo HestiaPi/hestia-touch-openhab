@@ -504,8 +504,8 @@ end
 rule "convertproxy"
 when
   Item MyTemp changed or
-  Item MyHumi changed or
-  Item MyPressure changed
+  Item MyHumi changed// or
+//  Item MyPressure changed
 then
   //Additional initialisation checks
   if(PreviousTempReading.state == NULL) postUpdate(PreviousTempReading, 0)
@@ -532,7 +532,7 @@ then
 
   MyTempProxy.sendCommand(Double::parseDouble(MyTemp.state.toString))
   MyHumiProxy.sendCommand(Double::parseDouble(MyHumi.state.toString))
-  MyPressureProxy.sendCommand(Double::parseDouble(MyPressure.state.toString))
+  //MyPressureProxy.sendCommand(Double::parseDouble(MyPressure.state.toString))
 
   if (TempUnit.state == "C") {
     if ((Double::parseDouble(MyTemp.state.toString) < (Double::parseDouble(PreviousTempReading.state.toString)) - 0.2) || (Double::parseDouble(MyTemp.state.toString) > (Double::parseDouble(PreviousTempReading.state.toString)) + 0.2)) {
@@ -545,7 +545,7 @@ then
   if ((Double::parseDouble(MyHumi.state.toString) < (Double::parseDouble(PreviousHumiReading.state.toString)) - 3) || (Double::parseDouble(MyHumi.state.toString) > (Double::parseDouble(PreviousHumiReading.state.toString)) + 3)) {
     PreviousHumiReading.postUpdate(Double::parseDouble(MyHumi.state.toString))
   }
-  PreviousPressureReading.postUpdate(Double::parseDouble(MyPressure.state.toString))
+  //PreviousPressureReading.postUpdate(Double::parseDouble(MyPressure.state.toString))
 end
 
 rule "checkcurrtemp"

@@ -8,7 +8,7 @@ Thing exec:command:gethumi [ command="/home/pi/scripts/getBMEhumi.sh", interval=
 //BME280 Temp
 Thing exec:command:gettemp [ command="/home/pi/scripts/getBMEtemp.sh", interval=10, timeout=5 ]
 //BME280 atmospheric pressure
-Thing exec:command:getpress [ command="/home/pi/scripts/getBMEpress.sh", interval=60, timeout=5 ]
+//Thing exec:command:getpress [ command="/home/pi/scripts/getBMEpress.sh", interval=60, timeout=5 ]
 
 Thing exec:command:getwlanip [ command="/home/pi/scripts/getwlan0ip.sh", interval=600, timeout=60 ]
 Thing exec:command:getwlanmac [ command="/home/pi/scripts/getwlan0mac.sh", interval=0, timeout=60 ]
@@ -171,12 +171,12 @@ Bridge mqtt:broker:mosquitto "Mosquitto MQTT Broker" [ host="localhost", secure=
   }
 
   // MyPressureProxy
-    Thing mqtt:topic:mosquitto:MyPressureProxy {
-      Channels:
-      Type number : pressure "MyPressureProxy" [
-        commandTopic="hestia/local/pressure"
-      ]
-  }
+//    Thing mqtt:topic:mosquitto:MyPressureProxy {
+//      Channels:
+//      Type number : pressure "MyPressureProxy" [
+//        commandTopic="hestia/local/pressure"
+//      ]
+//  }
 
   // TempSetpoint
     Thing mqtt:topic:mosquitto:TempSetpoint {
