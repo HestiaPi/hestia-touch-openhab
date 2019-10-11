@@ -1605,3 +1605,10 @@ when
 then
     Season_Topic.sendCommand(Season.state.toString);
 end
+
+rule "Heating2 updated"
+when
+    Item Heating2  received update
+then
+    Pin16.sendCommand(OFF);
+end
