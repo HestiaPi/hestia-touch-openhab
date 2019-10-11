@@ -706,8 +706,10 @@ then
     switch(CoolingMode.state) {
       case "ON": {
         if (FanMode.state == "OFF") FanMode.sendCommand("AUTO");
-        CoolingPin.sendCommand(ON)
-        TempSetpointChart.sendCommand(TempSetpoint.state as DecimalType)
+        if (MyTempProxy.state > TempSetpoint.state) {
+          CoolingPin.sendCommand(ON)
+          TempSetpointChart.sendCommand(TempSetpoint.state as DecimalType)
+        }
 
         MainSwitch.sendCommand("ON")
         CoolingPreviousMode="ON"
