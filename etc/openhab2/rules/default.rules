@@ -738,6 +738,8 @@ then
         if ((HeatingMode.state == "OFF") && (CoolingMode.state == "OFF")) {
           FanPin.sendCommand(OFF)
           HeatingPreviousMode="OFF"
+        } else {
+          FanMode.sendCommand("AUTO")
         }
       }
       case "AUTO": {
@@ -908,8 +910,8 @@ then
         } else if (FanMode.state == "Schedule") {
           FanPreviousMode="Schedule"
           FanMode.sendCommand("OFF")
-        } else if (FanMode.state == "Boost") {
-          FanPreviousMode="Boost"
+        } else if (FanMode.state == "AUTO") {
+          FanPreviousMode="AUTO"
           FanMode.sendCommand("OFF")
         }
       }
