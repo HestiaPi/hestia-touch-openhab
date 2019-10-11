@@ -1610,5 +1610,6 @@ rule "Heating2 updated"
 when
     Item Heating2  received update
 then
+    Heating2Pin.sendCommand(OFF)
     Pin16.sendCommand(OFF);
 end
