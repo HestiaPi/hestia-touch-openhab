@@ -19,7 +19,7 @@ Thing exec:command:getcputemperature [ command="/home/pi/scripts/getcputemperatu
 Thing exec:command:getuseddiskspace [ command="/home/pi/scripts/getuseddiskspace.sh", interval=600, timeout=60, autorun=true ]
 Thing exec:command:getuptime [command="/home/pi/scripts/getuptime.sh", interval=300, timeout=60, autorun=true]
 Thing exec:command:getcpuload [command="/home/pi/scripts/getcpuload.sh", interval=300, timeout=60, autorun=true]
-Thing exec:command:gettz [ command="/home/pi/scripts/gettz.sh", interval=0, timeout=60, autorun=true]
+Thing exec:command:gettz [ command="/home/pi/scripts/gettz.sh", interval=3600, timeout=60, autorun=true]
 
 Thing exec:command:gettempunit [command="/home/pi/scripts/gettempunit.sh", interval=0, timeout=60, autorun=true]
 Thing exec:command:gethumiditymode [command="/home/pi/scripts/gethumiditymode.sh", interval=0, timeout=60, autorun=true]

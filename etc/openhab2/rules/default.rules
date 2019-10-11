@@ -36,6 +36,7 @@ then
     FanMode.sendCommand("OFF");
     HotWaterMode.sendCommand("OFF");
     HumidityMode.sendCommand("OFF");
+    Heating2.sendCommand("OFF");
 //    HumiTopic.sendCommand("0");
     if (TempUnit.state == "C") {
       if((TempSetpoint.state == NULL) || (TempSetpoint.state == UNDEF)) postUpdate(TempSetpoint, 18);
@@ -186,59 +187,61 @@ rule "Heating2Pin changed"
 when
     Item Heating2Pin changed
 then
-    switch(Heating2Pin.state) {
-      case ON: {
-        if (SystemType.state == "US") {
-          /**
-          //US
-          Switch HeatingPin12 "Heating" { gpio="pin:12", channel="mqtt:topic:HeatingPin12:switch" }
-          Switch Heating2Pin16 "Heating2" { gpio="pin:16", channel="mqtt:topic:Heating2Pin16:switch" }
-          Switch CoolingPin23 "Cooling" { gpio="pin:23", channel="mqtt:topic:CoolingPin23:switch" }
-          Switch FanPin18 "Fan" { gpio="pin:18", channel="mqtt:topic:FanPin18:switch" }
-          /**/
+    if (Heating2.state.toString == "ON") {
+      switch(Heating2Pin.state) {
+        case ON: {
+          if (SystemType.state == "US") {
+            /**
+            //US
+            Switch HeatingPin12 "Heating" { gpio="pin:12", channel="mqtt:topic:HeatingPin12:switch" }
+            Switch Heating2Pin16 "Heating2" { gpio="pin:16", channel="mqtt:topic:Heating2Pin16:switch" }
+            Switch CoolingPin23 "Cooling" { gpio="pin:23", channel="mqtt:topic:CoolingPin23:switch" }
+            Switch FanPin18 "Fan" { gpio="pin:18", channel="mqtt:topic:FanPin18:switch" }
+            /**/
 
-          Pin16.sendCommand(ON)
-          //Heating2PinTopic.sendCommand(ON)
-          logInfo("Default","Heating2Pin set to ON.")
-        } else {
-          /**
-          //EU
-          Switch HeatingPin23 "Heating" { gpio="pin:23", channel="mqtt:topic:HeatingPin23:switch" }
-          Switch Heating2Pin16 "Heating2" { gpio="pin:16", channel="mqtt:topic:Heating2Pin16:switch" }
-          Switch HotWaterPin12 "Hot Water" { gpio="pin:12", channel="mqtt:topic:HotWaterPin12:switch" }
-          Switch HumidityPin18 "Humidity" { gpio="pin:18", channel="mqtt:topic:HumidityPin18:switch" }
-          /**/
+            Pin16.sendCommand(ON)
+            //Heating2PinTopic.sendCommand(ON)
+            logInfo("Default","Heating2Pin set to ON.")
+          } else {
+            /**
+            //EU
+            Switch HeatingPin23 "Heating" { gpio="pin:23", channel="mqtt:topic:HeatingPin23:switch" }
+            Switch Heating2Pin16 "Heating2" { gpio="pin:16", channel="mqtt:topic:Heating2Pin16:switch" }
+            Switch HotWaterPin12 "Hot Water" { gpio="pin:12", channel="mqtt:topic:HotWaterPin12:switch" }
+            Switch HumidityPin18 "Humidity" { gpio="pin:18", channel="mqtt:topic:HumidityPin18:switch" }
+            /**/
 
-          Pin16.sendCommand(ON)
-          //Heating2PinTopic.sendCommand(ON)
-          logInfo("Default","Heating2Pin set to ON.")
+            Pin16.sendCommand(ON)
+            //Heating2PinTopic.sendCommand(ON)
+            logInfo("Default","Heating2Pin set to ON.")
+          }
         }
-      }
-      case OFF: {
-        if (SystemType.state == "US") {
-          /**
-          //US
-          Switch HeatingPin12 "Heating" { gpio="pin:12", channel="mqtt:topic:HeatingPin12:switch" }
-          Switch Heating2Pin16 "Heating2" { gpio="pin:16", channel="mqtt:topic:Heating2Pin16:switch" }
-          Switch CoolingPin23 "Cooling" { gpio="pin:23", channel="mqtt:topic:CoolingPin23:switch" }
-          Switch FanPin18 "Fan" { gpio="pin:18", channel="mqtt:topic:FanPin18:switch" }
-          /**/
+        case OFF: {
+          if (SystemType.state == "US") {
+            /**
+            //US
+            Switch HeatingPin12 "Heating" { gpio="pin:12", channel="mqtt:topic:HeatingPin12:switch" }
+            Switch Heating2Pin16 "Heating2" { gpio="pin:16", channel="mqtt:topic:Heating2Pin16:switch" }
+            Switch CoolingPin23 "Cooling" { gpio="pin:23", channel="mqtt:topic:CoolingPin23:switch" }
+            Switch FanPin18 "Fan" { gpio="pin:18", channel="mqtt:topic:FanPin18:switch" }
+            /**/
 
-          Pin16.sendCommand(OFF)
-          //Heating2PinTopic.sendCommand(OFF)
-          logInfo("Default","Heating2Pin set to OFF.")
-        } else {
-          /**
-          //EU
-          Switch HeatingPin23 "Heating" { gpio="pin:23", channel="mqtt:topic:HeatingPin23:switch" }
-          Switch Heating2Pin16 "Heating2" { gpio="pin:16", channel="mqtt:topic:Heating2Pin16:switch" }
-          Switch HotWaterPin12 "Hot Water" { gpio="pin:12", channel="mqtt:topic:HotWaterPin12:switch" }
-          Switch HumidityPin18 "Humidity" { gpio="pin:18", channel="mqtt:topic:HumidityPin18:switch" }
-          /**/
+            Pin16.sendCommand(OFF)
+            //Heating2PinTopic.sendCommand(OFF)
+            logInfo("Default","Heating2Pin set to OFF.")
+          } else {
+            /**
+            //EU
+            Switch HeatingPin23 "Heating" { gpio="pin:23", channel="mqtt:topic:HeatingPin23:switch" }
+            Switch Heating2Pin16 "Heating2" { gpio="pin:16", channel="mqtt:topic:Heating2Pin16:switch" }
+            Switch HotWaterPin12 "Hot Water" { gpio="pin:12", channel="mqtt:topic:HotWaterPin12:switch" }
+            Switch HumidityPin18 "Humidity" { gpio="pin:18", channel="mqtt:topic:HumidityPin18:switch" }
+            /**/
 
-          Pin16.sendCommand(OFF)
-          //Heating2PinTopic.sendCommand(OFF)
-          logInfo("Default","Heating2Pin set to OFF.")
+            Pin16.sendCommand(OFF)
+            //Heating2PinTopic.sendCommand(OFF)
+            logInfo("Default","Heating2Pin set to OFF.")
+          }
         }
       }
     }
@@ -527,9 +530,10 @@ then
   if((HeatingBoostTime.state == NULL) || (HeatingBoostTime.state == UNDEF)) HeatingBoostTime.postUpdate(10.0)
   if((HotWaterBoostTime.state == NULL) || (HotWaterBoostTime.state == UNDEF)) HotWaterBoostTime.postUpdate(10.0)
   if((HumiBoostTime.state == NULL) || (HumiBoostTime.state == UNDEF)) HumiBoostTime.postUpdate(10.0)
-  if((Heating2Time.state == NULL) || (Heating2Time.state == UNDEF)) Heating2Time.postUpdate(0)
-  if((Heating2Delta.state == NULL) || (Heating2Delta.state == UNDEF)) Heating2Delta.postUpdate(0)
-
+  if (Heating2.state.toString == "ON") {
+    if((Heating2Time.state == NULL) || (Heating2Time.state == UNDEF)) Heating2Time.postUpdate(0)
+    if((Heating2Delta.state == NULL) || (Heating2Delta.state == UNDEF)) Heating2Delta.postUpdate(0)
+  }
   MyTempProxy.sendCommand(Double::parseDouble(MyTemp.state.toString))
   MyHumiProxy.sendCommand(Double::parseDouble(MyHumi.state.toString))
   //MyPressureProxy.sendCommand(Double::parseDouble(MyPressure.state.toString))
@@ -567,37 +571,41 @@ then
     //Winter
     if (MyTempProxy.state > TempSetpoint.state){
       HeatingPin.sendCommand(OFF)
-      Heating2Pin.sendCommand(OFF)
-      //Heating2InitialTemp.sendCommand(0)
-      if (Heating2Timer !== null) {
-        Heating2Timer.cancel
-        Heating2Timer = null   // reset the timer
+      if (Heating2.state.toString == "ON") {
+        Heating2Pin.sendCommand(OFF)
+        //Heating2InitialTemp.sendCommand(0)
+        if (Heating2Timer !== null) {
+          Heating2Timer.cancel
+          Heating2Timer = null   // reset the timer
+        }
       }
       TempSetpointChart.sendCommand(0)
     } else if ((MyTempProxy.state < TempSetpoint.state) &&
         ((HeatingMode.state=="ON") || (HeatingMode.state=="Boost"))) {
       HeatingPin.sendCommand(ON)
 
-      /*****  SECOND STAGE HEATING START  *****/
-      //Only if Heating2InitialTemp is 0 update it
-      //logInfo("Default","Heating2InitialTemp was found set to " + (Double::parseDouble(Heating2InitialTemp.state.toString)))
-      //if((Double::parseDouble(Heating2InitialTemp.state.toString)) == 0) {
-        //Heating2InitialTemp.postUpdate(Double::parseDouble(MyTempProxy.state.toString))
-        //logInfo("Default","Heating2InitialTemp was 0 and is now set to " + (Double::parseDouble(Heating2InitialTemp.state.toString)))
+      if (Heating2.state.toString == "ON") {
+        /*****  SECOND STAGE HEATING START  *****/
+        //Only if Heating2InitialTemp is 0 update it
+        //logInfo("Default","Heating2InitialTemp was found set to " + (Double::parseDouble(Heating2InitialTemp.state.toString)))
+        //if((Double::parseDouble(Heating2InitialTemp.state.toString)) == 0) {
+          //Heating2InitialTemp.postUpdate(Double::parseDouble(MyTempProxy.state.toString))
+          //logInfo("Default","Heating2InitialTemp was 0 and is now set to " + (Double::parseDouble(Heating2InitialTemp.state.toString)))
 
-        logInfo("Default","Starting Heating2Timer timer to " + (Heating2Time.state as DecimalType).intValue + " minutes.")
-        Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as DecimalType).intValue)) [|
-          if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) < ((Double::parseDouble(TempSetpoint.state.toString)))) {
-            //If it is still cold enough start 2nd stage
-            Heating2Pin.sendCommand(ON)
-          }
-        ]
-      //}
-      if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) >= ((Double::parseDouble(TempSetpoint.state.toString)))) {
-        //2nd stage is not needed
-        Heating2Pin.sendCommand(OFF)
+          logInfo("Default","Starting Heating2Timer timer to " + (Heating2Time.state as DecimalType).intValue + " minutes.")
+          Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as DecimalType).intValue)) [|
+            if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) < ((Double::parseDouble(TempSetpoint.state.toString)))) {
+              //If it is still cold enough start 2nd stage
+              Heating2Pin.sendCommand(ON)
+            }
+          ]
+        //}
+        if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) >= ((Double::parseDouble(TempSetpoint.state.toString)))) {
+          //2nd stage is not needed
+          Heating2Pin.sendCommand(OFF)
+        }
+        /*****  SECOND STAGE HEATING END  *****/
       }
-      /*****  SECOND STAGE HEATING END  *****/
 
       TempSetpointChart.sendCommand(TempSetpoint.state as DecimalType)
     }
@@ -630,27 +638,28 @@ then
         if (MyTempProxy.state < TempSetpoint.state) {
           HeatingPin.sendCommand(ON)
 
-          /*****  SECOND STAGE HEATING START  *****/
-          //Only if Heating2InitialTemp is 0 update it
-          //logInfo("Default","Heating2InitialTemp was found set to " + (Double::parseDouble(Heating2InitialTemp.state.toString)))
-          //if((Double::parseDouble(Heating2InitialTemp.state.toString)) == 0) {
-            //Heating2InitialTemp.postUpdate(Double::parseDouble(MyTempProxy.state.toString))
-            //logInfo("Default","Heating2InitialTemp was 0 and is now set to " + (Double::parseDouble(Heating2InitialTemp.state.toString)))
+          if (Heating2.state.toString == "ON") {
+            /*****  SECOND STAGE HEATING START  *****/
+            //Only if Heating2InitialTemp is 0 update it
+            //logInfo("Default","Heating2InitialTemp was found set to " + (Double::parseDouble(Heating2InitialTemp.state.toString)))
+            //if((Double::parseDouble(Heating2InitialTemp.state.toString)) == 0) {
+              //Heating2InitialTemp.postUpdate(Double::parseDouble(MyTempProxy.state.toString))
+              //logInfo("Default","Heating2InitialTemp was 0 and is now set to " + (Double::parseDouble(Heating2InitialTemp.state.toString)))
 
-            logInfo("Default","Starting Heating2Timer timer to " + (Heating2Time.state as DecimalType).intValue + " minutes.")
-            Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as DecimalType).intValue)) [|
-              if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) < ((Double::parseDouble(TempSetpoint.state.toString)))) {
-                //If it is still cold enough start 2nd stage
-                Heating2Pin.sendCommand(ON)
-              }
-            ]
-          //}
-          if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) >= ((Double::parseDouble(TempSetpoint.state.toString)))) {
-            //2nd stage is not needed
-            Heating2Pin.sendCommand(OFF)
+              logInfo("Default","Starting Heating2Timer timer to " + (Heating2Time.state as DecimalType).intValue + " minutes.")
+              Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as DecimalType).intValue)) [|
+                if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) < ((Double::parseDouble(TempSetpoint.state.toString)))) {
+                  //If it is still cold enough start 2nd stage
+                  Heating2Pin.sendCommand(ON)
+                }
+              ]
+            //}
+            if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) >= ((Double::parseDouble(TempSetpoint.state.toString)))) {
+              //2nd stage is not needed
+              Heating2Pin.sendCommand(OFF)
+            }
+            /*****  SECOND STAGE HEATING END  *****/
           }
-          /*****  SECOND STAGE HEATING END  *****/
-
           TempSetpointChart.sendCommand(TempSetpoint.state as DecimalType)
         }
         MainSwitch.sendCommand("ON")
@@ -658,22 +667,26 @@ then
       }
       case "OFF": {
         HeatingPin.sendCommand(OFF)
-        Heating2Pin.sendCommand(OFF)
-        //Heating2InitialTemp.sendCommand(0)
-        if (Heating2Timer !== null) {
-          Heating2Timer.cancel
-          Heating2Timer = null   // reset the timer
+        if (Heating2.state.toString == "ON") {
+          Heating2Pin.sendCommand(OFF)
+          //Heating2InitialTemp.sendCommand(0)
+          if (Heating2Timer !== null) {
+            Heating2Timer.cancel
+            Heating2Timer = null   // reset the timer
+          }
         }
         TempSetpointChart.sendCommand(0)
         HeatingPreviousMode="OFF"
       }
       case "Schedule": {
         HeatingPin.sendCommand(OFF)
-        Heating2Pin.sendCommand(OFF)
-        //Heating2InitialTemp.sendCommand(0)
-        if (Heating2Timer !== null) {
-          Heating2Timer.cancel
-          Heating2Timer = null   // reset the timer
+        if (Heating2.state.toString == "ON") {
+          Heating2Pin.sendCommand(OFF)
+          //Heating2InitialTemp.sendCommand(0)
+          if (Heating2Timer !== null) {
+            Heating2Timer.cancel
+            Heating2Timer = null   // reset the timer
+          }
         }
         TempSetpointChart.sendCommand(0)
         MainSwitch.sendCommand("ON")
@@ -940,37 +953,40 @@ then
 
     if (MyTempProxy.state > TempSetpoint.state){
       HeatingPin.sendCommand(OFF)
-      Heating2Pin.sendCommand(OFF)
-      //Heating2InitialTemp.sendCommand(0)
-      if (Heating2Timer !== null) {
-        Heating2Timer.cancel
-        Heating2Timer = null   // reset the timer
+      if (Heating2.state.toString == "ON") {
+        Heating2Pin.sendCommand(OFF)
+        //Heating2InitialTemp.sendCommand(0)
+        if (Heating2Timer !== null) {
+          Heating2Timer.cancel
+          Heating2Timer = null   // reset the timer
+        }
       }
       TempSetpointChart.sendCommand(0)
     } else if (MyTempProxy.state < TempSetpoint.state) {
       HeatingPin.sendCommand(ON)
 
-      /*****  SECOND STAGE HEATING START  *****/
-      //Only if Heating2InitialTemp is 0 update it
-      //logInfo("Default","Heating2InitialTemp was found set to " + (Double::parseDouble(Heating2InitialTemp.state.toString)))
-      //if((Double::parseDouble(Heating2InitialTemp.state.toString)) == 0) {
-        //Heating2InitialTemp.postUpdate(Double::parseDouble(MyTempProxy.state.toString))
-        //logInfo("Default","Heating2InitialTemp was 0 and is now set to " + (Double::parseDouble(Heating2InitialTemp.state.toString)))
+      if (Heating2.state.toString == "ON") {
+        /*****  SECOND STAGE HEATING START  *****/
+        //Only if Heating2InitialTemp is 0 update it
+        //logInfo("Default","Heating2InitialTemp was found set to " + (Double::parseDouble(Heating2InitialTemp.state.toString)))
+        //if((Double::parseDouble(Heating2InitialTemp.state.toString)) == 0) {
+          //Heating2InitialTemp.postUpdate(Double::parseDouble(MyTempProxy.state.toString))
+          //logInfo("Default","Heating2InitialTemp was 0 and is now set to " + (Double::parseDouble(Heating2InitialTemp.state.toString)))
 
-        logInfo("Default","Starting Heating2Timer timer to " + (Heating2Time.state as DecimalType).intValue + " minutes.")
-        Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as DecimalType).intValue)) [|
-          if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) < ((Double::parseDouble(TempSetpoint.state.toString)))) {
-            //If it is still cold enough start 2nd stage
-            Heating2Pin.sendCommand(ON)
-          }
-        ]
-      //}
-      if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) >= ((Double::parseDouble(TempSetpoint.state.toString)))) {
-        //2nd stage is not needed
-        Heating2Pin.sendCommand(OFF)
+          logInfo("Default","Starting Heating2Timer timer to " + (Heating2Time.state as DecimalType).intValue + " minutes.")
+          Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as DecimalType).intValue)) [|
+            if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) < ((Double::parseDouble(TempSetpoint.state.toString)))) {
+              //If it is still cold enough start 2nd stage
+              Heating2Pin.sendCommand(ON)
+            }
+          ]
+        //}
+        if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) >= ((Double::parseDouble(TempSetpoint.state.toString)))) {
+          //2nd stage is not needed
+          Heating2Pin.sendCommand(OFF)
+        }
+        /*****  SECOND STAGE HEATING END  *****/
       }
-      /*****  SECOND STAGE HEATING END  *****/
-
       TempSetpointChart.sendCommand(TempSetpoint.state as DecimalType)
     }
 

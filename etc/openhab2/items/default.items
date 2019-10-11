@@ -45,6 +45,7 @@ String CoolingMode "Cooling Mode []" { channel="mqtt:topic:mosquitto:CoolingMode
 String FanMode "Fan Mode []" { channel="mqtt:topic:mosquitto:FanMode:string", autoupdate="true" }
 String HotWaterMode "Hot Water Mode []" { channel="mqtt:topic:mosquitto:HotWaterMode:string", autoupdate="true" }
 String HumidityMode "Humidity Mode []" { channel="mqtt:topic:mosquitto:HumidityMode:string", autoupdate="true" }
+Switch Heating2 "2nd Stage Heating []"
 Switch MainSwitch "MainSwitch"
 
 //String HumiTopic "Humidity Topic" { channel="mqtt:topic:mosquitto:HumiTopic:string" }

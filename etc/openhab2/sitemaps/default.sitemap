@@ -20,7 +20,7 @@ sitemap default label="Main Menu"
 
   Frame label="Fan" visibility=[SystemType=="US"] {
     Switch item=FanMode mappings=[ "ON"="ON", "OFF"="OFF", "AUTO"="AUTO"]
-  } 
+  }
 
   Frame label="Hot Water" visibility=[SystemType=="EU"] {
     Switch item=HotWaterMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
@@ -39,7 +39,7 @@ sitemap default label="Main Menu"
       Frame {
         Group item=settings label="Maintenance" icon="error" {
           Frame {
-            Switch item=MainSwitch
+            Switch item=MainSwitch mappings=[ "ON"="ON", "OFF"="OFF"]
             Switch item=BackupButton icon="lock" mappings=["ON"="Backup"]
             Switch item=BackupTimestampCommand mappings=["ON"="Check"]
             Switch item=RestoreButton icon="lock" mappings=["ON"="Restore"]
@@ -54,8 +54,9 @@ sitemap default label="Main Menu"
         }
         Group item=settings label="2nd Stage Heating" icon="heating" {
           Frame {
-            Setpoint item=Heating2Delta minValue=0 maxValue=20 step=1 icon="temperature"
-            Setpoint item=Heating2Time minValue=0 maxValue=120 step=1 icon="clock"
+            Switch item=Heating2 mappings=[ "ON"="ON", "OFF"="OFF"]
+            Setpoint item=Heating2Delta minValue=0 maxValue=20 step=1 icon="temperature" visibility=[Heating2=="ON"]
+            Setpoint item=Heating2Time minValue=0 maxValue=120 step=1 icon="clock" visibility=[Heating2=="ON"]
           }
         }
         Switch item=TempUnit mappings=["F"="°F", "C"="°C"]
