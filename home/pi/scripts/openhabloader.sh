@@ -1,4 +1,5 @@
 #!/bin/bash
+
 ### BEGIN INIT INFO
  # Provides:
  # Required-Start:
@@ -17,7 +18,11 @@ if (("$PARTSIZE" < "$THRESHOLD")) ; then
     sudo raspi-config --expand-rootfs && reboot
 fi
 
-cd /home/pi/scripts/
+# If rules file exists after boot, hide it until openHAB loads fully
+if [ -f /etc/openhab2/rules/default.rules ]; then
+  sudo mv /etc/openhab2/rules/default.rules /home/pi/scripts/default.rules;
+fi
+yes | sudo /usr/bin/openhab-cli reset-ownership;
 
 model=$(cat /proc/cpuinfo | grep "ARMv6" | wc -l)
 if [ $model -ne 1 ]; then
@@ -38,35 +43,67 @@ wlanmac="Not available"
 if [ $wlan -eq 0 ]; then
 /sbin/ifdown wlan0 && /sbin/ifup wlan0
 else
-  wlanip=$(./getwlan0ip.sh)
-  wlanmac=$(./getwlan0mac.sh)
+  wlanip=$(/home/pi/scripts/getwlan0ip.sh)
+  wlanmac=$(/home/pi/scripts/getwlan0mac.sh)
 fi
 
-if [ -f ./openhabloader.html ]; then
-  rm ./openhabloader.html
+if [ -f /home/pi/scripts/openhabloader.html ]; then
+  rm /home/pi/scripts/openhabloader.html
 fi
-cp ./openhabloader.blank.html ./openhabloader.html
-sed -i -e "s/wlanip/$wlanip/g" ./openhabloader.html
-sed -i -e "s/wlanmac/$wlanmac/g" ./openhabloader.html
+cp /home/pi/scripts/openhabloader.blank.html /home/pi/scripts/openhabloader.html
+sed -i -e "s/wlanip/$wlanip/g" /home/pi/scripts/openhabloader.html
+sed -i -e "s/wlanmac/$wlanmac/g" /home/pi/scripts/openhabloader.html
 
-pgrep chromium | xargs kill -9 #Kill all sessions in case something was hung - this will produce a restore prompt unfortunately
-sudo sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' /home/pi/.config/chromium/Default/Preferences
-sudo sed -i 's/"exit_type":"Crashed"/"exit_type":"None"/' /home/pi/.config/chromium/Default/Preferences
-#sudo -u pi /usr/bin/chromium-browser --disable-restore-session-state --disable-web-security --user-data-dir --noerordialogs --disable-session-crashed-bubble --disable-infobars --kiosk /home/pi/scripts/openhabloader.html &
+if grep -q "hostapd" /home/pi/scripts/raspberry-pi-turnkey/status.json
+then
+    sed -i -e "s/none/block/g" /home/pi/scripts/openhabloader.html
+else
+    sed -i -e "s/block/none/g" /home/pi/scripts/openhabloader.html
+fi
 
+# Clean up previously running apps, gracefully at first then harshly
+killall -TERM kweb 2>/dev/null;
+echo "kweb terminated";
+sleep 2;
+
+killall -9 kweb 2>/dev/null;
+echo "Final termination of kweb";
+
+DISPLAY=:0 kweb -KJ /home/pi/scripts/openhabloader.html &
+sleep 20;
 while :
 do
-if (($(echo "$(top -b -n1 | grep "load average:" | awk '{print $(NF-2)}' | cut -d, -f1) > 1.5" | bc -l))); then
-  #echo 'Too busy'
-  sleep 15; #Check again later
-else
-  #echo "Not too busy. Load!"
-  pgrep chromium | xargs kill -9 #Kill all sessions in case something was hung - this will produce a restore prompt unfortunately
-  sudo sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' /home/pi/.config/chromium/Default/Preferences
-  sudo sed -i 's/"exit_type":"Crashed"/"exit_type":"None"/' /home/pi/.config/chromium/Default/Preferences
-#  sudo -u pi /usr/bin/chromium-browser --disable-restore-session-state --disable-web-security --user-data-dir --noerordialogs --disable-session-crashed-bubble --disable-infobars --kiosk /home/pi/scripts/openhabloader.html &
-  break
-fi
-done
+  if (($(echo "$(top -b -n1 | grep "load average:" | awk '{print $(NF-2)}' | cut -d, -f1) > 0.5" | bc -l))); then
+    echo 'Too busy'
+    sleep 10; #Check again later
+  else
+    echo "Not too busy. Load!"
+    if [ ! -f /etc/openhab2/rules/default.rules ]; then
+      # Load full UI
 
+      echo "Easy Startup found. Loading UI...";
+      sudo cp /home/pi/scripts/default.rules /etc/openhab2/rules/default.rules;
+      sudo chmod 755 /etc/openhab2/rules/default.rules;
+      sudo chown openhab:openhab /etc/openhab2/rules/default.rules;
+
+      while :
+      do
+        # Start kweb if it dies and restart it
+        # Clean up previously running apps, gracefully at first then harshly
+        killall -TERM kweb 2>/dev/null;
+        echo "kweb terminated";
+        sleep 2;
+
+        killall -9 kweb 2>/dev/null;
+        echo "Final termination of kweb";
+
+        # Start the browser
+        echo "Starting kweb...";
+        DISPLAY=:0 kweb -KJ /home/pi/scripts/oneui/index.html
+        sleep 10;
+      done
+    fi
+    break;
+  fi
+done
 exit 0
