@@ -14,14 +14,13 @@ if [ "$ip" == "192.168.4.1" ]
 fi
 
 publicip=$(wget --timeout=10 http://ipinfo.io/ip -qO -)
+echo $publicip
 touch /tmp/publicip
 if [ "$publicip" != "$(cat /tmp/publicip)" ]
   then
   echo $publicip > /tmp/publicip  # overwrite for next run
-  echo $publicip
   # Run dyndns updater
   # dtdns is now dead :( use no-ip.com instead
   #/usr/bin/wget -O - -q -t 1 "http://www.dtdns.com/api/autodns.cfm?id=[YOUR-DTDNS-DOMAIN]&pw=[YOUR-DTDNS-PASS]&client=HestiaPiDDNSUpdater"
   #/usr/bin/wget -O - -q -t 1 "http://[USERNAME]:[PASSWORD]@dynupdate.no-ip.com/nic/update?hostname=[YOUR-HOSTNAME]"
 fi
-
