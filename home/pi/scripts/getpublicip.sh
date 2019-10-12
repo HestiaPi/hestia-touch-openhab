@@ -9,6 +9,7 @@ ip=$(ping -c 1 ipinfo.io | awk -F'[()]' '/PING/{print $2}')
 if [ "$ip" == "192.168.4.1" ]
  then
  echo "Not connected" > /tmp/publicip  # overwrite for next run
+ echo "Not connected"
  exit 0;
 fi
 
@@ -17,6 +18,7 @@ touch /tmp/publicip
 if [ "$publicip" != "$(cat /tmp/publicip)" ]
   then
   echo $publicip > /tmp/publicip  # overwrite for next run
+  echo $publicip
   # Run dyndns updater
   # dtdns is now dead :( use no-ip.com instead
   #/usr/bin/wget -O - -q -t 1 "http://www.dtdns.com/api/autodns.cfm?id=[YOUR-DTDNS-DOMAIN]&pw=[YOUR-DTDNS-PASS]&client=HestiaPiDDNSUpdater"
