@@ -10,6 +10,7 @@ Thing exec:command:gettemp [ command="/home/pi/scripts/getBMEtemp.sh", interval=
 //BME280 atmospheric pressure
 //Thing exec:command:getpress [ command="/home/pi/scripts/getBMEpress.sh", interval=60, timeout=5 ]
 
+Thing exec:command:getpublicip [ command="/home/pi/scripts/getpublicip.sh", interval=600, timeout=60 ]
 Thing exec:command:getwlanip [ command="/home/pi/scripts/getwlan0ip.sh", interval=600, timeout=60 ]
 Thing exec:command:getwlanmac [ command="/home/pi/scripts/getwlan0mac.sh", interval=0, timeout=60 ]
 Thing exec:command:getssid [ command="/home/pi/scripts/getssid.sh", interval=600, timeout=60 ]

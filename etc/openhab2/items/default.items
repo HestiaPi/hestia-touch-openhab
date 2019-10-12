@@ -55,7 +55,7 @@ Number chart_period "Period"
 //    SETTINGS START    ///////////////////////////////////////////////////////////////////////////////////////////////
 String SettingsPage <settings>
 String InfoPage <pie>
-String Network_WAN_IP "Public IP [%s]" <zoom> (Network) { http="<[http://icanhazip.com:600000:REGEX((.*?))]" }
+String Network_WAN_IP "Public IP [%s]" <zoom> (Network) { channel="exec:command:getpublicip:output" }
 String Network_WAN_IP_Topic { channel="mqtt:topic:mosquitto:Network_WAN_IP_Topic:string" }
 
 String Network_WLAN_IP "Local IP [%s]" <house> (Network) { channel="exec:command:getwlanip:output" }
