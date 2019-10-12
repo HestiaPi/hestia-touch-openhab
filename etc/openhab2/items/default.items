@@ -64,7 +64,7 @@ String Network_WLAN_IP_Topic { channel="mqtt:topic:mosquitto:Network_WLAN_IP_Top
 String Network_SSID "WiFi SSID [%s]" <network> (Network) { channel="exec:command:getssid:output" }
 String Network_SSID_Topic { channel="mqtt:topic:mosquitto:Network_SSID_Topic:string" }
 
-String Network_WLAN_INFO "WiFi Signal [%s dBm]" <line> (Network) { channel="exec:command:getwifiinfo:output" }
+String Network_WLAN_INFO "WiFi Signal [%s %%]" <line> (Network) { channel="exec:command:getwifiinfo:output" }
 String Network_WLAN_INFO_Topic { channel="mqtt:topic:mosquitto:Network_WLAN_INFO_Topic:string" }
 
 String Network_WLAN_MAC "WiFi MAC Address [%s]" <network> (Network) { channel="exec:command:getwlanmac:output" }
