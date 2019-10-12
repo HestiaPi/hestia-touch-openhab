@@ -19,6 +19,7 @@ cd /etc/openhab2;
 sudo chmod 777 rules sitemaps items persistence transform;
 sudo chmod 777 rules/default.rules sitemaps/default.sitemap items/default.items things/default.things persistence/rrd4j.persist transform/binary.map;
 sudo rsync -rtcsOa /home/pi/scripts/gitupdate/hestia-touch-openhab/ /;
+sudo chown pi:pi /home/pi/ ;
 #sudo mkdir html/hestiapi;
 #sudo chmod 777 html html/hestiapi;
 
