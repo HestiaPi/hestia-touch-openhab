@@ -6,6 +6,6 @@ if test -f "$FILE"; then
   sudo cp $FILE /home/pi/backup.zip
   sudo reboot;
 else
-    echo "1"
+    echo "No backup found."
 fi
 exit;

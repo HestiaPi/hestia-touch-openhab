@@ -1,5 +1,12 @@
 #!/bin/bash
 
+ip=$(ping -c 1 github.com | awk -F'[()]' '/PING/{print $2}')
+if [ "$ip" == "192.168.4.1" ]
+ then
+ echo "No Internet"
+ exit 0;
+fi
+
 ### PREPARE UPDATE FOLDER
 sudo mkdir /home/pi/scripts/gitupdate;
 cd /home/pi/scripts/gitupdate;

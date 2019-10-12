@@ -1460,7 +1460,7 @@ then
       } else {
       logInfo("Default","RestoreButton Selected")
       RestoreButton.postUpdate("Restoring & restarting twice...")
-      RestoreCommand.sendCommand("ON")
+      RestoreButton.postUpdate(executeCommandLine("/home/pi/scripts/restore.sh",10000));
     }
 end
 
@@ -1475,7 +1475,7 @@ rule "GitInstalledVersion Changed"
 when
   Item GitInstalledVersion received command ON
 then
-  GitInstalledVersion.postUpdate(executeCommandLine("cat /home/pi/scripts/gitinstalledversion",10000));
+  GitInstalledVersion.postUpdate(executeCommandLine("/home/pi/scripts/getgitinstalledversion.sh",10000));
 end
 
 rule "GitLatestVersion Changed"
@@ -1504,8 +1504,9 @@ then
   } else {
     GitInstallLatestVersion.postUpdate("Updating & restarting...");
     var String results = executeCommandLine("/home/pi/scripts/updateone.sh",30000)
-    results = results + "" // hide validation issue
-    results = ""
+    createTimer(now.plusSeconds(5)) [|
+      GitInstallLatestVersion.postUpdate(results)
+    ]
   }
 end
 
