@@ -1,7 +1,3 @@
-Group charts
-Group chart_temp
-Group chart_humi
-//Group chart_press
 Group settings
 
 Switch HeatingPin "Heating" { channel="mqtt:topic:mosquitto:HeatingPin:switch" }
@@ -30,11 +26,9 @@ Number MyHumiProxy "Humidity [%.0f %%]" <humidity> { channel="mqtt:topic:mosquit
 Number TempSetpoint "Proxy Temperature Setpoint[%.1f °-]" { channel="mqtt:topic:mosquitto:TempSetpoint:temperature", autoupdate="true" }
 Number TempSetpointC "Temperature Setpoint[%.1f °C]"
 Number TempSetpointF "Temperature Setpoint[%.0f °F]"
-Number TempSetpointChart "Heating Setpoint" (charts, chart_temp)
-Number PreviousTempReading "Temperature" <temperature> (charts, chart_temp)
+Number PreviousTempReading "Temperature" <temperature>
 Number HumiSetpoint "Humidity Setpoint[%.0f %%]" { channel="mqtt:topic:mosquitto:HumiSetpoint:humidity", autoupdate="true" }
-Number HumiSetpointChart "Humidity Setpoint" (charts, chart_humi)
-Number PreviousHumiReading "Humidity" <humidity> (charts, chart_humi)
+Number PreviousHumiReading "Humidity" <humidity>
 
 Number HeatingBoostTime "Heating Boost Time [%.0f min]" { channel="mqtt:topic:mosquitto:HeatingBoostTime:string", autoupdate="true" }
 Number CoolingBoostTime "Cooling Boost Time [%.0f min]" { channel="mqtt:topic:mosquitto:CoolingBoostTime:string", autoupdate="true" }
@@ -49,7 +43,6 @@ Switch Heating2 "2nd Stage Heating []"
 Switch MainSwitch "MainSwitch"
 
 //String HumiTopic "Humidity Topic" { channel="mqtt:topic:mosquitto:HumiTopic:string" }
-Number chart_period "Period"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    SETTINGS START    ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,10 +103,5 @@ String SystemType "System Type []" <pump> { channel="exec:command:getsystemtype:
 String SystemType_Topic { channel="mqtt:topic:mosquitto:SystemType_Topic:string" }
 
 String HumidityType "Humidity Mode []" <water> { channel="exec:command:gethumiditymode:output" }
-String Season "Season []" <calendar> { channel="exec:command:getseason:output" }
-String Season_Topic { channel="mqtt:topic:mosquitto:Season_Topic:string" }
-
-String US_Summer
-
 //    SETTINGS END    /////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
