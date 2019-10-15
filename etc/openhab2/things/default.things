@@ -25,7 +25,6 @@ Thing exec:command:gettz [ command="/home/pi/scripts/gettz.sh", interval=3600, t
 Thing exec:command:gettempunit [command="/home/pi/scripts/gettempunit.sh", interval=0, timeout=60, autorun=true]
 Thing exec:command:gethumiditymode [command="/home/pi/scripts/gethumiditymode.sh", interval=0, timeout=60, autorun=true]
 Thing exec:command:getsystemtype [command="/home/pi/scripts/getsystemtype.sh", interval=0, timeout=60, autorun=true]
-Thing exec:command:getseason [command="/home/pi/scripts/getseason.sh", interval=0, timeout=60, autorun=true]
 
 Thing exec:command:rebootcommand [command="/home/pi/scripts/reboot.sh", interval=0, timeout=60, autorun=false]
 Thing exec:command:shutdowncommand [command="/home/pi/scripts/shutdown.sh", interval=0, timeout=60, autorun=false]
@@ -308,14 +307,6 @@ Bridge mqtt:broker:mosquitto "Mosquitto MQTT Broker" [ host="localhost", secure=
     Channels:
       Type string : string "SystemType_Topic" [
         commandTopic="hestia/local/systemtype",
-        retained=true
-      ]
-  }
-
-  Thing mqtt:topic:mosquitto:Season_Topic {
-    Channels:
-      Type string : string "Season_Topic" [
-        commandTopic="hestia/local/season",
         retained=true
       ]
   }
