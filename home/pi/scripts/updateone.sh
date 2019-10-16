@@ -16,18 +16,17 @@ sudo rm -rf .git LICENSE README.md;
 
 ### PREPARE FILES AND OVERWRITE THEM
 cd /etc/openhab2;
-sudo chmod 777 rules sitemaps items persistence transform;
-sudo chmod 777 rules/default.rules sitemaps/default.sitemap items/default.items things/default.things persistence/rrd4j.persist transform/binary.map;
+sudo chmod 777 rules sitemaps items transform;
+sudo chmod 777 rules/default.rules sitemaps/default.sitemap items/default.items things/default.things transform/binary.map;
+sudo rm rules/default.rules;
 sudo rsync -rtcsOa /home/pi/scripts/gitupdate/hestia-touch-openhab/ /;
 sudo chown pi:pi /home/pi/ ;
-#sudo mkdir html/hestiapi;
-#sudo chmod 777 html html/hestiapi;
 
 ### SET PERMISSIONS
 cd /home/pi/scripts/;
 sudo chmod a+w /home/pi/scripts/;
-sudo touch gitinstalledversion humiditymode season systemtype tempunit /tmp/publicip;
-sudo chmod 777 gitinstalledversion humiditymode season systemtype tempunit /tmp/publicip;
+sudo touch gitinstalledversion humiditymode systemtype tempunit /tmp/publicip;
+sudo chmod 777 gitinstalledversion humiditymode systemtype tempunit /tmp/publicip;
 sudo chmod 777 F2C.sh C2F.sh bme280.py bme280C.py bme280F.py;
 sudo chmod 755 AdafruitDHTHum.py AdafruitDHTTemp.py *.sh;
 sudo chmod 644 openhabloader.blank.html openhabloader.html wpa_supplicant.conf;
