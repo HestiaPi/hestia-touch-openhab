@@ -17,7 +17,7 @@ sudo rm -rf .git LICENSE README.md;
 ### PREPARE FILES AND OVERWRITE THEM
 cd /etc/openhab2;
 sudo chmod 777 rules sitemaps items transform;
-sudo chmod 777 rules/default.rules sitemaps/default.sitemap items/default.items things/default.things transform/binary.map;
+sudo chmod 777 sitemaps/default.sitemap items/default.items things/default.things transform/binary.map;
 sudo rm rules/default.rules;
 sudo rsync -rtcsOa /home/pi/scripts/gitupdate/hestia-touch-openhab/ /;
 sudo chown pi:pi /home/pi/ ;
