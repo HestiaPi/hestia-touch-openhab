@@ -93,7 +93,7 @@ Switch RebootCommand "Reboot" { channel="exec:command:rebootcommand:run" }
 Switch ShutdownCommand "Shutdown" { channel="exec:command:shutdowncommand:run" }
 
 Number Heating2Time "Delay [%.0f min]" <clock>
-Number Heating2Delta "Threshold [%.1f °C]" <temperature>
+Number Heating2Delta "Threshold [%.1f °]" <temperature>
 Number Heating2InitialTemp "Heating2InitialTemp [%.1f ]"
 
 String TempUnit "Temperature Unit []" <temperature> { channel="exec:command:gettempunit:output" }
