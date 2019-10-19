@@ -8,12 +8,12 @@ sitemap default label="Main Menu"
   }
 
   Frame label="Heating" visibility=[SystemType=="US"] {
-    Switch item=HeatingMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
+    Switch item=HeatingMode mappings=[ "ON"="AUTO", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
     Setpoint item=HeatingBoostTime minValue=10 maxValue=1440 step=10 icon="clock"
   }
 
   Frame label="Cooling" visibility=[SystemType=="US"] {
-    Switch item=CoolingMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
+    Switch item=CoolingMode mappings=[ "ON"="AUTO", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
     Setpoint item=CoolingBoostTime minValue=10 maxValue=1440 step=10 icon="clock"
   }
 
@@ -22,7 +22,7 @@ sitemap default label="Main Menu"
   }
 
   Frame label="Heating" visibility=[SystemType=="EU"] {
-    Switch item=HeatingMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
+    Switch item=HeatingMode mappings=[ "ON"="AUTO", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
     Setpoint item=TempSetpointC minValue=0 maxValue=40 step=0.5 icon="temperature" visibility=[TempUnit=="C"]
     Setpoint item=TempSetpointF minValue=32 maxValue=100 step=1 icon="temperature" visibility=[TempUnit=="F"]
     Setpoint item=HeatingBoostTime minValue=10 maxValue=1440 step=10 icon="clock"
