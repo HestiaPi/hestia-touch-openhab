@@ -31,7 +31,7 @@ sudo chmod 777 gitinstalledversion humiditymode systemtype tempunit /tmp/publici
 sudo chmod 777 F2C.sh C2F.sh bme280.py bme280C.py bme280F.py;
 sudo chmod 755 AdafruitDHTHum.py AdafruitDHTTemp.py *.sh;
 sudo chmod 644 openhabloader.blank.html openhabloader.html wpa_supplicant.conf;
-sudo openhab-cli reset-ownership
+yes | sudo openhab-cli reset-ownership
 
 ### STORE VERSION NUMBER LOCALLY
 sudo curl --silent "https://api.github.com/repos/hestiapi/hestia-touch-openhab/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' > /home/pi/scripts/gitinstalledversion;
