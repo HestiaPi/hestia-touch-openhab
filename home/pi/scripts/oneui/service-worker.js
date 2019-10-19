@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "precache-manifest.2c63fac3a6ada9c5df1b3583d1419b88.js"
+  "precache-manifest.9ecf7972e73d0d9bea973142019f64cf.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "hestia-ui"});
