@@ -8,6 +8,11 @@ THRESHOLD=3679731
 if (("$PARTSIZE" < "$THRESHOLD")) ; then
     sudo raspi-config --expand-rootfs && reboot
 fi
+# If backup file exists after boot restore, delete it and reboot
+if [ -f /home/pi/backup.zip ]; then
+  sudo service openhab2 stop && yes | sudo openhab-cli restore /home/pi/backup.zip && sudo rm /home/pi/backup.zip;
+  sudo reboot;
+fi
 # If rules file exists after boot, hide it until openHAB loads fully
 if [ -f /etc/openhab2/rules/default.rules ]; then
   sudo mv /etc/openhab2/rules/default.rules /home/pi/scripts/default.rules;
