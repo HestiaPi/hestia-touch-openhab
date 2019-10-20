@@ -786,6 +786,7 @@ then
       //postUpdate(TempSetpoint, 18)
       TempSetpoint.sendCommand(18)
     }
+    System_CPU_TEMP.sendCommand(executeCommandLine("/home/pi/scripts/getcputemperature.sh",60000));
 end
 
 rule "HumidityTypeChanged"

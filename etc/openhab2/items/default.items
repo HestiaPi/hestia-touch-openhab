@@ -63,7 +63,7 @@ String Network_WLAN_INFO_Topic { channel="mqtt:topic:mosquitto:Network_WLAN_INFO
 String Network_WLAN_MAC "WiFi MAC Address [%s]" <network> (Network) { channel="exec:command:getwlanmac:output" }
 String Network_WLAN_MAC_Topic { channel="mqtt:topic:mosquitto:Network_WLAN_MAC_Topic:string" }
 
-String System_CPU_TEMP "CPU Temp [%s °C]" <temperature> { channel="exec:command:getcputemperature:output" }
+String System_CPU_TEMP "CPU Temp [%s]" <temperature> { channel="exec:command:getcputemperature:output" }
 String System_CPU_TEMP_Topic { channel="mqtt:topic:mosquitto:System_CPU_TEMP_Topic:string" }
 
 String System_CPU_LOAD "CPU Load [%s %%]" <line> { channel="exec:command:getcpuload:output" }
