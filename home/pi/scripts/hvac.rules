@@ -788,7 +788,7 @@ then
   if (((GitInstalledVersion.state == NULL) || (GitInstalledVersion.state == UNDEF)) ||
   ((GitLatestVersion.state == NULL) || (GitLatestVersion.state == UNDEF)) ||
   (GitInstalledVersion.state.toString == GitLatestVersion.state.toString)) {
-    GitInstalledVersion.postUpdate(executeCommandLine("cat /home/pi/scripts/gitinstalledversion",10000));
+    GitInstalledVersion.postUpdate(executeCommandLine("/home/pi/scripts/getgitinstalledversion.sh",10000));
     GitLatestVersion.postUpdate(executeCommandLine("sudo /home/pi/scripts/getgitlatestversion.sh",10000));
   }
   if (GitInstalledVersion.state.toString == GitLatestVersion.state.toString){
