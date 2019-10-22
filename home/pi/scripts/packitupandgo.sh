@@ -5,7 +5,8 @@ if [ $(id -u) -ne 0 ]; then
     printf "script must be run as root\n"
     exit 1
 fi
-
+sudo systemctl stop openhab2
+yes | sudo openhab-cli clean-cache
 rm -f /etc/wpa_supplicant/wpa_supplicant.conf;
 cp /home/pi/scripts/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf;
 sudo find /var/log -type f -delete;
