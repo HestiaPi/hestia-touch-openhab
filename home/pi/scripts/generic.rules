@@ -31,10 +31,10 @@ then
     Heating2.sendCommand("OFF");
 //    HumiTopic.sendCommand("0");
     if (TempUnit.state == "C") {
-      if((TempSetpoint.state == NULL) || (TempSetpoint.state == UNDEF)) postUpdate(TempSetpoint, 18);
-      if((TempSetpointC.state == NULL) || (TempSetpointC.state == UNDEF)) postUpdate(TempSetpointC, 18);
-      if(TempSetpoint.state > 40) postUpdate(TempSetpoint, 18);
-      if(TempSetpointC.state > 40) postUpdate(TempSetpointC, 18);
+      if((TempSetpoint.state == NULL) || (TempSetpoint.state == UNDEF)) postUpdate(TempSetpoint, 22);
+      if((TempSetpointC.state == NULL) || (TempSetpointC.state == UNDEF)) postUpdate(TempSetpointC, 22);
+      if(TempSetpoint.state > 40) postUpdate(TempSetpoint, 22);
+      if(TempSetpointC.state > 40) postUpdate(TempSetpointC, 22);
     } else {
       if((TempSetpoint.state == NULL) || (TempSetpoint.state == UNDEF)) postUpdate(TempSetpoint, 70);
       if((TempSetpointF.state == NULL) || (TempSetpointF.state == UNDEF)) postUpdate(TempSetpointF, 70);
@@ -194,8 +194,8 @@ then
   if(HumidityType.state == NULL) HumidityType.postUpdate(executeCommandLine("/home/pi/scripts/gethumiditymode.sh",60000))
 
   if (TempUnit.state == "C") {
-    if((TempSetpoint.state == NULL) || (TempSetpoint.state == UNDEF)) TempSetpoint.sendCommand(18.0)
-    //if((TempSetpointC.state == NULL) || (TempSetpointC.state == UNDEF)) postUpdate(TempSetpointC, 18.0)
+    if((TempSetpoint.state == NULL) || (TempSetpoint.state == UNDEF)) TempSetpoint.sendCommand(22.0)
+    //if((TempSetpointC.state == NULL) || (TempSetpointC.state == UNDEF)) postUpdate(TempSetpointC, 22.0)
   } else {
     if((TempSetpoint.state == NULL) || (TempSetpoint.state == UNDEF)) TempSetpoint.sendCommand(70)
     //if((TempSetpointF.state == NULL) || (TempSetpointF.state == UNDEF)) postUpdate(TempSetpointF, 70)
@@ -783,8 +783,8 @@ then
       var String results = executeCommandLine("/home/pi/scripts/F2C.sh",1000)
       results = results + "" // hide validation issue
       results = ""
-      //postUpdate(TempSetpoint, 18)
-      TempSetpoint.sendCommand(18)
+      //postUpdate(TempSetpoint, 22)
+      TempSetpoint.sendCommand(22)
     }
     System_CPU_TEMP.sendCommand(executeCommandLine("/home/pi/scripts/getcputemperature.sh",60000));
 end
@@ -817,8 +817,8 @@ then
       //postUpdate(TempSetpoint, 70)
       TempSetpoint.sendCommand(70)
     } else {
-      //postUpdate(TempSetpoint, 18)
-      TempSetpoint.sendCommand(18)
+      //postUpdate(TempSetpoint, 22)
+      TempSetpoint.sendCommand(22)
     }
 
     if (SystemType.state == "EU") {
