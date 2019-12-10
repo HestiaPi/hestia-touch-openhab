@@ -1,9 +1,13 @@
 #!/bin/bash
 # This will check from ipinfo.io if your public IP has changed and only then it will push it.
-# Make sure this script is executble (sudo chmod +x /home/pi/scripts/publicip.sh) and add it to crontab
+# Make sure this script is executble (sudo chmod +x /home/pi/scripts/getpublicip.sh) 
+# the temp file is writable (touch /tmp/publicip && sudo chmod 777 /tmp/publicip)
+# and add it to crontab
 #sudo crontab -e
 #[add this at the end, to check every hour]
-#0 * * * * /home/pi/scripts/publicip.sh
+#0 * * * * /home/pi/scripts/getpublicip.sh
+
+# Uncomment below the service you want to use but first create an account on their website and replace their credentials and hostname here
 
 ip=$(ping -c 1 ipinfo.io | awk -F'[()]' '/PING/{print $2}')
 if [ "$ip" == "192.168.4.1" ]
