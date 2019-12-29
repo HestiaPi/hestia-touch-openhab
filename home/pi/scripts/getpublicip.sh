@@ -9,6 +9,11 @@
 
 # Uncomment below the service you want to use but first create an account on their website and replace their credentials and hostname here
 
+while ! ping -c 1 ipinfo.io &>/dev/null
+ do echo "Error"
+ exit 0;
+done
+
 ip=$(ping -c 1 ipinfo.io | awk -F'[()]' '/PING/{print $2}')
 if [ "$ip" == "192.168.4.1" ]
  then
