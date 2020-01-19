@@ -1,0 +1,64 @@
+Fix your HestiaPi's case to the wall first. If you simply want to test-drive
+HestiaPi before committing to it, connect the LCD first and then plug in a
+Micro USB cable to the Pi's port.
+
+\begin{enumerate}
+\item Insert the MicroSD card back in the Raspberry Pi. Just push it in. It
+      does not click. It does not lock in place. A tiny part of it will stick
+      out just enough to grab and pull it if needed.
+\item Insert the LCD in the cover. Remove the protective film if present. Turn
+      and push it in place. It should feel firm in place.
+\item Take all necessary precautions before applying mains voltage so cut off
+      the power now!
+\item Connect all Heating, Cooling, Fan and Hot Water (depending on model)
+      control lines on the terminal block's contacts.
+\item Connect remaining wires, marked C(N) and R(L).
+\item Place the sensor at the bottom compartment of the cover and fit the 4
+      wires in the vertical slit. Note that the sensor, the little shiny
+      square, should be placed facing outwards and ideally not be blocked by
+      any plastic piece of the case. The red wire (Vin) goes to the top pin
+      (Vin) on the PCB.
+\item Align and push evenly the cover against the base aligning at the same
+      times the pins with the LCD connector. The cover should lock when pushed
+      all the way in. Step back and enjoy the new looks of your wall :)
+\item If you cannot cut off the power on the cables, you are risking of
+      HestiaPi booting before the LCD is connected. In such a scenario the LCD
+      will not display anything but a blank white screen and you would need to
+      restart as it is not ``plug and play'' like HDMI. We would advise to leave
+      the SD card out before applying mains voltage and just before you are
+      about to close the case, insert it but don't restart. It shouldn't boot.
+      Once you close the case, there is a chance that it will restart. Close
+      the case and wait 20 seconds. If nothing shows up on the screen, it
+      didn't restart.  Press reset button from the right side.
+\item If at any time you want to remove the top cover, select ``Shutdown'' from
+      the App. When HestiaPi Touch is completely shut down, simply pull the
+      cover outwards.
+\item You should soon see the HestiaPi boot sequence and the loading screen at
+      the end with a countdown. Follow
+      \href{https://github.com/HestiaPi/hestia-touch-openhab/wiki/Connect-WiFi}
+      {these steps} to connect your new HestiaPi to your WiFi.
+\item After a few seconds the screen will show if the WiFi is connected and
+      what is the local IP it got (DHCP)
+\item The full installation may take up to 20 minutes for the very first time
+      and a few restarts are normal. Just leave it alone. You can always SSH to
+      it.  Use pi/hestia
+\item The SD card image expands automatically to occupy the complete size of
+      the card if available.
+\item While waiting, head over to the \href{https://hestiapi.com/downloads/}{downloads}
+      section and download the smartphone app on your phone. Under settings set
+      Local OpenHAB URL as http://[hestiapi\_IP]:8080 and close the application
+\item The LCD UI starts with 0 values or blank fields. This is normal until it
+      gets ready.
+\item Once the LCD is showing the UI with temperature values, try and load the
+      app again or simply use your laptop and navigate to:\\
+      http://[hestiapi\_IP]:8080/start/index and select ``Basic UI''
+\item You should now be able to control the basic functions from either the App
+      or your browser
+\item Please note that the UI of the app, web and LCD may change with software
+      updates so back up your customisations before running an update.
+\item OpenHAB2 has a great \href{https://community.openhab.org/}{forum} with so
+      much information from fellow users. Salivate at what you want to make now
+      with it.
+\item Feel free to explore the files under /etc/openhab2 names default.* in
+      folders items, rules, sitemaps and things.
+\end{enumerate}
