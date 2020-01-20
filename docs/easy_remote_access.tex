@@ -1,0 +1,35 @@
+All latest releases of HestiaPi offer very easy remote access to your home
+without touching your network modem/router or even knowing HestiaPi's IP! Does
+not depend on port forwarding or DynDNS! Woohooo!
+
+\textbf{Please note that this is an externally hosted service not controlled by
+you or us but by OpenHAB itself.}
+
+\href{https://www.youtube.com/watch?v=joz5f4ejJVc}{Instructions video} (if you
+prefer video to text)
+
+To activate it (shipped disabled by default for obvious reasons) go to
+http://[YOUR-HESTIAPI-IP]:8080/paperui and select Add-ons > MISC and make
+sure ``openHAB Cloud Connector'' is installed.
+
+Once installed SSH into your HestiaPi (username: pi and password: hestia) and
+type:
+
+\texttt{    cat /var/lib/openhab2/uuid}
+
+ copy the output somewhere. Then type:
+
+\texttt{        cat /var/lib/openhab2/openhabcloud/secret}
+
+copy this output too. Reboot your HestiaPi
+
+\texttt{        sudo reboot}
+
+    
+Then go to \url{https://myopenhab.org} and create an account using your details
+and the above information (UUID and secret).
+
+You can now access your HestiaPi Touch from a browser or your mobile app
+
+Hint: Enter \url{https://myopenhab.org} as a remote url and your myopenHAB
+account username and password as credentials
