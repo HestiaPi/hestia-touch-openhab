@@ -1,123 +1,107 @@
-Group charts
-Group chart_temp
-Group chart_humi
-Group chart_press
 Group settings
 
-/**
-//US
-Switch HeatingPin23 "Heating" { gpio="pin:12", channel="mqtt:topic:HeatingPin23:switch" }
-Switch Heating2Pin16 "Heating2" { gpio="pin:16", channel="mqtt:topic:Heating2Pin16:switch" }
-Switch CoolingPin23 "Cooling" { gpio="pin:23", channel="mqtt:topic:CoolingPin23:switch" }
-Switch FanPin18 "Fan" { gpio="pin:18", channel="mqtt:topic:FanPin18:switch" }
-/**/
-Switch HeatingPin "Heating"
-Switch Heating2Pin "Heating2"
-Switch CoolingPin "Cooling"
-Switch FanPin "Fan"
-Switch HotWaterPin "Hot Water"
-Switch HumidityPin "Humidity"
+Switch HeatingPin "Heating" { channel="mqtt:topic:mosquitto:HeatingPin:switch" }
+Switch Heating2Pin "Heating2" { channel="mqtt:topic:mosquitto:Heating2Pin:switch" }
+Switch CoolingPin "Cooling" { channel="mqtt:topic:mosquitto:CoolingPin:switch" }
+Switch FanPin "Fan" { channel="mqtt:topic:mosquitto:FanPin:switch" }
+Switch HotWaterPin "Hot Water" { channel="mqtt:topic:mosquitto:HotWaterPin:switch" }
+Switch HumidityPin "Humidity" { channel="mqtt:topic:mosquitto:HumidityPin:switch" }
 
 Switch Pin12 { gpio="pin:12" }
 Switch Pin16 { gpio="pin:16" }
 Switch Pin18 { gpio="pin:18" }
 Switch Pin23 { gpio="pin:23" }
 
-Switch HeatingPinTopic { channel="mqtt:topic:HeatingPin:switch" }
-Switch Heating2PinTopic { channel="mqtt:topic:Heating2Pin:switch" }
-Switch CoolingPinTopic { channel="mqtt:topic:CoolingPin:switch" }
-Switch FanPinTopic { channel="mqtt:topic:FanPin:switch" }
-Switch HotWaterPinTopic { channel="mqtt:topic:HotWaterPin:switch" }
-Switch HumidityPinTopic { channel="mqtt:topic:HumidityPin:switch" }
-
 String MyTemp "Temperature" <temperature> { channel="exec:command:gettemp:output"}
-Number MyTempProxy "Proxy Temperature [%.1f °-]" <temperature> //{ channel="mqtt:topic:MyTempProxy:temperature" }
-Number MyTempProxyC "Temperature [%.1f °C]" <temperature> //{ channel="mqtt:topic:MyTempProxy:temperature" }
-Number MyTempProxyF "Temperature [%.0f °F]" <temperature> //{ channel="mqtt:topic:MyTempProxy:temperature" }
+Number MyTempProxy <temperature> { channel="mqtt:topic:mosquitto:MyTempProxy:temperature" }
+Number MyTempProxyC "Temperature [%.1f °C]" <temperature>
+Number MyTempProxyF "Temperature [%.0f °F]" <temperature>
 
 String MyHumi "Humidity" <humidity> { channel="exec:command:gethumi:output" }
-Number MyHumiProxy "Humidity [%.0f %%]" <humidity> //{ channel="mqtt:topic:MyHumiProxy:humidity" }
+Number MyHumiProxy "Humidity [%.0f %%]" <humidity> { channel="mqtt:topic:mosquitto:MyHumiProxy:humidity" }
 
-String MyPressure "Pressure" <pressure> { channel="exec:command:getpress:output" }
-Number MyPressureProxy "Pressure [%.2f hPa]" <pressure>  //{ channel="mqtt:topic:MyPressureProxy:pressure" }
+//String MyPressure "Pressure" <pressure> { channel="exec:command:getpress:output" }
+//Number MyPressureProxy "Pressure [%.2f hPa]" <pressure>  { channel="mqtt:topic:mosquitto:MyPressureProxy:pressure" }
 
-Number TempSetpoint "Proxy Temperature Setpoint[%.1f °-]" //{ channel="mqtt:topic:TempSetpoint:temperature" }
-Number TempSetpointC "Temperature Setpoint[%.1f °C]" //{ channel="mqtt:topic:TempSetpoint:temperature" }
-Number TempSetpointF "Temperature Setpoint[%.0f °F]" //{ channel="mqtt:topic:TempSetpoint:temperature" }
-Number TempSetpointChart "Heating Setpoint" (charts, chart_temp)
-//Switch IncTargetTemp "IncTargetTemp"  //todo: was for HABpanel - should be deleted
-//Switch DecTargetTemp "DecTargetTemp"  //todo: was for HABpanel - should be deleted
-Number TargetTemp
-Number PreviousTempReading "Temperature" <temperature> (charts, chart_temp)
-Number HumiSetpoint "Humidity Setpoint[%.0f %%]"// { channel="mqtt:topic:HumiSetpoint:humidity" }
-Number HumiSetpointChart "Humidity Setpoint" (charts, chart_humi)
-//Switch IncTargetHumi "IncTargetHumi"  //todo: was for HABpanel - should be deleted
-//Switch DecTargetHumi "DecTargetHumi"  //todo: was for HABpanel - should be deleted
-Number TargetHumi
-Number PreviousHumiReading "Humidity" <humidity> (charts, chart_humi)
-Number PreviousPressureReading "Pressure" <pressure> (chart_press)
+Number TempSetpoint "Proxy Temperature Setpoint[%.1f °-]" { channel="mqtt:topic:mosquitto:TempSetpoint:temperature", autoupdate="true" }
+Number TempSetpointC "Temperature Setpoint[%.1f °C]"
+Number TempSetpointF "Temperature Setpoint[%.0f °F]"
+Number PreviousTempReading "Temperature" <temperature>
+Number HumiSetpoint "Humidity Setpoint[%.0f %%]" { channel="mqtt:topic:mosquitto:HumiSetpoint:humidity", autoupdate="true" }
+Number PreviousHumiReading "Humidity" <humidity>
 
-Number HeatingBoostTime "Heating Boost Time [%.0f min]"
-//Switch HeatingBoostTimeDec "HeatingBoostTimeDec"  //todo: was for HABpanel - should be deleted
-//Switch HeatingBoostTimeInc "HeatingBoostTimeInc"  //todo: was for HABpanel - should be deleted
-Number HotWaterBoostTime "Hot Water Boost Time [%.0f min]"
-//Switch HotWaterBoostTimeDec "HotWaterBoostTimeDec"  //todo: was for HABpanel - should be deleted
-//Switch HotWaterBoostTimeInc "HotWaterBoostTimeInc"  //todo: was for HABpanel - should be deleted
-Number HumiBoostTime "Humidity Boost Time [%.0f min]"
-//Switch HumiBoostTimeDec "HumiBoostTimeDec"  //todo: was for HABpanel - should be deleted
-//Switch HumiBoostTimeInc "HumiBoostTimeInc"  //todo: was for HABpanel - should be deleted
-Number CoolingBoostTime "Cooling Boost Time [%.0f min]"
-//Switch CoolingBoostTimeDec "CoolingBoostTimeDec"  //todo: was for HABpanel - should be deleted
-//Switch CoolingBoostTimeInc "CoolingBoostTimeInc"  //todo: was for HABpanel - should be deleted
-String HeatingMode "Heating Mode"
-String HotWaterMode "Hot Water Mode"
-String HumiMode "Humidity Mode"
-String CoolingMode "Cooling Mode"
-String FanMode "Fan Mode []" <fan> { channel="mqtt:topic:FanMode:string" }
+Number HeatingBoostTime "Heating Boost Time [%.0f min]" { channel="mqtt:topic:mosquitto:HeatingBoostTime:string", autoupdate="true" }
+Number CoolingBoostTime "Cooling Boost Time [%.0f min]" { channel="mqtt:topic:mosquitto:CoolingBoostTime:string", autoupdate="true" }
+Number HotWaterBoostTime "Hot Water Boost Time [%.0f min]" { channel="mqtt:topic:mosquitto:HotWaterBoostTime:string", autoupdate="true" }
+Number HumiBoostTime "Humidity Boost Time [%.0f min]" { channel="mqtt:topic:mosquitto:HumiBoostTime:string", autoupdate="true" }
+String HeatingMode "Heating Mode []" { channel="mqtt:topic:mosquitto:HeatingMode:string", autoupdate="true" }
+String CoolingMode "Cooling Mode []" { channel="mqtt:topic:mosquitto:CoolingMode:string", autoupdate="true" }
+String FanMode "Fan Mode []" { channel="mqtt:topic:mosquitto:FanMode:string", autoupdate="true" }
+String HotWaterMode "Hot Water Mode []" { channel="mqtt:topic:mosquitto:HotWaterMode:string", autoupdate="true" }
+String HumidityMode "Humidity Mode []" { channel="mqtt:topic:mosquitto:HumidityMode:string", autoupdate="true" }
+Switch Heating2 "2nd Stage Heating []"
 Switch MainSwitch "MainSwitch"
 
-String HumiTopic "Humidity Topic" { channel="mqtt:topic:HumiTopic:string" }
-Number chart_period "Period"
+//String HumiTopic "Humidity Topic" { channel="mqtt:topic:mosquitto:HumiTopic:string" }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    SETTINGS START    ///////////////////////////////////////////////////////////////////////////////////////////////
 String SettingsPage <settings>
 String InfoPage <pie>
-String Network_WAN_IP "Public IP [%s]" <zoom> (Network) { http="<[http://icanhazip.com:600000:REGEX((.*?))]" }
+String Network_WAN_IP "Public IP [%s]" <zoom> (Network) { channel="exec:command:getpublicip:output" }
+String Network_WAN_IP_Topic { channel="mqtt:topic:mosquitto:Network_WAN_IP_Topic:string" }
+
 String Network_WLAN_IP "Local IP [%s]" <house> (Network) { channel="exec:command:getwlanip:output" }
-String Network_WLAN_MAC "WiFi MAC Address [%s]" <network> (Network) { channel="exec:command:getwlanmac:output" }
+String Network_WLAN_IP_Topic { channel="mqtt:topic:mosquitto:Network_WLAN_IP_Topic:string" }
+
 String Network_SSID "WiFi SSID [%s]" <network> (Network) { channel="exec:command:getssid:output" }
-String Network_WLAN_INFO "WiFi Signal [%s dBm]" <line> (Network) { channel="exec:command:getwifiinfo:output" }
-String System_CPU_TEMP "CPU Temp [%s °C]" <temperature> { channel="exec:command:getcputemperature:output" }
+String Network_SSID_Topic { channel="mqtt:topic:mosquitto:Network_SSID_Topic:string" }
+
+String Network_WLAN_INFO "WiFi Signal [%s %%]" <line> (Network) { channel="exec:command:getwifiinfo:output" }
+String Network_WLAN_INFO_Topic { channel="mqtt:topic:mosquitto:Network_WLAN_INFO_Topic:string" }
+
+String Network_WLAN_MAC "WiFi MAC Address [%s]" <network> (Network) { channel="exec:command:getwlanmac:output" }
+String Network_WLAN_MAC_Topic { channel="mqtt:topic:mosquitto:Network_WLAN_MAC_Topic:string" }
+
+String System_CPU_TEMP "CPU Temp [%s]" <temperature> { channel="exec:command:getcputemperature:output" }
+String System_CPU_TEMP_Topic { channel="mqtt:topic:mosquitto:System_CPU_TEMP_Topic:string" }
+
 String System_CPU_LOAD "CPU Load [%s %%]" <line> { channel="exec:command:getcpuload:output" }
+String System_CPU_LOAD_Topic { channel="mqtt:topic:mosquitto:System_CPU_LOAD_Topic:string" }
+
 String System_CPU_UPTIME "Uptime [%s]" <status> { channel="exec:command:getuptime:output" }
 String System_Used_Space "Used Disk [%s]" <pie> { channel="exec:command:getuseddiskspace:output" }
+String System_Used_Space_Topic { channel="mqtt:topic:mosquitto:System_Used_Space_Topic:string" }
 
 String System_TZ "Timezone [%s]" <time> { channel="exec:command:gettz:output" }
 String System_TZ_Set "Timezone [%s]" <time>
 
-String TempUnit "Temperature Unit []" <temperature> { channel="exec:command:gettempunit:output" }
+String BackupButton "Backup [%s]"
+Switch BackupCommand "Backup" { channel="exec:command:backupcommand:run" }
+String BackupTimestampCommand "Last Backup [%s]" <calendar> { channel="exec:command:getbackuptimestampcommand:output" }
+
+String RestoreButton "Restore [%s]" <switch>
+Switch RestoreCommand "Restore" { channel="exec:command:restorecommand:run" }
+
+String GitInstalledVersion "Installed version [%s]" <shield>
+String GitLatestVersion "Latest version [%s]" <returnpipe>
+String GitInstallLatestVersion "Update & restart [%s]" <returnpipe>
 
 String RebootButton "Reboot" <switch>
 String ShutdownButton "Shutdown" <switch>
 Switch RebootCommand "Reboot" { channel="exec:command:rebootcommand:run" }
 Switch ShutdownCommand "Shutdown" { channel="exec:command:shutdowncommand:run" }
 
-String BackupButton "Backup [%s]" <switch>
-Switch BackupCommand "Backup" { channel="exec:command:backupcommand:run" }
-Switch BackupTimestampCommand { channel="exec:command:getbackuptimestampcommand:output" }
-
-String RestoreButton "Restore [%s]" <switch>
-Switch RestoreCommand "Restore" { channel="exec:command:restorecommand:run" }
-
 Number Heating2Time "Delay [%.0f min]" <clock>
-Number Heating2Delta "Threshold [%.1f °C]" <temperature>
+Number Heating2Delta "Threshold [%.1f °]" <temperature>
 Number Heating2InitialTemp "Heating2InitialTemp [%.1f ]"
 
-String SystemType "System Type []" <pump> { channel="exec:command:getsystemtype:output" }
-String HumidityMode "Humidity Mode []" <water> { channel="exec:command:gethumiditymode:output" }
-String Season "Season []" <calendar> { channel="exec:command:getseason:output" }
-String US_Summer
+String TempUnit "Temperature Unit []" <temperature> { channel="exec:command:gettempunit:output" }
+String TempUnit_Topic { channel="mqtt:topic:mosquitto:TempUnit_Topic:string" }
 
+String SystemType "System Type []" <pump> { channel="exec:command:getsystemtype:output" }
+String SystemType_Topic { channel="mqtt:topic:mosquitto:SystemType_Topic:string" }
+
+String HumidityType "Humidity Mode []" <water> { channel="exec:command:gethumiditymode:output" }
 //    SETTINGS END    /////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

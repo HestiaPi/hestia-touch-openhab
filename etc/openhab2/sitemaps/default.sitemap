@@ -1,25 +1,33 @@
 sitemap default label="Main Menu"
 {
-  Frame label="Heating" visibility=[Season=="WINTER"] {
-    Switch item=HeatingMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
-    Text item=MyTempProxyC visibility=[TempUnit=="C"]
-    Text item=MyTempProxyF visibility=[TempUnit=="F"]
-    Setpoint item=HeatingBoostTime minValue=10 maxValue=1440 step=10 icon="clock"
-    Setpoint item=TempSetpointC minValue=0 maxValue=40 step=0.5 icon="temperature" visibility=[TempUnit=="C"]
-    Setpoint item=TempSetpointF minValue=32 maxValue=100 step=1 icon="temperature" visibility=[TempUnit=="F"]
-  }
-
-  Frame label="Cooling" visibility=[US_Summer==ON] {
-    Switch item=CoolingMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
-    Text item=MyTempProxyC visibility=[TempUnit=="C"]
-    Text item=MyTempProxyF visibility=[TempUnit=="F"]
-    Setpoint item=CoolingBoostTime minValue=10 maxValue=1440 step=10 icon="clock"
+  Frame label="Temperature" visibility=[SystemType=="US"] {
     Setpoint item=TempSetpointC minValue=0 maxValue=40 step=0.5 icon="temperature" visibility=[TempUnit=="C"]
     Setpoint item=TempSetpointF minValue=32 maxValue=86 step=1 icon="temperature" visibility=[TempUnit=="F"]
+    Text item=MyTempProxyC visibility=[TempUnit=="C"]
+    Text item=MyTempProxyF visibility=[TempUnit=="F"]
+  }
+
+  Frame label="Heating" visibility=[SystemType=="US"] {
+    Switch item=HeatingMode mappings=[ "ON"="AUTO", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
+    Setpoint item=HeatingBoostTime minValue=10 maxValue=1440 step=10 icon="clock"
+  }
+
+  Frame label="Cooling" visibility=[SystemType=="US"] {
+    Switch item=CoolingMode mappings=[ "ON"="AUTO", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
+    Setpoint item=CoolingBoostTime minValue=10 maxValue=1440 step=10 icon="clock"
   }
 
   Frame label="Fan" visibility=[SystemType=="US"] {
     Switch item=FanMode mappings=[ "ON"="ON", "OFF"="OFF", "AUTO"="AUTO"]
+  }
+
+  Frame label="Heating" visibility=[SystemType=="EU"] {
+    Switch item=HeatingMode mappings=[ "ON"="AUTO", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
+    Setpoint item=TempSetpointC minValue=0 maxValue=40 step=0.5 icon="temperature" visibility=[TempUnit=="C"]
+    Setpoint item=TempSetpointF minValue=32 maxValue=100 step=1 icon="temperature" visibility=[TempUnit=="F"]
+    Setpoint item=HeatingBoostTime minValue=10 maxValue=1440 step=10 icon="clock"
+    Text item=MyTempProxyC visibility=[TempUnit=="C"]
+    Text item=MyTempProxyF visibility=[TempUnit=="F"]
   }
 
   Frame label="Hot Water" visibility=[SystemType=="EU"] {
@@ -28,33 +36,40 @@ sitemap default label="Main Menu"
   }
 
   Frame label="Humidity" visibility=[SystemType=="EU"] {
-    Switch item=HumiMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
+    Switch item=HumidityMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
     Text item=MyHumiProxy
     Setpoint item=HumiBoostTime minValue=10 maxValue=120 step=10 icon="clock"
-    Setpoint item=HumiSetpoint minValue=0 maxValue=100 step=5 icon="humidity"
+    Setpoint item=HumiSetpoint minValue=0 maxValue=100 step=1 icon="humidity"
   }
 
   Frame label="Configuration" {
     Text item=SettingsPage label="Settings" {
       Frame {
-        Group item=settings label="Maintenance" icon="switch" {
+        Group item=settings label="Maintenance" icon="error" {
           Frame {
-            Switch item=BackupButton mappings=["ON"="Backup"]
-            Switch item=RestoreButton mappings=["ON"="Restore"]
-            Switch item=RebootButton mappings=["ON"="Reboot"]
-            Switch item=ShutdownButton mappings=["ON"="Shutdown"]
+            Switch item=MainSwitch mappings=[ "ON"="ON", "OFF"="OFF"]
+            Switch item=BackupButton icon="lock" mappings=["ON"="Backup"]
+            Switch item=BackupTimestampCommand mappings=["ON"="Check"]
+            Switch item=RestoreButton icon="lock" mappings=["ON"="Restore"]
+
+            Switch item=GitInstalledVersion mappings=["ON"="Check"]
+            Switch item=GitLatestVersion mappings=["ON"="Check"]
+            Switch item=GitInstallLatestVersion mappings=["ON"="Update"]
+
+            Switch item=RebootButton icon="sunrise" mappings=["ON"="Reboot"]
+            Switch item=ShutdownButton icon="sunset" mappings=["ON"="Shutdown"]
           }
         }
         Group item=settings label="2nd Stage Heating" icon="heating" {
           Frame {
+            Switch item=Heating2 mappings=[ "ON"="ON", "OFF"="OFF"]
             Setpoint item=Heating2Delta minValue=0 maxValue=20 step=1 icon="temperature"
             Setpoint item=Heating2Time minValue=0 maxValue=120 step=1 icon="clock"
           }
         }
         Switch item=TempUnit mappings=["F"="°F", "C"="°C"]
-        Switch item=HumidityMode mappings=["Dehumidify"="Dehumidify", "Humidify"="Humidify"]
+        Switch item=HumidityType mappings=["Dehumidify"="Dehumidify", "Humidify"="Humidify"] visibility=[SystemType=="EU"]
         Switch item=SystemType mappings=["US"="HVAC", "EU"="Generic"]
-        Switch item=Season mappings=["WINTER"="WINTER", "SUMMER"="SUMMER"]
         Selection item=System_TZ_Set mappings=[  // THIS IS UNAVOIDABLY UGLY - START SCROLLING NOW
           "Africa/Abidjan"="Africa/Abidjan +00:00",
           "Africa/Accra"="Africa/Accra +00:00",
