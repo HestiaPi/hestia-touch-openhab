@@ -1,9 +1,0 @@
-Strategies {
-  // for rrd charts, we need a cron strategy
-  everyMinute : "0 * * * * ?"
-  default = everyMinute
-}
-
-Items {
-  TempSetpointChart,PreviousTempReading,TempMinSetpointChart,TempMaxSetpointChart,HumiSetpointChart,PreviousHumiReading,PreviousPressureReading : strategy = everyMinute
-}
