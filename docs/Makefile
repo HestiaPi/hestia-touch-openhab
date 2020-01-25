@@ -1,6 +1,9 @@
-.PHONY: all deps deps-debian
+.PHONY: all deps deps-debian clean
 
-all: deps hestiapi-one.pdf
+all: hestiapi-one.pdf
+
+clean:
+	rm -f hestiapi-one.aux hestiapi-one.log hestiapi-one.out hestiapi-one.pdf
 
 hestiapi-one.pdf: *.tex
 	# Have to compile it twice to generate/obtain forward references
