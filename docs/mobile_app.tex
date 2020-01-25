@@ -1,1 +1,28 @@
-To be done...
+The interface for the mobile app is almost identical to the basic UI of the
+webpage (covered in section \ref{Webpage}).  The only signficiant differences
+are getting the application and connecting to the HestiaPi.
+
+The application can be downloaded from the
+\href{https://play.google.com/store/apps/details?id=org.openhab.habdroid&hl=en_US}
+{Google Play store}, or \href{https://apps.apple.com/us/app/openhab/id492054521}
+{Apple's App store}.  Ideally, as long as your mobile device is connected to
+the same network as the HestiaPi, the app should automatically find the
+HestiaPi's OpenHAB server.  If this works as expected, everything should look
+similar to the screenshots shown in figure \ref{fig:Web UI}.
+
+If the server is not found, the hamburger menu in the top left (three
+horizontal lines) will bring up a menu that allows access to the settings.  In
+the settings menu, there is a Local section which allows connecting to a local
+OpenHAB server.  The app refuses to connect to unencrypted web servers when the
+URL is entered manually, so the URL should be slightly different than described
+in the web UI: \texttt{https://[YOUR\_HESTIA\_IP]:8443/}  Once the URL is
+entered, return to the settings screen and in the local section, it should say
+``Insecurely connected to \texttt{YOUR\_HESTIA\_IP}''.  It says the connection
+is insecure because the app has no way to verify that the server is actually
+the correct one.  The app will work fine when connected ``insecurely'' and to
+get a secure connection requires quite a bit of effort and technical know-how.
+For instructions on how to get the app to say it's a secure connection, see
+the ``\nameref{Set up TLS}'' section (\ref{Set up TLS}).
+
+Now that the application is connected to the server, click the back arrow to
+return to the Main Menu.
