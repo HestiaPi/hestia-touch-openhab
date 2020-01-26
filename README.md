@@ -11,12 +11,15 @@ You can do all this securely and with confidence your private data stays private
 
 HestiaPi Touch is compatible with many devices and home automation systems and can serve as a central point of control that ties them all together in your home.
 
+For **HestiaPi Touch ONE** select "Branch" menu above and then "ONE"
+
 # Useful links
 
 * [Main website](https://hestiapi.com/)
 * [Documentation & Getting Started Guides](https://github.com/HestiaPi/hestia-touch-openhab/wiki)
 * [Community forum](https://community.hestiapi.com/)
-* [Code (this repo)](https://github.com/HestiaPi/hestia-touch-openhab)
+* [Code (this repo)](https://github.com/HestiaPi/hestia-touch-openhab) - For **HestiaPi Touch ONE** select "Branch" menu above and then "ONE"
+
 * [Electronics](https://github.com/HestiaPi/hestia-touch-pcb-dev)
 * [3D Case](https://github.com/HestiaPi/hestia-touch-case)
 

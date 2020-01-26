@@ -1,0 +1,38 @@
+\subsubsection{How to edit files via SSH}
+If you are very new to command line interface we would advise you taking a
+short online course by searching for ``linux command line interface'' on your
+favourite website.
+
+To edit a file while you are inside SSH use the command
+
+\texttt{sudo nano /path/to/your/file}
+
+Then leave your mouse alone as it does not control you cursor anymore
+
+Use only your keyboard and once you are done, press Ctrl+O to save and Ctrl+X to close.
+
+\subsubsection{Start OpenHAB2 in Debug Mode}
+
+For OpenHAB2 (v10.x image -- July 2018)
+To monitor the OpenHAB logs without stopping the service run
+
+\texttt{openhab-cli showlogs}
+
+To start OpenHAB manually after stopping the service run
+
+\texttt{openhab-cli start}
+
+For older OpenHAB installations:
+Stop OpenHAB first
+
+\texttt{sudo service openhab2 stop}
+
+and when it is stopped, start it manually
+
+\texttt{/usr/share/openhab2/start\_debug.sh}
+
+once (if) loaded type inside the OpenHAB session
+
+\texttt{log:tail}
+
+and notice any issues.
