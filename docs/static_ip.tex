@@ -1,0 +1,53 @@
+Setting a static IP address on a Raspberry Pi can be done with either the
+dhcpcd or the networking service.  These are documented in more detail
+\href{https://raspberrypi.stackexchange.com/questions/37920/how-do-i-set-up-networking-wifi-static-ip-address/74428#74428}
+{on this stackexchange post}, so this guide only goes over the basics.  The
+dhcpcd option has been thoroughly tested with the HestiPi in particular, but
+the networking option should also work, as that has been tested with Raspberry
+Pis in general.
+
+A third option is to get a dynamic IP address every time the HestiaPi starts
+up, but configure your router to look at the MAC address that the request came
+from and always assign the same dynamic address.  This process will be
+different for every router and can not be covered in this documentation.  For
+instructions on how to do this, consult your router's documentation.
+
+\subsubsection{Configuring dhcpcd}
+Using dhcpcd to configure a static IP address requires editing
+\texttt{/etc/dhcpcd.conf} and restarting the dhcpcd service.  The configuration
+file contains some commented out examples, which look similar to this:
+
+\begin{verbatim}
+interface wlan0
+static ip_address=10.1.1.31/24
+static routers=10.1.1.1
+static domain_name_servers=10.1.1.1
+\end{verbatim}
+
+Then run \texttt{sudo systemctl restart dhcpcd} to start using the new
+configuration.  The system will then have two IP addresses, the DHCP assigned
+one that it already had, and the newly assigned one.  This is because dhcpcd
+doesn't remove any IP addresses.  When the HestiaPi is rebooted, it will only
+have the static IP address.
+
+\subsubsection{Configuring Networking Service}
+The other option is to just disable DHCP all together and set the static IP
+address in \texttt{/etc/network/interfaces}.  The configuration would look
+similar to the example below:
+
+\begin{verbatim}
+iface wlan0 inet static
+    address 10.1.1.31
+    netmask 255.255.255.0
+    gateway 10.1.1.1
+    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+\end{verbatim}
+
+Once this is set, run \texttt{sudo systemctl disable dhcpcd} to make sure
+it doesn't cause any issues, then run \texttt{sudo systemctl enable networking}
+This should reconfigure the interface to use only the staticly assigned IP
+address.  Unlike the dhcpcd option, this means your SSH connection will be
+terminated and you will have to SSH into the machine again, but this also
+avoids a reboot (however rebooting is still recommended to verify that the
+IP address is set properly on boot).
+
