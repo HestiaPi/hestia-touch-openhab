@@ -67,9 +67,9 @@ when
     Item TempSetpointC changed
 then
     if (TempUnit.state == "C") {
-      TempSetpoint.sendCommand(TempSetpointC.state as DecimalType)
+      TempSetpoint.sendCommand(TempSetpointC.state as Number)
     } else {
-      TempSetpoint.sendCommand(TempSetpointF.state as DecimalType)
+      TempSetpoint.sendCommand(TempSetpointF.state as Number)
     }
 end
 
@@ -78,9 +78,9 @@ when
     Item TempSetpoint changed
 then
     if (TempUnit.state == "C") {
-      postUpdate(TempSetpointC, (TempSetpoint.state as DecimalType))
+      postUpdate(TempSetpointC, (TempSetpoint.state as Number))
     } else {
-      postUpdate(TempSetpointF, (TempSetpoint.state as DecimalType))
+      postUpdate(TempSetpointF, (TempSetpoint.state as Number))
     }
 end
 
@@ -90,9 +90,9 @@ when
     Item MyTempProxyC changed
 then
     if (TempUnit.state == "C") {
-      MyTempProxy.sendCommand(MyTempProxyC.state as DecimalType)
+      MyTempProxy.sendCommand(MyTempProxyC.state as Number)
     } else {
-      MyTempProxy.sendCommand(MyTempProxyF.state as DecimalType)
+      MyTempProxy.sendCommand(MyTempProxyF.state as Number)
     }
 end
 
@@ -101,9 +101,9 @@ when
     Item MyTempProxy changed
 then
     if (TempUnit.state == "C") {
-      MyTempProxyC.sendCommand(MyTempProxy.state as DecimalType)
+      MyTempProxyC.sendCommand(MyTempProxy.state as Number)
     } else {
-      MyTempProxyF.sendCommand(MyTempProxy.state as DecimalType)
+      MyTempProxyF.sendCommand(MyTempProxy.state as Number)
     }
 end
 
@@ -240,8 +240,8 @@ then
       /*****  SECOND STAGE HEATING START  *****/
       //Only if Heating2InitialTemp is 0 update it
 
-      logInfo("Default","Starting Heating2Timer timer to " + (Heating2Time.state as DecimalType).intValue + " minutes.")
-      Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as DecimalType).intValue)) [|
+      logInfo("Default","Starting Heating2Timer timer to " + Heating2Time.state + " minutes.")
+      Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as Number).intValue)) [|
         if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) < ((Double::parseDouble(TempSetpoint.state.toString)))) {
           //If it is still cold enough start 2nd stage
           Heating2Pin.sendCommand(ON)
@@ -297,8 +297,8 @@ then
               //Heating2InitialTemp.postUpdate(Double::parseDouble(MyTempProxy.state.toString))
               //logInfo("Default","Heating2InitialTemp was 0 and is now set to " + (Double::parseDouble(Heating2InitialTemp.state.toString)))
 
-              logInfo("Default","Starting Heating2Timer timer to " + (Heating2Time.state as DecimalType).intValue + " minutes.")
-              Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as DecimalType).intValue)) [|
+              logInfo("Default","Starting Heating2Timer timer to " + Heating2Time.state + " minutes.")
+              Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as Number).intValue)) [|
                 if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) < ((Double::parseDouble(TempSetpoint.state.toString)))) {
                   //If it is still cold enough start 2nd stage
                   Heating2Pin.sendCommand(ON)
@@ -495,10 +495,10 @@ rule "HeatingBoostTime changed"
 when
     Item HeatingBoostTime changed
 then
-    HeatingBoostTimeInitial = (HeatingBoostTime.state as DecimalType).intValue
+    HeatingBoostTimeInitial = HeatingBoostTime.state as Number 
     if (HeatingMode.state == "Boost") {
       if (HeatingBoostTimer !== null) {
-        HeatingBoostTimer.reschedule(now.plusMinutes((HeatingBoostTimeInitial).intValue))
+        HeatingBoostTimer.reschedule(now.plusMinutes(HeatingBoostTimeInitial.intValue))
       }
       if (HeatingBoostRemTime !== null) {
         HeatingBoostRemTime.reschedule(now.plusMinutes(1))
@@ -520,7 +520,7 @@ then
       HeatingBoostRemTime = null   // reset the timer
     }
 
-    HeatingBoostTimeInitial = (HeatingBoostTime.state as DecimalType).intValue;
+    HeatingBoostTimeInitial = HeatingBoostTime.state as Number
     HeatingBoostTimeInitialUI = HeatingBoostTimeInitial
 //    sendNotification("your-myopenhab-account@email.com", "Heating started for " + HeatingBoostTimeInitial + " minutes")
 
@@ -546,8 +546,8 @@ then
           //Heating2InitialTemp.postUpdate(Double::parseDouble(MyTempProxy.state.toString))
           //logInfo("Default","Heating2InitialTemp was 0 and is now set to " + (Double::parseDouble(Heating2InitialTemp.state.toString)))
 
-          logInfo("Default","Starting Heating2Timer timer to " + (Heating2Time.state as DecimalType).intValue + " minutes.")
-          Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as DecimalType).intValue)) [|
+          logInfo("Default","Starting Heating2Timer timer to " + Heating2Time.state + " minutes.")
+          Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as Number).intValue)) [|
             if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) < ((Double::parseDouble(TempSetpoint.state.toString)))) {
               //If it is still cold enough start 2nd stage
               Heating2Pin.sendCommand(ON)
@@ -563,12 +563,12 @@ then
     }
 
     HeatingBoostRemTime = createTimer(now.plusMinutes(1)) [|
-        HeatingBoostTime.sendCommand((HeatingBoostTime.state as DecimalType).intValue -1)
+        HeatingBoostTime.sendCommand((HeatingBoostTime.state as Number) - 1)
         HeatingBoostRemTime.reschedule(now.plusMinutes(1))
     ]
 
-    logInfo("Default","Setting heating timer to " + (HeatingBoostTime.state as DecimalType).intValue)
-    HeatingBoostTimer = createTimer(now.plusMinutes(HeatingBoostTimeInitial)) [|
+    logInfo("Default","Setting heating timer to " + HeatingBoostTime.state)
+    HeatingBoostTimer = createTimer(now.plusMinutes(HeatingBoostTimeInitial.intValue)) [|
         if (HeatingBoostRemTime !== null) {
           HeatingBoostRemTime.cancel
           HeatingBoostRemTime = null   // reset the timer
@@ -585,7 +585,7 @@ when
 then
     logInfo("Default","Heating Boost finished")
 //    sendNotification("your-myopenhab-account@email.com", "Your house should be warm now ("+MyTempProxy.state+")")
-    if (((HeatingBoostTime.state as DecimalType).intValue < 10) || (HeatingBoostTimeInitial < 10)) {
+    if (((HeatingBoostTime.state as Number) < 10) || (HeatingBoostTimeInitial < 10)) {
       HeatingBoostTimeInitial = 10
     }
     HeatingBoostTime.sendCommand(HeatingBoostTimeInitialUI)
@@ -608,10 +608,10 @@ rule "HotWaterBoostTime changed"
 when
     Item HotWaterBoostTime changed
 then
-    HotWaterBoostTimeInitial = (HotWaterBoostTime.state as DecimalType).intValue
+    HotWaterBoostTimeInitial = HotWaterBoostTime.state as Number
     if (HotWaterMode.state == "Boost") {
       if (HotWaterBoostTimer !== null) {
-        HotWaterBoostTimer.reschedule(now.plusMinutes((HotWaterBoostTimeInitial).intValue))
+        HotWaterBoostTimer.reschedule(now.plusMinutes(HotWaterBoostTimeInitial.intValue))
       }
       if (HotWaterBoostRemTime !== null) {
         HotWaterBoostRemTime.reschedule(now.plusMinutes(1))
@@ -633,19 +633,19 @@ then
       HotWaterBoostRemTime = null   // reset the timer
     }
 
-    HotWaterBoostTimeInitial = (HotWaterBoostTime.state as DecimalType).intValue;
+    HotWaterBoostTimeInitial = HotWaterBoostTime.state as Number
     HotWaterBoostTimeInitialUI = HotWaterBoostTimeInitial
     HotWaterPin.sendCommand(ON)
 //    sendNotification("your-myopenhab-account@email.com", "Hot water started for " + HotWaterBoostTimeInitial + " minutes")
 
 
     HotWaterBoostRemTime = createTimer(now.plusMinutes(1)) [|
-        HotWaterBoostTime.sendCommand((HotWaterBoostTime.state as DecimalType).intValue -1)
+        HotWaterBoostTime.sendCommand((HotWaterBoostTime.state as Number) - 1)
         HotWaterBoostRemTime.reschedule(now.plusMinutes(1))
     ]
 
     logInfo("Default","Setting hot water timer to " + HotWaterBoostTimeInitial)
-    HotWaterBoostTimer = createTimer(now.plusMinutes(HotWaterBoostTimeInitial)) [|
+    HotWaterBoostTimer = createTimer(now.plusMinutes(HotWaterBoostTimeInitial.intValue)) [|
         if (HotWaterBoostRemTime !== null) {
           HotWaterBoostRemTime.cancel
           HotWaterBoostRemTime = null   // reset the timer
@@ -662,7 +662,7 @@ when
     Item HotWaterMode changed from Boost
 then
     logInfo("Default","Hot Water Boost finished")
-    if (((HotWaterBoostTime.state as DecimalType).intValue < 10) || (HotWaterBoostTimeInitial < 10)) {
+    if (((HotWaterBoostTime.state as Number) < 10) || (HotWaterBoostTimeInitial < 10)) {
       HotWaterBoostTimeInitial = 10
     }
     HotWaterBoostTime.sendCommand(HotWaterBoostTimeInitialUI)
@@ -685,10 +685,10 @@ rule "HumiBoostTime changed"
 when
     Item HumiBoostTime changed
 then
-    HumiBoostTimeInitial = (HumiBoostTime.state as DecimalType).intValue
+    HumiBoostTimeInitial = HumiBoostTime.state as Number
     if (HumidityMode.state == "Boost") {
       if (HumiBoostTimer !== null) {
-        HumiBoostTimer.reschedule(now.plusMinutes((HumiBoostTimeInitial).intValue))
+        HumiBoostTimer.reschedule(now.plusMinutes(HumiBoostTimeInitial.intValue))
       }
       if (HumiBoostRemTime !== null) {
         HumiBoostRemTime.reschedule(now.plusMinutes(1))
@@ -710,7 +710,7 @@ then
       HumiBoostRemTime = null   // reset the timer
     }
 
-    HumiBoostTimeInitial = (HumiBoostTime.state as DecimalType).intValue;
+    HumiBoostTimeInitial = HumiBoostTime.state as Number
     HumiBoostTimeInitialUI = HumiBoostTimeInitial
 
     if (((HumidityType.state == "Dehumidify") && (MyHumiProxy.state < HumiSetpoint.state)) || ((HumidityType.state == "Humidify") && (MyHumiProxy.state > HumiSetpoint.state))) {
@@ -720,12 +720,12 @@ then
     }
 
     HumiBoostRemTime = createTimer(now.plusMinutes(1)) [|
-        HumiBoostTime.sendCommand((HumiBoostTime.state as DecimalType).intValue -1)
+        HumiBoostTime.sendCommand((HumiBoostTime.state as Number) - 1)
         HumiBoostRemTime.reschedule(now.plusMinutes(1))
     ]
 
     logInfo("Default","Setting humidity timer to " + HumiBoostTimeInitial)
-    HumiBoostTimer = createTimer(now.plusMinutes(HumiBoostTimeInitial)) [|
+    HumiBoostTimer = createTimer(now.plusMinutes(HumiBoostTimeInitial.intValue)) [|
         if (HumiBoostRemTime !== null) {
           HumiBoostRemTime.cancel
           HumiBoostRemTime = null   // reset the timer
@@ -742,7 +742,7 @@ when
     Item HumidityMode changed from Boost
 then
     logInfo("Default","Humidity Boost finished")
-    if (((HumiBoostTime.state as DecimalType).intValue < 10) || (HumiBoostTimeInitial < 10)) {
+    if (((HumiBoostTime.state as Number) < 10) || (HumiBoostTimeInitial < 10)) {
       HumiBoostTimeInitial = 10
     }
     HumiBoostTime.sendCommand(HumiBoostTimeInitialUI)
