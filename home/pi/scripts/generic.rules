@@ -568,7 +568,7 @@ then
     ]
 
     logInfo("Default","Setting heating timer to " + HeatingBoostTime.state)
-    HeatingBoostTimer = createTimer(now.plusMinutes(HeatingBoostTimeInitial)) [|
+    HeatingBoostTimer = createTimer(now.plusMinutes(HeatingBoostTimeInitial.intValue)) [|
         if (HeatingBoostRemTime !== null) {
           HeatingBoostRemTime.cancel
           HeatingBoostRemTime = null   // reset the timer
@@ -645,7 +645,7 @@ then
     ]
 
     logInfo("Default","Setting hot water timer to " + HotWaterBoostTimeInitial)
-    HotWaterBoostTimer = createTimer(now.plusMinutes(HotWaterBoostTimeInitial)) [|
+    HotWaterBoostTimer = createTimer(now.plusMinutes(HotWaterBoostTimeInitial.intValue)) [|
         if (HotWaterBoostRemTime !== null) {
           HotWaterBoostRemTime.cancel
           HotWaterBoostRemTime = null   // reset the timer
@@ -725,7 +725,7 @@ then
     ]
 
     logInfo("Default","Setting humidity timer to " + HumiBoostTimeInitial)
-    HumiBoostTimer = createTimer(now.plusMinutes(HumiBoostTimeInitial)) [|
+    HumiBoostTimer = createTimer(now.plusMinutes(HumiBoostTimeInitial.intValue)) [|
         if (HumiBoostRemTime !== null) {
           HumiBoostRemTime.cancel
           HumiBoostRemTime = null   // reset the timer
