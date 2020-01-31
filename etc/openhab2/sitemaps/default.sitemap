@@ -45,7 +45,7 @@ sitemap default label="Main Menu"
   Frame label="Configuration" {
     Text item=SettingsPage label="Settings" {
       Frame {
-        Group item=settings label="Maintenance" icon="error" {
+        Text label="Maintenance" icon="error" {
           Frame {
             Switch item=MainSwitch mappings=[ "ON"="ON", "OFF"="OFF"]
             Switch item=BackupButton icon="lock" mappings=["ON"="Backup"]
@@ -60,7 +60,7 @@ sitemap default label="Main Menu"
             Switch item=ShutdownButton icon="sunset" mappings=["ON"="Shutdown"]
           }
         }
-        Group item=settings label="2nd Stage Heating" icon="heating" {
+        Text label="2nd Stage Heating" icon="heating" {
           Frame {
             Switch item=Heating2 mappings=[ "ON"="ON", "OFF"="OFF"]
             Setpoint item=Heating2Delta minValue=0 maxValue=20 step=1 icon="temperature"
