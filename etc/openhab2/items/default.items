@@ -1,4 +1,3 @@
-Group settings
 Group RestoreOnStartup
 
 Switch HeatingPin "Heating" { channel="mqtt:topic:mosquitto:HeatingPin:switch" }
