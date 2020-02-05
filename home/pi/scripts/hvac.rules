@@ -117,9 +117,9 @@ when
     Item TempSetpoint changed
 then
     if (TempUnit.state == "C") {
-      postUpdate(TempSetpointC, (TempSetpoint.state as Number)
+      postUpdate(TempSetpointC, TempSetpoint.state as Number)
     } else {
-      postUpdate(TempSetpointF, (TempSetpoint.state as Number)
+      postUpdate(TempSetpointF, TempSetpoint.state as Number)
     }
 end
 
