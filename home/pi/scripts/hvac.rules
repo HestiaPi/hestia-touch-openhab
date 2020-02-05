@@ -1,5 +1,3 @@
-import org.openhab.model.script.actions.Timer;
-
 var Timer HeatingBoostTimer = null
 var Timer HeatingBoostRemTime = null
 var Number HeatingBoostTimeInitial = 10
@@ -72,8 +70,8 @@ then
 
   // Initialize temp setpoint items
   if(TempUnit.state == "C") {
-    initSetpoint.apply(TempSetpoint, 18, 40, 0)
-    initSetpoint.apply(TempSetpointC, 18, 40, 0)
+    initSetpoint.apply(TempSetpoint, 22, 40, 0)
+    initSetpoint.apply(TempSetpointC, 22, 40, 0)
   }
   else{
     initSetpoint.apply(TempSetpoint, 70, 100, 32)
@@ -108,9 +106,9 @@ when
     Item TempSetpointC changed
 then
     if (TempUnit.state == "C") {
-      TempSetpoint.sendCommand(TempSetpointC.state as DecimalType)
+      TempSetpoint.sendCommand(TempSetpointC.state as Number)
     } else {
-      TempSetpoint.sendCommand(TempSetpointF.state as DecimalType)
+      TempSetpoint.sendCommand(TempSetpointF.state as Number)
     }
 end
 
@@ -119,9 +117,9 @@ when
     Item TempSetpoint changed
 then
     if (TempUnit.state == "C") {
-      postUpdate(TempSetpointC, (TempSetpoint.state as DecimalType))
+      postUpdate(TempSetpointC, (TempSetpoint.state as Number))
     } else {
-      postUpdate(TempSetpointF, (TempSetpoint.state as DecimalType))
+      postUpdate(TempSetpointF, (TempSetpoint.state as Number))
     }
 end
 
@@ -131,9 +129,9 @@ when
     Item MyTempProxyC changed
 then
     if (TempUnit.state == "C") {
-      MyTempProxy.sendCommand(MyTempProxyC.state as DecimalType)
+      MyTempProxy.sendCommand(MyTempProxyC.state as Number)
     } else {
-      MyTempProxy.sendCommand(MyTempProxyF.state as DecimalType)
+      MyTempProxy.sendCommand(MyTempProxyF.state as Number)
     }
 end
 
@@ -142,9 +140,9 @@ when
     Item MyTempProxy changed
 then
     if (TempUnit.state == "C") {
-      MyTempProxyC.sendCommand(MyTempProxy.state as DecimalType)
+      MyTempProxyC.sendCommand(MyTempProxy.state as Number)
     } else {
-      MyTempProxyF.sendCommand(MyTempProxy.state as DecimalType)
+      MyTempProxyF.sendCommand(MyTempProxy.state as Number)
     }
 end
 
@@ -234,8 +232,8 @@ then
   if(TempUnit.state == NULL) TempUnit.postUpdate(executeCommandLine("/home/pi/scripts/gettempunit.sh",60000))
 
   if (TempUnit.state == "C") {
-    if((TempSetpoint.state == NULL) || (TempSetpoint.state == UNDEF)) TempSetpoint.sendCommand(18.0)
-    //if((TempSetpointC.state == NULL) || (TempSetpointC.state == UNDEF)) postUpdate(TempSetpointC, 18.0)
+    if((TempSetpoint.state == NULL) || (TempSetpoint.state == UNDEF)) TempSetpoint.sendCommand(22.0)
+    //if((TempSetpointC.state == NULL) || (TempSetpointC.state == UNDEF)) postUpdate(TempSetpointC, 22.0)
   } else {
     if((TempSetpoint.state == NULL) || (TempSetpoint.state == UNDEF)) TempSetpoint.sendCommand(70)
     //if((TempSetpointF.state == NULL) || (TempSetpointF.state == UNDEF)) postUpdate(TempSetpointF, 70)
@@ -284,8 +282,8 @@ then
       /*****  SECOND STAGE HEATING START  *****/
       //Only if Heating2InitialTemp is 0 update it
 
-      logInfo("Default","Starting Heating2Timer timer to " + (Heating2Time.state as DecimalType).intValue + " minutes.")
-      Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as DecimalType).intValue)) [|
+      logInfo("Default","Starting Heating2Timer timer to " + Heating2Time.state + " minutes.")
+      Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as Number).intValue)) [|
         if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) < ((Double::parseDouble(TempSetpoint.state.toString)))) {
           //If it is still cold enough start 2nd stage
           Heating2Pin.sendCommand(ON)
@@ -329,8 +327,8 @@ then
               //Heating2InitialTemp.postUpdate(Double::parseDouble(MyTempProxy.state.toString))
               //logInfo("Default","Heating2InitialTemp was 0 and is now set to " + (Double::parseDouble(Heating2InitialTemp.state.toString)))
 
-              logInfo("Default","Starting Heating2Timer timer to " + (Heating2Time.state as DecimalType).intValue + " minutes.")
-              Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as DecimalType).intValue)) [|
+              logInfo("Default","Starting Heating2Timer timer to " + Heating2Time.state + " minutes.")
+              Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as Number).intValue)) [|
                 if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) < ((Double::parseDouble(TempSetpoint.state.toString)))) {
                   //If it is still cold enough start 2nd stage
                   Heating2Pin.sendCommand(ON)
@@ -479,7 +477,7 @@ rule "HeatingBoostTime changed"
 when
     Item HeatingBoostTime changed
 then
-    HeatingBoostTimeInitial = (HeatingBoostTime.state as DecimalType).intValue
+    HeatingBoostTimeInitial = HeatingBoostTime.state as Number
     if (HeatingMode.state == "Boost") {
       if (HeatingBoostTimer !== null) {
         HeatingBoostTimer.reschedule(now.plusMinutes((HeatingBoostTimeInitial).intValue))
@@ -505,7 +503,7 @@ then
       HeatingBoostRemTime = null   // reset the timer
     }
 
-    HeatingBoostTimeInitial = (HeatingBoostTime.state as DecimalType).intValue;
+    HeatingBoostTimeInitial = HeatingBoostTime.state as Number
     HeatingBoostTimeInitialUI = HeatingBoostTimeInitial
 //    sendNotification("your-myopenhab-account@email.com", "Heating started for " + HeatingBoostTimeInitial + " minutes")
 
@@ -531,8 +529,8 @@ then
           //Heating2InitialTemp.postUpdate(Double::parseDouble(MyTempProxy.state.toString))
           //logInfo("Default","Heating2InitialTemp was 0 and is now set to " + (Double::parseDouble(Heating2InitialTemp.state.toString)))
 
-          logInfo("Default","Starting Heating2Timer timer to " + (Heating2Time.state as DecimalType).intValue + " minutes.")
-          Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as DecimalType).intValue)) [|
+          logInfo("Default","Starting Heating2Timer timer to " + Heating2Time.state + " minutes.")
+          Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as Number).intValue)) [|
             if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) < ((Double::parseDouble(TempSetpoint.state.toString)))) {
               //If it is still cold enough start 2nd stage
               Heating2Pin.sendCommand(ON)
@@ -548,12 +546,12 @@ then
     }
 
     HeatingBoostRemTime = createTimer(now.plusMinutes(1)) [|
-        HeatingBoostTime.sendCommand((HeatingBoostTime.state as DecimalType).intValue -1)
+        HeatingBoostTime.sendCommand((HeatingBoostTime.state as Number) - 1)
         HeatingBoostRemTime.reschedule(now.plusMinutes(1))
     ]
 
-    logInfo("Default","Setting heating timer to " + (HeatingBoostTime.state as DecimalType).intValue)
-    HeatingBoostTimer = createTimer(now.plusMinutes(HeatingBoostTimeInitial)) [|
+    logInfo("Default","Setting heating timer to " + HeatingBoostTime.state)
+    HeatingBoostTimer = createTimer(now.plusMinutes(HeatingBoostTimeInitial.intValue)) [|
         if (HeatingBoostRemTime !== null) {
           HeatingBoostRemTime.cancel
           HeatingBoostRemTime = null   // reset the timer
@@ -570,7 +568,7 @@ when
 then
     logInfo("Default","Heating Boost finished")
 //    sendNotification("your-myopenhab-account@email.com", "Your house should be warm now ("+MyTempProxy.state+")")
-    if (((HeatingBoostTime.state as DecimalType).intValue < 10) || (HeatingBoostTimeInitial < 10)) {
+    if (((HeatingBoostTime.state as Number) < 10) || (HeatingBoostTimeInitial < 10)) {
       HeatingBoostTimeInitial = 10
     }
     HeatingBoostTime.sendCommand(HeatingBoostTimeInitialUI)
@@ -604,7 +602,7 @@ then
       CoolingBoostRemTime = null   // reset the timer
     }
 
-    CoolingBoostTimeInitial = (CoolingBoostTime.state as DecimalType).intValue;
+    CoolingBoostTimeInitial = CoolingBoostTime.state as Number
     CoolingBoostTimeInitialUI = CoolingBoostTimeInitial
 //    sendNotification("your-myopenhab-account@email.com", "Cooling started for " + CoolingBoostTimeInitial + " minutes")
 
@@ -616,12 +614,12 @@ then
     }
 
     CoolingBoostRemTime = createTimer(now.plusMinutes(1)) [|
-        CoolingBoostTime.sendCommand((CoolingBoostTime.state as DecimalType).intValue -1)
+        CoolingBoostTime.sendCommand((CoolingBoostTime.state as Number) - 1)
         CoolingBoostRemTime.reschedule(now.plusMinutes(1))
     ]
 
-    logInfo("Default","Setting cooling timer to " + (CoolingBoostTime.state as DecimalType).intValue)
-    CoolingBoostTimer = createTimer(now.plusMinutes(CoolingBoostTimeInitial)) [|
+    logInfo("Default","Setting cooling timer to " + CoolingBoostTime.state)
+    CoolingBoostTimer = createTimer(now.plusMinutes(CoolingBoostTimeInitial.intValue)) [|
         if (CoolingBoostRemTime !== null) {
           CoolingBoostRemTime.cancel
           CoolingBoostRemTime = null   // reset the timer
@@ -638,7 +636,7 @@ when
 then
     logInfo("Default","Cooling Boost finished")
 //    sendNotification("your-myopenhab-account@email.com", "Your house should be warm now ("+MyTempProxy.state+")")
-    if (((CoolingBoostTime.state as DecimalType).intValue < 10) || (CoolingBoostTimeInitial < 10)) {
+    if (((CoolingBoostTime.state as Number) < 10) || (CoolingBoostTimeInitial < 10)) {
       CoolingBoostTimeInitial = 10
     }
     CoolingBoostTime.sendCommand(CoolingBoostTimeInitialUI)
@@ -699,8 +697,8 @@ then
       var String results = executeCommandLine("/home/pi/scripts/F2C.sh",1000)
       results = results + "" // hide validation issue
       results = ""
-      //postUpdate(TempSetpoint, 18)
-      TempSetpoint.sendCommand(18)
+      //postUpdate(TempSetpoint, 22)
+      TempSetpoint.sendCommand(22)
     }
     System_CPU_TEMP.sendCommand(executeCommandLine("/home/pi/scripts/getcputemperature.sh",60000));
 end
@@ -722,8 +720,8 @@ then
       //postUpdate(TempSetpoint, 70)
       TempSetpoint.sendCommand(70)
     } else {
-      //postUpdate(TempSetpoint, 18)
-      TempSetpoint.sendCommand(18)
+      //postUpdate(TempSetpoint, 22)
+      TempSetpoint.sendCommand(22)
     }
 
     if (SystemType.state == "EU") {
