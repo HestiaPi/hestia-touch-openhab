@@ -544,7 +544,7 @@ then
     HeatingBoostTimeInitial = HeatingBoostTime.state as Number
     if (HeatingMode.state == "Boost") {
       if (HeatingBoostTimer !== null) {
-        HeatingBoostTimer.reschedule(now.plusMinutes((HeatingBoostTimeInitial).intValue))
+        HeatingBoostTimer.reschedule(now.plusMinutes(HeatingBoostTimeInitial.intValue))
       }
       if (HeatingBoostRemTime !== null) {
         HeatingBoostRemTime.reschedule(now.plusMinutes(1))
@@ -609,7 +609,7 @@ then
     }
 
     HeatingBoostRemTime = createTimer(now.plusMinutes(1)) [|
-        HeatingBoostTime.sendCommand((HeatingBoostTime.state as Number) -1)
+        HeatingBoostTime.sendCommand((HeatingBoostTime.state as Number) - 1)
         HeatingBoostRemTime.reschedule(now.plusMinutes(1))
     ]
 
@@ -708,7 +708,7 @@ when
     Item HotWaterMode changed from Boost
 then
     logInfo("Default","Hot Water Boost finished")
-    if (((HotWaterBoostTime.state as Number).intValue < 10) || (HotWaterBoostTimeInitial < 10)) {
+    if (((HotWaterBoostTime.state as Number) < 10) || (HotWaterBoostTimeInitial < 10)) {
       HotWaterBoostTimeInitial = 10
     }
     HotWaterBoostTime.sendCommand(HotWaterBoostTimeInitialUI)
