@@ -13,41 +13,93 @@ var Number CoolingBoostTimeInitial = 10
 var Number CoolingBoostTimeInitialUI = 10
 var String CoolingPreviousMode = "OFF"
 
-rule "Initialisation"
+rule "Initialization"
 when
     System started
 then
-    MainSwitch.sendCommand("OFF");
-    HeatingMode.sendCommand("OFF");
-    CoolingMode.sendCommand("OFF");
-    FanMode.sendCommand("OFF");
-    Heating2.sendCommand("OFF");
-    if (TempUnit.state == "C") {
-      if((TempSetpoint.state == NULL) || (TempSetpoint.state == UNDEF)) postUpdate(TempSetpoint, 22);
-      if((TempSetpointC.state == NULL) || (TempSetpointC.state == UNDEF)) postUpdate(TempSetpointC, 22);
-      if(TempSetpoint.state > 40) postUpdate(TempSetpoint, 22);
-      if(TempSetpointC.state > 40) postUpdate(TempSetpointC, 22);
-    } else {
-      if((TempSetpoint.state == NULL) || (TempSetpoint.state == UNDEF)) postUpdate(TempSetpoint, 70);
-      if((TempSetpointF.state == NULL) || (TempSetpointF.state == UNDEF)) postUpdate(TempSetpointF, 70);
-      if(TempSetpoint.state < 32) postUpdate(TempSetpoint, 70);
-      if(TempSetpointF.state < 32) postUpdate(TempSetpointF, 70);
+  val initLogName = "initialization"
+
+  logInfo(initLogName, "Initializing settings")
+
+  // Reusable lambdas to check and initialize Items
+  val initFromScript = [ GenericItem i, String cmd |
+    if(i.state == NULL || i.state == UNDEF){
+      logInfo(initLogName, i.name + " is undefined")
+      val results = executeCommandLine(cmd, 60000)
+      logInfo(initLogName, i.name + " is not set, initializing to " + results)
+      i.sendCommand(results)
     }
-    if((HeatingBoostTime.state == NULL) || (HeatingBoostTime.state == UNDEF)) HeatingBoostTime.sendCommand(10);
-    if((CoolingBoostTime.state == NULL) || (CoolingBoostTime.state == UNDEF)) CoolingBoostTime.sendCommand(10);
-    postUpdate(PreviousTempReading, 0);
-    postUpdate(PreviousHumiReading, 0);
-    Heating2Time.sendCommand(0);
-    Heating2Delta.sendCommand(0);
-    Network_WLAN_IP.sendCommand(executeCommandLine("/home/pi/scripts/getwlan0ip.sh",60000));
-    Network_SSID.sendCommand(executeCommandLine("/home/pi/scripts/getssid.sh",60000));
-    Network_WLAN_INFO.sendCommand(executeCommandLine("/home/pi/scripts/getwifiinfo.sh",60000));
-    Network_WLAN_MAC.sendCommand(executeCommandLine("/home/pi/scripts/getwlan0mac.sh",60000));
-    System_CPU_TEMP.sendCommand(executeCommandLine("/home/pi/scripts/getcputemperature.sh",60000));
-    System_CPU_LOAD.sendCommand(executeCommandLine("/home/pi/scripts/getcpuload.sh",60000));
-    System_Used_Space.sendCommand(executeCommandLine("/home/pi/scripts/getuseddiskspace.sh",60000));
-    TempUnit.sendCommand(executeCommandLine("/home/pi/scripts/gettempunit.sh",60000));
-    SystemType.sendCommand(executeCommandLine("/home/pi/scripts/getsystemtype.sh",60000));
+    else {
+        logInfo(initLogName, i.name + " is " + i.state)
+        i.sendCommand(i.state) // The UI requires the command
+    }
+  ]
+
+  val initState = [ GenericItem i, String initState |
+    if(i.state == NULL || i.state == UNDEF) {
+      logInfo(initLogName, i.name + " is not set, initializing to " + initState)
+      i.sendCommand(initState)
+    }
+    else {
+      logInfo(initLogName, i.name + " is " + i.state)
+      i.sendCommand(i.state) // The UI requires the command
+    }
+  ]
+
+  val initSetpoint = [ GenericItem i, Number value, Number max, Number min |
+    if(i.state == NULL || i.state == UNDEF || (i.state as Number) > max || (i.state as Number) < min) {
+      logInfo(initLogName, i.name + " is " + i.state + ", initializing to " + value)
+      i.postUpdate(value)
+    }
+    else {
+      logInfo(initLogName, i.name + " is " + i.state)
+      i.sendCommand(i.state) // The UI requires the command
+    }
+  ]
+
+  // Initialize type Items first
+  initFromScript.apply(SystemType, "/home/pi/scripts/getsystemtype.sh")
+  initFromScript.apply(TempUnit, "/home/pi/scripts/gettempunit.sh")
+  initFromScript.apply(HumidityType, "/home/pi/scripts/gethumiditymode.sh")
+
+  // Initialize mode Items
+  initState.apply(MainSwitch, "OFF")
+  initState.apply(HeatingMode, "OFF")
+  initState.apply(HotWaterMode, "OFF")
+  initState.apply(HumidityMode, "OFF")
+  initState.apply(Heating2, "OFF")
+//  initState.apply(HumiTopic, "0")
+
+  // Initialize temp setpoint items
+  if(TempUnit.state == "C") {
+    initSetpoint.apply(TempSetpoint, 18, 40, 0)
+    initSetpoint.apply(TempSetpointC, 18, 40, 0)
+  }
+  else{
+    initSetpoint.apply(TempSetpoint, 70, 100, 32)
+    initSetpoint.apply(TempSetpointF, 70, 100, 32)
+  }
+
+  // Initialize misc settings
+  initState.apply(HeatingBoostTime, "10")
+  initState.apply(HumiSetpoint, "50")
+  initState.apply(HotWaterBoostTime, "10")
+  initState.apply(HumiBoostTime, "10")
+  initState.apply(PreviousTempReading, "0")
+  initState.apply(PreviousHumiReading, "0")
+  initState.apply(Heating2Time, "0")
+  initState.apply(Heating2Delta, "0")
+
+  // Do not rely on old values for network and system stats
+  Network_WLAN_IP.sendCommand(executeCommandLine("/home/pi/scripts/getwlan0ip.sh",5000))
+  Network_SSID.sendCommand(executeCommandLine("/home/pi/scripts/getssid.sh",5000))
+  Network_WLAN_INFO.sendCommand(executeCommandLine("/home/pi/scripts/getwifiinfo.sh",5000))
+  Network_WLAN_MAC.sendCommand(executeCommandLine("/home/pi/scripts/getwlan0mac.sh",5000))
+  System_CPU_TEMP.sendCommand(executeCommandLine("/home/pi/scripts/getcputemperature.sh",5000))
+  System_CPU_LOAD.sendCommand(executeCommandLine("/home/pi/scripts/getcpuload.sh",5000))
+  System_Used_Space.sendCommand(executeCommandLine("/home/pi/scripts/getuseddiskspace.sh",5000))
+
+  logInfo("initialization", "Done initializing settings")
 end
 
 rule "TempSetpoint Proxy Set"
@@ -56,9 +108,9 @@ when
     Item TempSetpointC changed
 then
     if (TempUnit.state == "C") {
-      TempSetpoint.sendCommand(TempSetpointC.state as Number)
+      TempSetpoint.sendCommand(TempSetpointC.state as DecimalType)
     } else {
-      TempSetpoint.sendCommand(TempSetpointF.state as Number)
+      TempSetpoint.sendCommand(TempSetpointF.state as DecimalType)
     }
 end
 
@@ -67,9 +119,9 @@ when
     Item TempSetpoint changed
 then
     if (TempUnit.state == "C") {
-      postUpdate(TempSetpointC, TempSetpoint.state as Number)
+      postUpdate(TempSetpointC, (TempSetpoint.state as DecimalType))
     } else {
-      postUpdate(TempSetpointF, TempSetpoint.state as Number)
+      postUpdate(TempSetpointF, (TempSetpoint.state as DecimalType))
     }
 end
 
@@ -79,9 +131,9 @@ when
     Item MyTempProxyC changed
 then
     if (TempUnit.state == "C") {
-      MyTempProxy.sendCommand(MyTempProxyC.state as Number)
+      MyTempProxy.sendCommand(MyTempProxyC.state as DecimalType)
     } else {
-      MyTempProxy.sendCommand(MyTempProxyF.state as Number)
+      MyTempProxy.sendCommand(MyTempProxyF.state as DecimalType)
     }
 end
 
@@ -90,9 +142,9 @@ when
     Item MyTempProxy changed
 then
     if (TempUnit.state == "C") {
-      MyTempProxyC.sendCommand(MyTempProxy.state as Number)
+      MyTempProxyC.sendCommand(MyTempProxy.state as DecimalType)
     } else {
-      MyTempProxyF.sendCommand(MyTempProxy.state as Number)
+      MyTempProxyF.sendCommand(MyTempProxy.state as DecimalType)
     }
 end
 
@@ -182,8 +234,8 @@ then
   if(TempUnit.state == NULL) TempUnit.postUpdate(executeCommandLine("/home/pi/scripts/gettempunit.sh",60000))
 
   if (TempUnit.state == "C") {
-    if((TempSetpoint.state == NULL) || (TempSetpoint.state == UNDEF)) TempSetpoint.sendCommand(22.0)
-    //if((TempSetpointC.state == NULL) || (TempSetpointC.state == UNDEF)) postUpdate(TempSetpointC, 22.0)
+    if((TempSetpoint.state == NULL) || (TempSetpoint.state == UNDEF)) TempSetpoint.sendCommand(18.0)
+    //if((TempSetpointC.state == NULL) || (TempSetpointC.state == UNDEF)) postUpdate(TempSetpointC, 18.0)
   } else {
     if((TempSetpoint.state == NULL) || (TempSetpoint.state == UNDEF)) TempSetpoint.sendCommand(70)
     //if((TempSetpointF.state == NULL) || (TempSetpointF.state == UNDEF)) postUpdate(TempSetpointF, 70)
@@ -232,8 +284,8 @@ then
       /*****  SECOND STAGE HEATING START  *****/
       //Only if Heating2InitialTemp is 0 update it
 
-      logInfo("Default","Starting Heating2Timer timer to " + Heating2Time.state + " minutes.")
-      Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as Number).intValue)) [|
+      logInfo("Default","Starting Heating2Timer timer to " + (Heating2Time.state as DecimalType).intValue + " minutes.")
+      Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as DecimalType).intValue)) [|
         if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) < ((Double::parseDouble(TempSetpoint.state.toString)))) {
           //If it is still cold enough start 2nd stage
           Heating2Pin.sendCommand(ON)
@@ -277,8 +329,8 @@ then
               //Heating2InitialTemp.postUpdate(Double::parseDouble(MyTempProxy.state.toString))
               //logInfo("Default","Heating2InitialTemp was 0 and is now set to " + (Double::parseDouble(Heating2InitialTemp.state.toString)))
 
-              logInfo("Default","Starting Heating2Timer timer to " + Heating2Time.state + " minutes.")
-              Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as Number).intValue)) [|
+              logInfo("Default","Starting Heating2Timer timer to " + (Heating2Time.state as DecimalType).intValue + " minutes.")
+              Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as DecimalType).intValue)) [|
                 if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) < ((Double::parseDouble(TempSetpoint.state.toString)))) {
                   //If it is still cold enough start 2nd stage
                   Heating2Pin.sendCommand(ON)
@@ -427,7 +479,7 @@ rule "HeatingBoostTime changed"
 when
     Item HeatingBoostTime changed
 then
-    HeatingBoostTimeInitial = HeatingBoostTime.state as Number
+    HeatingBoostTimeInitial = (HeatingBoostTime.state as DecimalType).intValue
     if (HeatingMode.state == "Boost") {
       if (HeatingBoostTimer !== null) {
         HeatingBoostTimer.reschedule(now.plusMinutes((HeatingBoostTimeInitial).intValue))
@@ -453,7 +505,7 @@ then
       HeatingBoostRemTime = null   // reset the timer
     }
 
-    HeatingBoostTimeInitial = HeatingBoostTime.state as Number
+    HeatingBoostTimeInitial = (HeatingBoostTime.state as DecimalType).intValue;
     HeatingBoostTimeInitialUI = HeatingBoostTimeInitial
 //    sendNotification("your-myopenhab-account@email.com", "Heating started for " + HeatingBoostTimeInitial + " minutes")
 
@@ -479,8 +531,8 @@ then
           //Heating2InitialTemp.postUpdate(Double::parseDouble(MyTempProxy.state.toString))
           //logInfo("Default","Heating2InitialTemp was 0 and is now set to " + (Double::parseDouble(Heating2InitialTemp.state.toString)))
 
-          logInfo("Default","Starting Heating2Timer timer to " + Heating2Time.state + " minutes.")
-          Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as Number).intValue)) [|
+          logInfo("Default","Starting Heating2Timer timer to " + (Heating2Time.state as DecimalType).intValue + " minutes.")
+          Heating2Timer = createTimer(now.plusMinutes((Heating2Time.state as DecimalType).intValue)) [|
             if (((Double::parseDouble(MyTempProxy.state.toString)) + (Double::parseDouble(Heating2Delta.state.toString))) < ((Double::parseDouble(TempSetpoint.state.toString)))) {
               //If it is still cold enough start 2nd stage
               Heating2Pin.sendCommand(ON)
@@ -496,12 +548,12 @@ then
     }
 
     HeatingBoostRemTime = createTimer(now.plusMinutes(1)) [|
-        HeatingBoostTime.sendCommand((HeatingBoostTime.state as Number) - 1)
+        HeatingBoostTime.sendCommand((HeatingBoostTime.state as DecimalType).intValue -1)
         HeatingBoostRemTime.reschedule(now.plusMinutes(1))
     ]
 
-    logInfo("Default","Setting heating timer to " + HeatingBoostTime.state)
-    HeatingBoostTimer = createTimer(now.plusMinutes(HeatingBoostTimeInitial.intValue)) [|
+    logInfo("Default","Setting heating timer to " + (HeatingBoostTime.state as DecimalType).intValue)
+    HeatingBoostTimer = createTimer(now.plusMinutes(HeatingBoostTimeInitial)) [|
         if (HeatingBoostRemTime !== null) {
           HeatingBoostRemTime.cancel
           HeatingBoostRemTime = null   // reset the timer
@@ -518,7 +570,7 @@ when
 then
     logInfo("Default","Heating Boost finished")
 //    sendNotification("your-myopenhab-account@email.com", "Your house should be warm now ("+MyTempProxy.state+")")
-    if (((HeatingBoostTime.state as Number) < 10) || (HeatingBoostTimeInitial < 10)) {
+    if (((HeatingBoostTime.state as DecimalType).intValue < 10) || (HeatingBoostTimeInitial < 10)) {
       HeatingBoostTimeInitial = 10
     }
     HeatingBoostTime.sendCommand(HeatingBoostTimeInitialUI)
@@ -552,7 +604,7 @@ then
       CoolingBoostRemTime = null   // reset the timer
     }
 
-    CoolingBoostTimeInitial = CoolingBoostTime.state as Number
+    CoolingBoostTimeInitial = (CoolingBoostTime.state as DecimalType).intValue;
     CoolingBoostTimeInitialUI = CoolingBoostTimeInitial
 //    sendNotification("your-myopenhab-account@email.com", "Cooling started for " + CoolingBoostTimeInitial + " minutes")
 
@@ -564,12 +616,12 @@ then
     }
 
     CoolingBoostRemTime = createTimer(now.plusMinutes(1)) [|
-        CoolingBoostTime.sendCommand((CoolingBoostTime.state as Number) - 1)
+        CoolingBoostTime.sendCommand((CoolingBoostTime.state as DecimalType).intValue -1)
         CoolingBoostRemTime.reschedule(now.plusMinutes(1))
     ]
 
-    logInfo("Default","Setting cooling timer to " + CoolingBoostTime.state)
-    CoolingBoostTimer = createTimer(now.plusMinutes(CoolingBoostTimeInitial.intValue)) [|
+    logInfo("Default","Setting cooling timer to " + (CoolingBoostTime.state as DecimalType).intValue)
+    CoolingBoostTimer = createTimer(now.plusMinutes(CoolingBoostTimeInitial)) [|
         if (CoolingBoostRemTime !== null) {
           CoolingBoostRemTime.cancel
           CoolingBoostRemTime = null   // reset the timer
@@ -586,7 +638,7 @@ when
 then
     logInfo("Default","Cooling Boost finished")
 //    sendNotification("your-myopenhab-account@email.com", "Your house should be warm now ("+MyTempProxy.state+")")
-    if (((CoolingBoostTime.state as Number) < 10) || (CoolingBoostTimeInitial < 10)) {
+    if (((CoolingBoostTime.state as DecimalType).intValue < 10) || (CoolingBoostTimeInitial < 10)) {
       CoolingBoostTimeInitial = 10
     }
     CoolingBoostTime.sendCommand(CoolingBoostTimeInitialUI)
@@ -647,8 +699,8 @@ then
       var String results = executeCommandLine("/home/pi/scripts/F2C.sh",1000)
       results = results + "" // hide validation issue
       results = ""
-      //postUpdate(TempSetpoint, 22)
-      TempSetpoint.sendCommand(22)
+      //postUpdate(TempSetpoint, 18)
+      TempSetpoint.sendCommand(18)
     }
     System_CPU_TEMP.sendCommand(executeCommandLine("/home/pi/scripts/getcputemperature.sh",60000));
 end
@@ -670,8 +722,8 @@ then
       //postUpdate(TempSetpoint, 70)
       TempSetpoint.sendCommand(70)
     } else {
-      //postUpdate(TempSetpoint, 22)
-      TempSetpoint.sendCommand(22)
+      //postUpdate(TempSetpoint, 18)
+      TempSetpoint.sendCommand(18)
     }
 
     if (SystemType.state == "EU") {

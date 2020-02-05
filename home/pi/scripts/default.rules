@@ -7,18 +7,11 @@ var Number HeatingBoostTimeInitialUI = 10
 var String HeatingPreviousMode = "OFF"
 var Timer Heating2Timer = null
 
-var Timer HotWaterBoostTimer = null
-var Timer HotWaterBoostRemTime = null
-var Number HotWaterBoostTimeInitial = 10
-var Number HotWaterBoostTimeInitialUI = 10
-var String HotWaterPreviousMode = "OFF"
-
-var Timer HumiBoostTimer = null
-var Timer HumiBoostRemTime = null
-var Number HumiBoostTimeInitial = 10
-var Number HumiBoostTimeInitialUI = 10
-var String HumiPreviousMode = "OFF"
-//var Timer HumiTopicTimer = null
+var Timer CoolingBoostTimer = null
+var Timer CoolingBoostRemTime = null
+var Number CoolingBoostTimeInitial = 10
+var Number CoolingBoostTimeInitialUI = 10
+var String CoolingPreviousMode = "OFF"
 
 rule "Initialization"
 when
@@ -31,14 +24,13 @@ then
   // Reusable lambdas to check and initialize Items
   val initFromScript = [ GenericItem i, String cmd |
     if(i.state == NULL || i.state == UNDEF){
-      logInfo(initLogName, i.name + " is undefined")
       val results = executeCommandLine(cmd, 60000)
       logInfo(initLogName, i.name + " is not set, initializing to " + results)
       i.sendCommand(results)
     }
     else {
         logInfo(initLogName, i.name + " is " + i.state)
-        i.sendCommand(i.state) // The UI requires the command
+        i.sendCommand(i.state.toString) // The UI depends on these commands at startup
     }
   ]
 
@@ -49,7 +41,7 @@ then
     }
     else {
       logInfo(initLogName, i.name + " is " + i.state)
-      i.sendCommand(i.state) // The UI requires the command
+      i.sendCommand(i.state.toString) // The UI depends on these commands at startup
     }
   ]
 
@@ -60,7 +52,7 @@ then
     }
     else {
       logInfo(initLogName, i.name + " is " + i.state)
-      i.sendCommand(i.state) // The UI requires the command
+      i.sendCommand(i.state.toString) // The UI depends on these commands at startup
     }
   ]
 
@@ -77,17 +69,17 @@ then
   initState.apply(Heating2, "OFF")
 //  initState.apply(HumiTopic, "0")
 
-   // Initialize temp setpoint items
-   if(TempUnit.state == "C") {
+  // Initialize temp setpoint items
+  if(TempUnit.state == "C") {
     initSetpoint.apply(TempSetpoint, 18, 40, 0)
     initSetpoint.apply(TempSetpointC, 18, 40, 0)
   }
-  else {
+  else{
     initSetpoint.apply(TempSetpoint, 70, 100, 32)
     initSetpoint.apply(TempSetpointF, 70, 100, 32)
   }
 
-  // Initialize temp setpoint items
+  // Initialize misc settings
   initState.apply(HeatingBoostTime, "10")
   initState.apply(HumiSetpoint, "50")
   initState.apply(HotWaterBoostTime, "10")
@@ -161,12 +153,12 @@ when
 then
     switch(HeatingPin.state) {
       case ON: {
-        Pin23.sendCommand(ON)
+        Pin12.sendCommand(ON)
         //HeatingPinTopic.sendCommand(ON)
         logInfo("Default","HeatingPin set to ON.")
       }
       case OFF: {
-        Pin23.sendCommand(OFF)
+        Pin12.sendCommand(OFF)
         //HeatingPinTopic.sendCommand(OFF)
         logInfo("Default","HeatingPin set to OFF.")
       }
@@ -193,38 +185,38 @@ then
     }
 end
 
-rule "HotWaterPin changed"
+rule "CoolingPin changed"
 when
-    Item HotWaterPin changed
+    Item CoolingPin changed
 then
-    switch(HotWaterPin.state) {
+    switch(CoolingPin.state) {
       case ON: {
-        Pin12.sendCommand(ON)
-        //HotWaterPinTopic.sendCommand(ON)
-        logInfo("Default","HotWaterPin set to ON.")
+        Pin23.sendCommand(ON)
+        //CoolingPinTopic.sendCommand(ON)
+        logInfo("Default","CoolingPin set to ON.")
       }
       case OFF: {
-        Pin12.sendCommand(OFF)
-        //HotWaterPinTopic.sendCommand(OFF)
-        logInfo("Default","HotWaterPin set to OFF.")
+        Pin23.sendCommand(OFF)
+        //CoolingPinTopic.sendCommand(OFF)
+        logInfo("Default","CoolingPin set to OFF.")
       }
     }
 end
 
-rule "HumidityPin changed"
+rule "FanPin changed"
 when
-    Item HumidityPin changed
+    Item FanPin changed
 then
-    switch(HumidityPin.state) {
+    switch(FanPin.state) {
       case ON: {
         Pin18.sendCommand(ON)
-        //HumidityPinTopic.sendCommand(ON)
-        logInfo("Default","HumidityPin set to ON.")
+        //FanPinTopic.sendCommand(ON)
+        logInfo("Default","FanPin set to ON.")
       }
       case OFF: {
         Pin18.sendCommand(OFF)
-        //HumidityPinTopic.sendCommand(OFF)
-        logInfo("Default","HumidityPin set to OFF.")
+        //FanPinTopic.sendCommand(OFF)
+        logInfo("Default","FanPin set to OFF.")
       }
     }
 end
@@ -239,7 +231,6 @@ then
   if(PreviousTempReading.state == NULL) postUpdate(PreviousTempReading, 0)
   if(PreviousHumiReading.state == NULL) postUpdate(PreviousHumiReading, 0)
   if(TempUnit.state == NULL) TempUnit.postUpdate(executeCommandLine("/home/pi/scripts/gettempunit.sh",60000))
-  if(HumidityType.state == NULL) HumidityType.postUpdate(executeCommandLine("/home/pi/scripts/gethumiditymode.sh",60000))
 
   if (TempUnit.state == "C") {
     if((TempSetpoint.state == NULL) || (TempSetpoint.state == UNDEF)) TempSetpoint.sendCommand(18.0)
@@ -249,10 +240,7 @@ then
     //if((TempSetpointF.state == NULL) || (TempSetpointF.state == UNDEF)) postUpdate(TempSetpointF, 70)
   }
 
-  if((HumiSetpoint.state == NULL) || (HumiSetpoint.state == UNDEF)) HumiSetpoint.postUpdate(50.0)
   if((HeatingBoostTime.state == NULL) || (HeatingBoostTime.state == UNDEF)) HeatingBoostTime.postUpdate(10.0)
-  if((HotWaterBoostTime.state == NULL) || (HotWaterBoostTime.state == UNDEF)) HotWaterBoostTime.postUpdate(10.0)
-  if((HumiBoostTime.state == NULL) || (HumiBoostTime.state == UNDEF)) HumiBoostTime.postUpdate(10.0)
   if (Heating2.state.toString == "ON") {
     if((Heating2Time.state == NULL) || (Heating2Time.state == UNDEF)) Heating2Time.postUpdate(0)
     if((Heating2Delta.state == NULL) || (Heating2Delta.state == UNDEF)) Heating2Delta.postUpdate(0)
@@ -280,6 +268,13 @@ when
   Item TempSetpoint changed or
   Item PreviousTempReading changed
 then
+  if ((MyTempProxy.state > TempSetpoint.state) &&
+      ((CoolingMode.state=="ON") || (CoolingMode.state=="Boost"))) {
+    CoolingPin.sendCommand(ON)
+  } else {
+    CoolingPin.sendCommand(OFF)
+  }
+
   if ((MyTempProxy.state < TempSetpoint.state) &&
     ((HeatingMode.state=="ON") || (HeatingMode.state=="Boost"))) {
     HeatingPin.sendCommand(ON)
@@ -314,19 +309,6 @@ then
   }
 end
 
-rule "checkcurrhumi"
-when
-  Item HumiSetpoint changed or
-  Item PreviousHumiReading changed
-then
-  if (((HumidityType.state == "Dehumidify") && (MyHumiProxy.state < HumiSetpoint.state)) || ((HumidityType.state == "Humidify") && (MyHumiProxy.state > HumiSetpoint.state))){
-    HumidityPin.sendCommand(OFF)
-  } else if ((((HumidityType.state == "Dehumidify") && (MyHumiProxy.state > HumiSetpoint.state)) || ((HumidityType.state == "Humidify") && (MyHumiProxy.state < HumiSetpoint.state))) &&
-      ((HumidityMode.state=="ON") || (HumidityMode.state=="Boost"))) {
-    HumidityPin.sendCommand(ON)
-  }
-end
-
 rule "Heating Mode"
 when
     Item HeatingMode changed
@@ -334,6 +316,7 @@ then
     if(HeatingBoostTime.state == NULL) postUpdate(HeatingBoostTime, 10)
     switch(HeatingMode.state) {
       case "ON": {
+        if (FanMode.state == "OFF") FanMode.sendCommand("AUTO");
         if (MyTempProxy.state < TempSetpoint.state) {
           HeatingPin.sendCommand(ON)
 
@@ -395,54 +378,24 @@ then
     }
 end
 
-rule "Hot Water Mode"
+rule "Cooling Mode"
 when
-    Item HotWaterMode changed
+    Item CoolingMode changed
 then
-    if(HotWaterBoostTime.state == NULL) postUpdate(HotWaterBoostTime, 10)
-    switch(HotWaterMode.state) {
+    switch(CoolingMode.state) {
       case "ON": {
-        HotWaterPin.sendCommand(ON)
-        MainSwitch.sendCommand("ON")
-        HotWaterPreviousMode="ON"
-      }
-      case "OFF": {
-        HotWaterPin.sendCommand(OFF)
-        HotWaterPreviousMode="OFF"
-      }
-      case "Schedule": {
-        HotWaterPin.sendCommand(OFF)
-        MainSwitch.sendCommand("ON")
-        HotWaterPreviousMode="Schedule"
-      }
-      case "Boost": {
-        MainSwitch.sendCommand("ON")
-        // See below more...
-      }
-    }
-end
+        if (FanMode.state == "OFF") FanMode.sendCommand("AUTO");
+        if (MyTempProxy.state > TempSetpoint.state) {
+          CoolingPin.sendCommand(ON)
 
-rule "Humidity Mode"
-when
-    Item HumidityMode changed
-then
-    if(HumiBoostTime.state == NULL) postUpdate(HumiBoostTime, 10)
-    switch(HumidityMode.state) {
-      case "ON": {
-        if (((HumidityType.state == "Dehumidify") && (MyHumiProxy.state > HumiSetpoint.state)) || ((HumidityType.state == "Humidify") && (MyHumiProxy.state < HumiSetpoint.state))) {
-          HumidityPin.sendCommand(ON)
         }
+
         MainSwitch.sendCommand("ON")
-        HumiPreviousMode="ON"
+        CoolingPreviousMode="ON"
       }
       case "OFF": {
-        HumidityPin.sendCommand(OFF)
-        HumiPreviousMode="OFF"
-      }
-      case "Schedule": {
-        HumidityPin.sendCommand(OFF)
-        MainSwitch.sendCommand("ON")
-        HumiPreviousMode="Schedule"
+        CoolingPin.sendCommand(OFF)
+        CoolingPreviousMode="OFF"
       }
       case "Boost": {
         MainSwitch.sendCommand("ON")
@@ -451,48 +404,30 @@ then
     }
 end
 
-// rule "HumidityPin changed"
-// when
-//     Item HumidityPin changed
-// then
-//     switch(HumidityPin.state) {
-//       case ON: {
-//         HumiTopic.sendCommand("1")
-//       }
-//       case OFF: {
-//         HumiTopicTimer = createTimer(now.plusSeconds(5), [|
-//             HumiTopicTimer = null
-//         ])
-//         HumiTopic.sendCommand("0")
-//       }
-//     }
-// end
-
-// rule "Humidity Topic changed"
-// when
-//     Item HumiTopic changed
-// then
-//     switch(HumiTopic.state) {
-//       case "1",
-//       case "ON": {
-//         if (HumidityMode.state != "Boost") {
-//           HumidityMode.sendCommand("ON")
-//         }
-//         if (((HumidityType.state == "Dehumidify") && (MyHumiProxy.state < HumiSetpoint.state)) || ((HumidityType.state == "Humidify") && (MyHumiProxy.state > HumiSetpoint.state))) {
-//           HumiTopicTimer = createTimer(now.plusSeconds(5), [|
-//               HumiTopicTimer = null
-//           ])
-//           HumidityPin.sendCommand(OFF)
-//         }
-//       }
-//       case "0",
-//       case "OFF": {
-//         if (HumiTopicTimer === null) {
-//           HumidityMode.sendCommand("OFF")
-//         }
-//       }
-//     }
-// end
+rule "Fan Mode"
+when
+    Item FanMode changed
+then
+    switch(FanMode.state) {
+      case "ON": {
+        FanPin.sendCommand(ON)
+        MainSwitch.sendCommand("ON")
+        HeatingPreviousMode="ON"
+      }
+      case "OFF": {
+        if ((HeatingMode.state == "OFF") && (CoolingMode.state == "OFF")) {
+          FanPin.sendCommand(OFF)
+          HeatingPreviousMode="OFF"
+        } else {
+          FanMode.sendCommand("AUTO")
+        }
+      }
+      case "AUTO": {
+        MainSwitch.sendCommand("ON")
+        // See below more...
+      }
+    }
+end
 
 rule "MainSwitch"
 when
@@ -514,26 +449,26 @@ then
           HeatingMode.sendCommand("OFF")
         }
 
-        if (HotWaterMode.state == "ON") {
-          HotWaterPreviousMode="ON"
-          HotWaterMode.sendCommand("OFF")
-        } else if (HotWaterMode.state == "Schedule") {
-          HotWaterPreviousMode="Schedule"
-          HotWaterMode.sendCommand("OFF")
-        } else if (HotWaterMode.state == "Boost") {
-          HotWaterPreviousMode="Boost"
-          HotWaterMode.sendCommand("OFF")
+        if (CoolingMode.state == "ON") {
+          CoolingPreviousMode = "ON"
+          CoolingMode.sendCommand("OFF")
+        } else if (CoolingMode.state == "Schedule") {
+          CoolingPreviousMode="Schedule"
+          CoolingMode.sendCommand("OFF")
+        } else if (CoolingMode.state == "Boost") {
+          CoolingPreviousMode="Boost"
+          CoolingMode.sendCommand("OFF")
         }
 
-        if (HumidityMode.state == "ON") {
-          HumiPreviousMode = "ON"
-          HumidityMode.sendCommand("OFF")
-        } else if (HumidityMode.state == "Schedule") {
-          HumiPreviousMode="Schedule"
-          HumidityMode.sendCommand("OFF")
-        } else if (HumidityMode.state == "Boost") {
-          HumiPreviousMode="Boost"
-          HumidityMode.sendCommand("OFF")
+        if (FanMode.state == "ON") {
+          FanPreviousMode = "ON"
+          FanMode.sendCommand("OFF")
+        } else if (FanMode.state == "Schedule") {
+          FanPreviousMode="Schedule"
+          FanMode.sendCommand("OFF")
+        } else if (FanMode.state == "AUTO") {
+          FanPreviousMode="AUTO"
+          FanMode.sendCommand("OFF")
         }
       }
     }
@@ -558,6 +493,7 @@ rule "Boost Heating"
 when
     Item HeatingMode changed to Boost
 then
+    if (FanMode.state == "OFF") FanMode.sendCommand("AUTO");
     if((HeatingBoostTime.state == NULL) || (HeatingBoostTime.state == UNDEF)) HeatingBoostTime.sendCommand(10)
     if (HeatingBoostTimer !== null) {
       HeatingBoostTimer.cancel
@@ -652,160 +588,91 @@ then
     }
 end
 
-rule "HotWaterBoostTime changed"
+rule "Boost Cooling"
 when
-    Item HotWaterBoostTime changed
+    Item CoolingMode changed to Boost
 then
-    HotWaterBoostTimeInitial = (HotWaterBoostTime.state as DecimalType).intValue
-    if (HotWaterMode.state == "Boost") {
-      if (HotWaterBoostTimer !== null) {
-        HotWaterBoostTimer.reschedule(now.plusMinutes((HotWaterBoostTimeInitial).intValue))
-      }
-      if (HotWaterBoostRemTime !== null) {
-        HotWaterBoostRemTime.reschedule(now.plusMinutes(1))
-      }
+    if (FanMode.state == "OFF") FanMode.sendCommand("AUTO");
+    if((CoolingBoostTime.state == NULL) || (CoolingBoostTime.state == UNDEF)) CoolingBoostTime.sendCommand(10)
+    if (CoolingBoostTimer !== null) {
+      CoolingBoostTimer.cancel
+      CoolingBoostTimer = null   // reset the timer
     }
-end
-
-rule "Boost Hot Water"
-when
-    Item HotWaterMode changed to Boost
-then
-    if((HotWaterBoostTime.state == NULL) || (HotWaterBoostTime.state == UNDEF)) HotWaterBoostTime.sendCommand(10)
-    if (HotWaterBoostTimer !== null) {
-      HotWaterBoostTimer.cancel
-      HotWaterBoostTimer = null   // reset the timer
-    }
-    if (HotWaterBoostRemTime !== null) {
-      HotWaterBoostRemTime.cancel
-      HotWaterBoostRemTime = null   // reset the timer
+    if (CoolingBoostRemTime !== null) {
+      CoolingBoostRemTime.cancel
+      CoolingBoostRemTime = null   // reset the timer
     }
 
-    HotWaterBoostTimeInitial = (HotWaterBoostTime.state as DecimalType).intValue;
-    HotWaterBoostTimeInitialUI = HotWaterBoostTimeInitial
-    HotWaterPin.sendCommand(ON)
-//    sendNotification("your-myopenhab-account@email.com", "Hot water started for " + HotWaterBoostTimeInitial + " minutes")
+    CoolingBoostTimeInitial = (CoolingBoostTime.state as DecimalType).intValue;
+    CoolingBoostTimeInitialUI = CoolingBoostTimeInitial
+//    sendNotification("your-myopenhab-account@email.com", "Cooling started for " + CoolingBoostTimeInitial + " minutes")
 
 
-    HotWaterBoostRemTime = createTimer(now.plusMinutes(1)) [|
-        HotWaterBoostTime.sendCommand((HotWaterBoostTime.state as DecimalType).intValue -1)
-        HotWaterBoostRemTime.reschedule(now.plusMinutes(1))
+    if (MyTempProxy.state < TempSetpoint.state){
+      CoolingPin.sendCommand(OFF)
+    } else if (MyTempProxy.state > TempSetpoint.state) {
+      CoolingPin.sendCommand(ON)
+    }
+
+    CoolingBoostRemTime = createTimer(now.plusMinutes(1)) [|
+        CoolingBoostTime.sendCommand((CoolingBoostTime.state as DecimalType).intValue -1)
+        CoolingBoostRemTime.reschedule(now.plusMinutes(1))
     ]
 
-    logInfo("Default","Setting hot water timer to " + HotWaterBoostTimeInitial)
-    HotWaterBoostTimer = createTimer(now.plusMinutes(HotWaterBoostTimeInitial)) [|
-        if (HotWaterBoostRemTime !== null) {
-          HotWaterBoostRemTime.cancel
-          HotWaterBoostRemTime = null   // reset the timer
+    logInfo("Default","Setting cooling timer to " + (CoolingBoostTime.state as DecimalType).intValue)
+    CoolingBoostTimer = createTimer(now.plusMinutes(CoolingBoostTimeInitial)) [|
+        if (CoolingBoostRemTime !== null) {
+          CoolingBoostRemTime.cancel
+          CoolingBoostRemTime = null   // reset the timer
         }
-        HotWaterMode.sendCommand(HotWaterPreviousMode)
-        HotWaterBoostTimer = null   // reset the timer
-//        sendNotification("your-myopenhab-account@email.com", "Hot Water is ready!")
+        CoolingMode.sendCommand(CoolingPreviousMode)
+        CoolingBoostTimer = null   // reset the timer
     ]
 
 end
 
-rule "Boost Hot Water Ended"
+rule "Boost Cooling Ended"
 when
-    Item HotWaterMode changed from Boost
+    Item CoolingMode changed from Boost
 then
-    logInfo("Default","Hot Water Boost finished")
-    if (((HotWaterBoostTime.state as DecimalType).intValue < 10) || (HotWaterBoostTimeInitial < 10)) {
-      HotWaterBoostTimeInitial = 10
+    logInfo("Default","Cooling Boost finished")
+//    sendNotification("your-myopenhab-account@email.com", "Your house should be warm now ("+MyTempProxy.state+")")
+    if (((CoolingBoostTime.state as DecimalType).intValue < 10) || (CoolingBoostTimeInitial < 10)) {
+      CoolingBoostTimeInitial = 10
     }
-    HotWaterBoostTime.sendCommand(HotWaterBoostTimeInitialUI)
+    CoolingBoostTime.sendCommand(CoolingBoostTimeInitialUI)
 
-    logInfo("Timer", "Clearing Hot Water timers...")
-    if (HotWaterBoostTimer !== null) {
-      HotWaterBoostTimer.cancel()
-      HotWaterBoostTimer = null
-      logInfo("Timer", "HotWaterBoostTimer cleared")
+    logInfo("Timer", "Clearing Cooling timers...")
+    if (CoolingBoostTimer !== null) {
+      CoolingBoostTimer.cancel()
+      CoolingBoostTimer = null
+      logInfo("Timer", "CoolingBoostTimer cleared")
     }
 
-    if (HotWaterBoostRemTime !== null) {
-      HotWaterBoostRemTime.cancel()
-      HotWaterBoostRemTime = null
-      logInfo("Timer", "HotWaterBoostRemTime cleared")
+    if (CoolingBoostRemTime !== null) {
+      CoolingBoostRemTime.cancel()
+      CoolingBoostRemTime = null
+      logInfo("Timer", "CoolingBoostRemTime cleared")
     }
 end
 
-rule "HumiBoostTime changed"
+rule "FanControl"
 when
-    Item HumiBoostTime changed
+  Item HeatingPin changed or
+  Item CoolingPin changed or
+  Item FanMode changed
 then
-    HumiBoostTimeInitial = (HumiBoostTime.state as DecimalType).intValue
-    if (HumidityMode.state == "Boost") {
-      if (HumiBoostTimer !== null) {
-        HumiBoostTimer.reschedule(now.plusMinutes((HumiBoostTimeInitial).intValue))
+    if (FanMode.state == "AUTO") {
+      if ((HeatingPin.state == ON) || (CoolingPin.state == ON)) {
+        FanPin.sendCommand(ON)
       }
-      if (HumiBoostRemTime !== null) {
-        HumiBoostRemTime.reschedule(now.plusMinutes(1))
+      else {
+        FanPin.sendCommand(OFF)
       }
-    }
-end
-
-rule "Boost Humidity"
-when
-    Item HumidityMode changed to Boost
-then
-    if((HumiBoostTime.state == NULL) || (HumiBoostTime.state == UNDEF)) HumiBoostTime.sendCommand(10)
-    if (HumiBoostTimer !== null) {
-      HumiBoostTimer.cancel
-      HumiBoostTimer = null   // reset the timer
-    }
-    if (HumiBoostRemTime !== null) {
-      HumiBoostRemTime.cancel
-      HumiBoostRemTime = null   // reset the timer
-    }
-
-    HumiBoostTimeInitial = (HumiBoostTime.state as DecimalType).intValue;
-    HumiBoostTimeInitialUI = HumiBoostTimeInitial
-
-    if (((HumidityType.state == "Dehumidify") && (MyHumiProxy.state < HumiSetpoint.state)) || ((HumidityType.state == "Humidify") && (MyHumiProxy.state > HumiSetpoint.state))) {
-      HumidityPin.sendCommand(OFF)
-    } else if (((HumidityType.state == "Dehumidify") && (MyHumiProxy.state > HumiSetpoint.state)) || ((HumidityType.state == "Humidify") && (MyHumiProxy.state < HumiSetpoint.state))) {
-      HumidityPin.sendCommand(ON)
-    }
-
-    HumiBoostRemTime = createTimer(now.plusMinutes(1)) [|
-        HumiBoostTime.sendCommand((HumiBoostTime.state as DecimalType).intValue -1)
-        HumiBoostRemTime.reschedule(now.plusMinutes(1))
-    ]
-
-    logInfo("Default","Setting humidity timer to " + HumiBoostTimeInitial)
-    HumiBoostTimer = createTimer(now.plusMinutes(HumiBoostTimeInitial)) [|
-        if (HumiBoostRemTime !== null) {
-          HumiBoostRemTime.cancel
-          HumiBoostRemTime = null   // reset the timer
-        }
-        HumidityMode.sendCommand(HumiPreviousMode)
-        HumiBoostTimer = null   // reset the timer
-//        sendNotification("your-myopenhab-account@email.com", "Desired humidity reached!")
-    ]
-
-end
-
-rule "Boost Humidity Ended"
-when
-    Item HumidityMode changed from Boost
-then
-    logInfo("Default","Humidity Boost finished")
-    if (((HumiBoostTime.state as DecimalType).intValue < 10) || (HumiBoostTimeInitial < 10)) {
-      HumiBoostTimeInitial = 10
-    }
-    HumiBoostTime.sendCommand(HumiBoostTimeInitialUI)
-
-    logInfo("Timer", "Clearing Humidity timers...")
-    if (HumiBoostTimer !== null) {
-      HumiBoostTimer.cancel()
-      HumiBoostTimer = null
-      logInfo("Timer", "HumiBoostTimer cleared")
-    }
-
-    if (HumiBoostRemTime !== null) {
-      HumiBoostRemTime.cancel()
-      HumiBoostRemTime = null
-      logInfo("Timer", "HumiBoostRemTime cleared")
+    } else if (FanMode.state == "ON") {
+        FanPin.sendCommand(ON)
+    } else { //FanMode.state == "OFF"
+      FanPin.sendCommand(OFF)
     }
 end
 
@@ -815,8 +682,8 @@ when
 then
     MainSwitch.sendCommand("OFF");
     HeatingMode.sendCommand("OFF");
-    HotWaterMode.sendCommand("OFF");
-    HumidityMode.sendCommand("OFF");
+    CoolingMode.sendCommand("OFF");
+    FanMode.sendCommand("OFF");
     if (TempUnit.state == "F") {
       logInfo("Default","F Selected")
       //C2F.sendCommand("ON")
@@ -837,15 +704,6 @@ then
     System_CPU_TEMP.sendCommand(executeCommandLine("/home/pi/scripts/getcputemperature.sh",60000));
 end
 
-rule "HumidityTypeChanged"
-when
-  Item HumidityType changed
-then
-    HumidityMode.sendCommand("OFF");
-    HumiSetpoint.sendCommand(50);
-    HumiBoostTime.sendCommand(10);
-end
-
 rule "SystemTypeChanged"
 when
   Item SystemType changed from EU or
@@ -853,13 +711,11 @@ when
 then
     MainSwitch.sendCommand("OFF");
     HeatingMode.sendCommand("OFF");
-    HotWaterMode.sendCommand("OFF");
-    HumidityMode.sendCommand("OFF");
+    CoolingMode.sendCommand("OFF");
+    FanMode.sendCommand("OFF");
 
     HeatingBoostTime.sendCommand(10);
-    HotWaterBoostTime.sendCommand(10);
-    HumiBoostTime.sendCommand(10);
-    HumiSetpoint.sendCommand(50);
+    CoolingBoostTime.sendCommand(10);
 
     if (TempUnit.state == "F") {
       //postUpdate(TempSetpoint, 70)
