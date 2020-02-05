@@ -36,7 +36,7 @@ then
     }
     else {
         logInfo(initLogName, i.name + " is " + i.state)
-        i.sendCommand(i.state) // The UI requires the command
+        i.sendCommand(i.state.toString) // The UI requires the command
     }
   ]
 
@@ -47,7 +47,7 @@ then
     }
     else {
       logInfo(initLogName, i.name + " is " + i.state)
-      i.sendCommand(i.state) // The UI requires the command
+      i.sendCommand(i.state.toString) // The UI requires the command
     }
   ]
 
@@ -58,7 +58,7 @@ then
     }
     else {
       logInfo(initLogName, i.name + " is " + i.state)
-      i.sendCommand(i.state) // The UI requires the command
+      i.sendCommand(i.state.toString) // The UI requires the command
     }
   ]
 
