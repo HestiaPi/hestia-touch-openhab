@@ -1,5 +1,3 @@
-import org.openhab.model.script.actions.Timer;
-
 var Timer HeatingBoostTimer = null
 var Timer HeatingBoostRemTime = null
 var Number HeatingBoostTimeInitial = 10
@@ -13,41 +11,93 @@ var Number CoolingBoostTimeInitial = 10
 var Number CoolingBoostTimeInitialUI = 10
 var String CoolingPreviousMode = "OFF"
 
-rule "Initialisation"
+rule "Initialization"
 when
     System started
 then
-    MainSwitch.sendCommand("OFF");
-    HeatingMode.sendCommand("OFF");
-    CoolingMode.sendCommand("OFF");
-    FanMode.sendCommand("OFF");
-    Heating2.sendCommand("OFF");
-    if (TempUnit.state == "C") {
-      if((TempSetpoint.state == NULL) || (TempSetpoint.state == UNDEF)) postUpdate(TempSetpoint, 22);
-      if((TempSetpointC.state == NULL) || (TempSetpointC.state == UNDEF)) postUpdate(TempSetpointC, 22);
-      if(TempSetpoint.state > 40) postUpdate(TempSetpoint, 22);
-      if(TempSetpointC.state > 40) postUpdate(TempSetpointC, 22);
-    } else {
-      if((TempSetpoint.state == NULL) || (TempSetpoint.state == UNDEF)) postUpdate(TempSetpoint, 70);
-      if((TempSetpointF.state == NULL) || (TempSetpointF.state == UNDEF)) postUpdate(TempSetpointF, 70);
-      if(TempSetpoint.state < 32) postUpdate(TempSetpoint, 70);
-      if(TempSetpointF.state < 32) postUpdate(TempSetpointF, 70);
+  val initLogName = "initialization"
+
+  logInfo(initLogName, "Initializing settings")
+
+  // Reusable lambdas to check and initialize Items
+  val initFromScript = [ GenericItem i, String cmd |
+    if(i.state == NULL || i.state == UNDEF){
+      logInfo(initLogName, i.name + " is undefined")
+      val results = executeCommandLine(cmd, 60000)
+      logInfo(initLogName, i.name + " is not set, initializing to " + results)
+      i.sendCommand(results)
     }
-    if((HeatingBoostTime.state == NULL) || (HeatingBoostTime.state == UNDEF)) HeatingBoostTime.sendCommand(10);
-    if((CoolingBoostTime.state == NULL) || (CoolingBoostTime.state == UNDEF)) CoolingBoostTime.sendCommand(10);
-    postUpdate(PreviousTempReading, 0);
-    postUpdate(PreviousHumiReading, 0);
-    Heating2Time.sendCommand(0);
-    Heating2Delta.sendCommand(0);
-    Network_WLAN_IP.sendCommand(executeCommandLine("/home/pi/scripts/getwlan0ip.sh",60000));
-    Network_SSID.sendCommand(executeCommandLine("/home/pi/scripts/getssid.sh",60000));
-    Network_WLAN_INFO.sendCommand(executeCommandLine("/home/pi/scripts/getwifiinfo.sh",60000));
-    Network_WLAN_MAC.sendCommand(executeCommandLine("/home/pi/scripts/getwlan0mac.sh",60000));
-    System_CPU_TEMP.sendCommand(executeCommandLine("/home/pi/scripts/getcputemperature.sh",60000));
-    System_CPU_LOAD.sendCommand(executeCommandLine("/home/pi/scripts/getcpuload.sh",60000));
-    System_Used_Space.sendCommand(executeCommandLine("/home/pi/scripts/getuseddiskspace.sh",60000));
-    TempUnit.sendCommand(executeCommandLine("/home/pi/scripts/gettempunit.sh",60000));
-    SystemType.sendCommand(executeCommandLine("/home/pi/scripts/getsystemtype.sh",60000));
+    else {
+        logInfo(initLogName, i.name + " is " + i.state)
+        i.sendCommand(i.state.toString) // The UI requires the command
+    }
+  ]
+
+  val initState = [ GenericItem i, String initState |
+    if(i.state == NULL || i.state == UNDEF) {
+      logInfo(initLogName, i.name + " is not set, initializing to " + initState)
+      i.sendCommand(initState)
+    }
+    else {
+      logInfo(initLogName, i.name + " is " + i.state)
+      i.sendCommand(i.state.toString) // The UI requires the command
+    }
+  ]
+
+  val initSetpoint = [ GenericItem i, Number value, Number max, Number min |
+    if(i.state == NULL || i.state == UNDEF || (i.state as Number) > max || (i.state as Number) < min) {
+      logInfo(initLogName, i.name + " is " + i.state + ", initializing to " + value)
+      i.postUpdate(value)
+    }
+    else {
+      logInfo(initLogName, i.name + " is " + i.state)
+      i.sendCommand(i.state.toString) // The UI requires the command
+    }
+  ]
+
+  // Initialize type Items first
+  initFromScript.apply(SystemType, "/home/pi/scripts/getsystemtype.sh")
+  initFromScript.apply(TempUnit, "/home/pi/scripts/gettempunit.sh")
+  initFromScript.apply(HumidityType, "/home/pi/scripts/gethumiditymode.sh")
+
+  // Initialize mode Items
+  initState.apply(MainSwitch, "OFF")
+  initState.apply(HeatingMode, "OFF")
+  initState.apply(HotWaterMode, "OFF")
+  initState.apply(HumidityMode, "OFF")
+  initState.apply(Heating2, "OFF")
+//  initState.apply(HumiTopic, "0")
+
+  // Initialize temp setpoint items
+  if(TempUnit.state == "C") {
+    initSetpoint.apply(TempSetpoint, 22, 40, 0)
+    initSetpoint.apply(TempSetpointC, 22, 40, 0)
+  }
+  else{
+    initSetpoint.apply(TempSetpoint, 70, 100, 32)
+    initSetpoint.apply(TempSetpointF, 70, 100, 32)
+  }
+
+  // Initialize misc settings
+  initState.apply(HeatingBoostTime, "10")
+  initState.apply(HumiSetpoint, "50")
+  initState.apply(HotWaterBoostTime, "10")
+  initState.apply(HumiBoostTime, "10")
+  initState.apply(PreviousTempReading, "0")
+  initState.apply(PreviousHumiReading, "0")
+  initState.apply(Heating2Time, "0")
+  initState.apply(Heating2Delta, "0")
+
+  // Do not rely on old values for network and system stats
+  Network_WLAN_IP.sendCommand(executeCommandLine("/home/pi/scripts/getwlan0ip.sh",5000))
+  Network_SSID.sendCommand(executeCommandLine("/home/pi/scripts/getssid.sh",5000))
+  Network_WLAN_INFO.sendCommand(executeCommandLine("/home/pi/scripts/getwifiinfo.sh",5000))
+  Network_WLAN_MAC.sendCommand(executeCommandLine("/home/pi/scripts/getwlan0mac.sh",5000))
+  System_CPU_TEMP.sendCommand(executeCommandLine("/home/pi/scripts/getcputemperature.sh",5000))
+  System_CPU_LOAD.sendCommand(executeCommandLine("/home/pi/scripts/getcpuload.sh",5000))
+  System_Used_Space.sendCommand(executeCommandLine("/home/pi/scripts/getuseddiskspace.sh",5000))
+
+  logInfo("initialization", "Done initializing settings")
 end
 
 rule "TempSetpoint Proxy Set"

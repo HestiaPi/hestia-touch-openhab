@@ -1,3 +1,5 @@
+Group RestoreOnStartup
+
 Switch HeatingPin "Heating" { channel="mqtt:topic:mosquitto:HeatingPin:switch" }
 Switch Heating2Pin "Heating2" { channel="mqtt:topic:mosquitto:Heating2Pin:switch" }
 Switch CoolingPin "Cooling" { channel="mqtt:topic:mosquitto:CoolingPin:switch" }
@@ -21,24 +23,24 @@ Number MyHumiProxy "Humidity [%.0f %%]" <humidity> { channel="mqtt:topic:mosquit
 //String MyPressure "Pressure" <pressure> { channel="exec:command:getpress:output" }
 //Number MyPressureProxy "Pressure [%.2f hPa]" <pressure>  { channel="mqtt:topic:mosquitto:MyPressureProxy:pressure" }
 
-Number TempSetpoint "Proxy Temperature Setpoint[%.1f °-]" { channel="mqtt:topic:mosquitto:TempSetpoint:temperature", autoupdate="true" }
-Number TempSetpointC "Temperature Setpoint[%.1f °C]"
-Number TempSetpointF "Temperature Setpoint[%.0f °F]"
-Number PreviousTempReading "Temperature" <temperature>
-Number HumiSetpoint "Humidity Setpoint[%.0f %%]" { channel="mqtt:topic:mosquitto:HumiSetpoint:humidity", autoupdate="true" }
-Number PreviousHumiReading "Humidity" <humidity>
+Number TempSetpoint "Proxy Temperature Setpoint[%.1f °-]" (RestoreOnStartup) { channel="mqtt:topic:mosquitto:TempSetpoint:temperature", autoupdate="true" }
+Number TempSetpointC "Temperature Setpoint[%.1f °C]" (RestoreOnStartup)
+Number TempSetpointF "Temperature Setpoint[%.0f °F]" (RestoreOnStartup)
+Number PreviousTempReading "Temperature" <temperature> (RestoreOnStartup)
+Number HumiSetpoint "Humidity Setpoint[%.0f %%]" (RestoreOnStartup) { channel="mqtt:topic:mosquitto:HumiSetpoint:humidity", autoupdate="true" }
+Number PreviousHumiReading "Humidity" <humidity> (RestoreOnStartup)
 
-Number HeatingBoostTime "Heating Boost Time [%.0f min]" { channel="mqtt:topic:mosquitto:HeatingBoostTime:string", autoupdate="true" }
-Number CoolingBoostTime "Cooling Boost Time [%.0f min]" { channel="mqtt:topic:mosquitto:CoolingBoostTime:string", autoupdate="true" }
-Number HotWaterBoostTime "Hot Water Boost Time [%.0f min]" { channel="mqtt:topic:mosquitto:HotWaterBoostTime:string", autoupdate="true" }
-Number HumiBoostTime "Humidity Boost Time [%.0f min]" { channel="mqtt:topic:mosquitto:HumiBoostTime:string", autoupdate="true" }
-String HeatingMode "Heating Mode []" { channel="mqtt:topic:mosquitto:HeatingMode:string", autoupdate="true" }
-String CoolingMode "Cooling Mode []" { channel="mqtt:topic:mosquitto:CoolingMode:string", autoupdate="true" }
-String FanMode "Fan Mode []" { channel="mqtt:topic:mosquitto:FanMode:string", autoupdate="true" }
-String HotWaterMode "Hot Water Mode []" { channel="mqtt:topic:mosquitto:HotWaterMode:string", autoupdate="true" }
-String HumidityMode "Humidity Mode []" { channel="mqtt:topic:mosquitto:HumidityMode:string", autoupdate="true" }
-Switch Heating2 "2nd Stage Heating []"
-Switch MainSwitch "MainSwitch"
+Number HeatingBoostTime "Heating Boost Time [%.0f min]" (RestoreOnStartup) { channel="mqtt:topic:mosquitto:HeatingBoostTime:string", autoupdate="true" }
+Number CoolingBoostTime "Cooling Boost Time [%.0f min]" (RestoreOnStartup) { channel="mqtt:topic:mosquitto:CoolingBoostTime:string", autoupdate="true" }
+Number HotWaterBoostTime "Hot Water Boost Time [%.0f min]" (RestoreOnStartup) { channel="mqtt:topic:mosquitto:HotWaterBoostTime:string", autoupdate="true" }
+Number HumiBoostTime "Humidity Boost Time [%.0f min]" (RestoreOnStartup) { channel="mqtt:topic:mosquitto:HumiBoostTime:string", autoupdate="true" }
+String HeatingMode "Heating Mode []" (RestoreOnStartup) { channel="mqtt:topic:mosquitto:HeatingMode:string", autoupdate="true" }
+String CoolingMode "Cooling Mode []" (RestoreOnStartup) { channel="mqtt:topic:mosquitto:CoolingMode:string", autoupdate="true" }
+String FanMode "Fan Mode []" (RestoreOnStartup) { channel="mqtt:topic:mosquitto:FanMode:string", autoupdate="true" }
+String HotWaterMode "Hot Water Mode []" (RestoreOnStartup) { channel="mqtt:topic:mosquitto:HotWaterMode:string", autoupdate="true" }
+String HumidityMode "Humidity Mode []" (RestoreOnStartup) { channel="mqtt:topic:mosquitto:HumidityMode:string", autoupdate="true" }
+Switch Heating2 "2nd Stage Heating []" (RestoreOnStartup)
+Switch MainSwitch "MainSwitch" (RestoreOnStartup)
 
 //String HumiTopic "Humidity Topic" { channel="mqtt:topic:mosquitto:HumiTopic:string" }
 
@@ -71,35 +73,35 @@ String System_CPU_UPTIME "Uptime [%s]" <status> { channel="exec:command:getuptim
 String System_Used_Space "Used Disk [%s]" <pie> { channel="exec:command:getuseddiskspace:output" }
 String System_Used_Space_Topic { channel="mqtt:topic:mosquitto:System_Used_Space_Topic:string" }
 
-String System_TZ "Timezone [%s]" <time> { channel="exec:command:gettz:output" }
-String System_TZ_Set "Timezone [%s]" <time>
+String System_TZ "Timezone [%s]" <time> (RestoreOnStartup) { channel="exec:command:gettz:output" }
+String System_TZ_Set "Timezone [%s]" <time> (RestoreOnStartup)
 
 String BackupButton "Backup [%s]"
 Switch BackupCommand "Backup" { channel="exec:command:backupcommand:run" }
-String BackupTimestampCommand "Last Backup [%s]" <calendar> { channel="exec:command:getbackuptimestampcommand:output" }
+String BackupTimestampCommand "Last Backup [%s]" <calendar> (RestoreOnStartup) { channel="exec:command:getbackuptimestampcommand:output" }
 
 String RestoreButton "Restore [%s]" <switch>
 Switch RestoreCommand "Restore" { channel="exec:command:restorecommand:run" }
 
-String GitInstalledVersion "Installed version [%s]" <shield>
-String GitLatestVersion "Latest version [%s]" <returnpipe>
-String GitInstallLatestVersion "Update & restart [%s]" <returnpipe>
+String GitInstalledVersion "Installed version [%s]" <shield> (RestoreOnStartup)
+String GitLatestVersion "Latest version [%s]" <returnpipe> (RestoreOnStartup)
+String GitInstallLatestVersion "Update & restart [%s]" <returnpipe> (RestoreOnStartup)
 
 String RebootButton "Reboot" <switch>
 String ShutdownButton "Shutdown" <switch>
 Switch RebootCommand "Reboot" { channel="exec:command:rebootcommand:run" }
 Switch ShutdownCommand "Shutdown" { channel="exec:command:shutdowncommand:run" }
 
-Number Heating2Time "Delay [%.0f min]" <clock>
-Number Heating2Delta "Threshold [%.1f °]" <temperature>
-Number Heating2InitialTemp "Heating2InitialTemp [%.1f ]"
+Number Heating2Time "Delay [%.0f min]" <clock> (RestoreOnStartup)
+Number Heating2Delta "Threshold [%.1f °]" <temperature> (RestoreOnStartup)
+Number Heating2InitialTemp "Heating2InitialTemp [%.1f ]" (RestoreOnStartup)
 
-String TempUnit "Temperature Unit []" <temperature> { channel="exec:command:gettempunit:output" }
+String TempUnit "Temperature Unit []" <temperature> (RestoreOnStartup) { channel="exec:command:gettempunit:output" }
 String TempUnit_Topic { channel="mqtt:topic:mosquitto:TempUnit_Topic:string" }
 
-String SystemType "System Type []" <pump> { channel="exec:command:getsystemtype:output" }
+String SystemType "System Type []" <pump> (RestoreOnStartup) { channel="exec:command:getsystemtype:output" }
 String SystemType_Topic { channel="mqtt:topic:mosquitto:SystemType_Topic:string" }
 
-String HumidityType "Humidity Mode []" <water> { channel="exec:command:gethumiditymode:output" }
+String HumidityType "Humidity Mode []" <water> (RestoreOnStartup) { channel="exec:command:gethumiditymode:output" }
 //    SETTINGS END    /////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
