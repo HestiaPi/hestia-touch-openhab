@@ -9,12 +9,14 @@ sitemap default label="Main Menu"
 
   Frame label="Heating" visibility=[SystemType=="US"] {
     Switch item=HeatingMode mappings=[ "ON"="AUTO", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
-    Setpoint item=HeatingBoostTime minValue=10 maxValue=1440 step=10 icon="clock"
+    Setpoint item=HeatingBoostTime minValue=10 maxValue=1440 step=10 icon="clock" visibility=[HeatingRemBoostTime<=0]
+    Setpoint item=HeatingRemBoostTime minValue=0 maxValue=1440 step=1 icon="clock" visibility=[HeatingRemBoostTime>0]
   }
 
   Frame label="Cooling" visibility=[SystemType=="US"] {
     Switch item=CoolingMode mappings=[ "ON"="AUTO", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
-    Setpoint item=CoolingBoostTime minValue=10 maxValue=1440 step=10 icon="clock"
+    Setpoint item=CoolingBoostTime minValue=10 maxValue=1440 step=10 icon="clock" visibility=[CoolingRemBoostTime<=0]
+    Setpoint item=CoolingRemBoostTime minValue=0 maxValue=1440 step=1 icon="clock" visibility=[CoolingRemBoostTime>0]
   }
 
   Frame label="Fan" visibility=[SystemType=="US"] {
