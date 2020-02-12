@@ -401,12 +401,6 @@ then
   val logName = "sensors"
   logDebug(logName, "Processing a sensor change from " + triggeringItem.name)
 
-  // ignore sensor changes if we are initializing
-  if(initializing) {
-    logWarn(logName, "System is still starting, ignoring change to " + triggeringItem.name)
-    return;
-  }
-
   // Parse the new reading
   var newReading = 0
   try {
