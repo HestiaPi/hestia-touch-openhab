@@ -339,21 +339,35 @@ then
   System_Used_Space.sendCommand(executeCommandLine("/home/pi/scripts/getuseddiskspace.sh", SCRIPT_TIMEOUT))
 
   // Update previousMode variables, do this at the end to make sure the Item has
-  // time to update. Useful to boost strap the PrevMode Items the first time.
+  // time to update. Useful to boot strap the PrevMode Items the first time.
   Modes.members.filter[ i | i.state.toString != "Boost"].forEach[ i |
     postUpdate(i.name.replace("Mode", "PrevMode"), i.state.toString)
   ]
+
+  initializing = false // Rules can now run
 
   // Turn off boost mode if it was on before
   Modes.members.filter[ m | m.state.toString == "Boost"].forEach[ m |
     val prev = PrevModes.members.findFirst[ prev | prev.name == m.name.replace("Mode", "PrevMode")]
     if(prev === null) logWarn(logName, "Item " + m.name.replace("Mode", "PrevMode") + " does not exist!")
-    val resetVal = if(prev !== null && prev.state != NULL && prev.state != UNDEF) prev.state else "OFF"
+    val resetVal = if(prev !== null && prev.state != NULL && prev.state != UNDEF) prev.state.toString else "OFF"
     m.sendCommand(resetVal) // Changing from Boost will reset the RemBoostTime Item and cancel the timers
   ]
 
+  // Send out the change to the current readings to kick off the selected mode.
+  // The sensor should have updated at least once while this Rule was running.
+  Sensors.members.forEach[ s |
+    if(s.state instanceof UnDefType) logError(logName, s.name + " doesn't have a value!")
+    else {
+      val type = s.name.replace("My", "")
+      logInfo(initLogName, "Sending " + s.state + " to " + s.name + "Proxy")
+      sendCommand(s.name+"Proxy", s.state.toString)
+      logInfo(initLogName, "Sending 0 to Previous"+type+"Reading")
+      sendCommand("Previous"+type+"Reading", "0")
+    }
+  ]
+
   logInfo(initLogName, "Done initializing settings")
-  initializing = false
 end
 
 // Updates the appropriate proxy items
