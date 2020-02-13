@@ -478,17 +478,13 @@ then
   // ignore sensor changes if we are initializing
   if(SystemType.state.toString != "EU") return; // Only run Rule if "EU"
 
-  if(initializing) {
-    logWarn(logName, "System is still starting, ignoring change to " + triggeringItem.name)
-    return;
-  }
   val logName = "humi-setpoint"
   if(initializing) {
     logWarn(logName, "System is still starting, ignoring change to " + triggeringItem.name)
     return;
   }
 
-  humidity.apply(logName, TIMERS, humidity_on, humidity_off)
+  humidity.apply(logName, TIMERS, humidity_control)
 end
 
 // Runs when any Mode Item changes. NOTE: this rule and the Boost rule below
