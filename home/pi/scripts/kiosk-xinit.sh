@@ -125,21 +125,22 @@ do
 
       echo "Easy Startup found. Loading UI...";
 #      if [ -f /home/pi/scripts/default.rules ]; then
-      sudo cp /home/pi/scripts/default.rules /etc/openhab2/rules/default.rules;
+      sudo -u openhab cp /home/pi/scripts/default.rules /etc/openhab2/rules/default.rules;
 #      else
-#        sudo cp /home/pi/scripts/hestiapi-one.rules /etc/openhab2/rules/default.rules;
+#        sudo -u openhab cp /home/pi/scripts/hestiapi-one.rules /etc/openhab2/rules/default.rules;
 #        # Read /home/pi/scripts/systemtype
 #        if grep -Fxq "EU" /home/pi/scripts/systemtype
 #        then
 #            echo "EU Loaded.";
-#            sudo cp /home/pi/scripts/generic.rules /etc/openhab2/rules/default.rules;
+#            sudo -u openhab cp /home/pi/scripts/generic.rules /etc/openhab2/rules/default.rules;
 #        else
 #            echo "Default US Loaded.";
-#            sudo cp /home/pi/scripts/hvac.rules /etc/openhab2/rules/default.rules;
+#            sudo -u openhab cp /home/pi/scripts/hvac.rules /etc/openhab2/rules/default.rules;
 #        fi
 #      fi
-      sudo chmod 755 /etc/openhab2/rules/default.rules;
-      sudo chown openhab:openhab /etc/openhab2/rules/default.rules;
+
+#     sudo chmod 755 /etc/openhab2/rules/default.rules;
+#     sudo chown openhab:openhab /etc/openhab2/rules/default.rules;
 
       while :
       do
