@@ -1,0 +1,879 @@
+import java.util.Map
+import org.eclipse.smarthome.model.script.ScriptServiceUtil
+
+// Defaults
+val Map<String, Number> DEFAULTS = newHashMap("C_MIN" -> 0,                  // Minimum C setpoint
+                                              "C_MAX" -> 40,                 // Maximum C setpoint
+                                              "C_DEF" -> 22,                 // Default C setpoint
+                                              "TempC_DIFF" -> 0.2,           // Difference before reporting a change in C
+                                              "F_MIN" -> 32,                 // Minimum F setpoint
+                                              "F_MAX" -> 100,                // Maximum F setpoint
+                                              "F_DEF" -> 70,                 // Default F setpoint
+                                              "TempF_DIFF" -> 0,             // Difference before reporting a change in F
+                                              "Humi_DIFF" -> 3,              // Difference before reporting a change in Humidity
+                                              "Pressure_DIFF" -> 0,          // Difference before reporting a change in Pressure
+                                              "HeatingBoostTime" -> 10,      // Default Heating Boost Time
+                                              "Heating2Time" -> 0,           // Default Heating2 Time
+                                              "Heating2Delta" -> 0,          // Default Heating2 Delta
+                                              "HumiSetpoint" -> 50,          // Default Humidifier Setpoint
+                                              "HumiSetpoint_max" -> 100,     // Default Humidifier Setpoint
+                                              "HumiSetpoint_min" -> 0,       // Default Humidifier Setpoint
+                                              "HotWaterBoostTime" -> 10,     // Default Hot Water Boost Time
+                                              "HumiBoostTime" -> 10)         // Default Humidifier Boost Time
+
+val SCRIPT_TIMEOUT = 5000 // How long to wait for a script to finish
+
+// Maps the Pin Items to its corresponding GPIO Item
+val Map<String, String> HVAC_PIN_MAP = newHashMap("HeatingPin"  -> "Pin12",
+                                                  "Heating2Pin" -> "Pin16",
+                                                  "CoolingPin"  -> "Pin23",
+                                                  "FanPin"      -> "Pin18")
+
+val Map<String, String> GEN_PIN_MAP = newHashMap("HeatingPin"  -> "Pin23",
+                                                 "Heating2Pin" -> "Pin16",
+                                                 "HotWaterPin" -> "Pin12",
+                                                 "HumidityPin" -> "Pin18")
+
+var initializing = true
+
+val Map<String, Timer> TIMERS = newHashMap
+
+// Global lambdas, put them in Maps so we can grab the right one based on the mode
+val Map<String, Procedures$Procedure3<String, Map<String, Timer>, Procedures$Procedure3<String, Map<String, Timer>, OnOffType>>> DECIDE_LAMBDAS = newHashMap
+val Map<String, Procedures$Procedure3<String, Map<String, Timer>, OnOffType>> CTRL_LAMBDAS = newHashMap
+
+// -----------------------------------------------
+// Decides whether to turn on or off the heater
+val heating = [ String logName, Map<String, Timer> TIMERS,
+                Procedures$Procedure3<String, Map<String, Timer>, OnOffType> heating_ctrl|
+  // negative means temp is higher than setpoint, positive means temp is lower than setpoint
+  if(TempSetpoint.state instanceof UnDefType || MyTempProxy.state instanceof UnDefType) {
+    logError(logName, "TempSetpoint ==" + TempSetpoing.state + " and MyTempProxy == " + MyTempProxy.state)
+  }
+  val delta = (TempSetpoint.state as Number) - (MyTempProxy.state as Number)
+  if(delta > 0) heating_ctrl.apply(logName, TIMERS, ON) // TODO: Replace 0 with hysteresis value
+  else heating_ctrl.apply(logName, TIMERS, OFF)
+]
+
+// -----------------------------------------------
+// Turns on or off the heater. Unlike the other modes, heater is active for both
+// US and EU System Types. But for the EU system type the fan is not used.
+val heating_ctrl = [ String logName, Map<String, Timer> TIMERS, OnOffType cmd |
+
+  // Turns on/off the heating if it isn't already
+  if(HeatingPin.state != cmd || (SystemType.state == "US" && FanPin != cmd)) {
+    logInfo(logName, "Turning " + cmd + " the heater")
+    // Command the rest of the heating pins
+    if(cmd == ON && MainSwitch.state != ON) MainSwitch.sendCommand(ON)
+    if(SystemType.state.toString == "US") {
+      if(FanMode.state.toString != "AUTO" && cmd == ON) FanMode.sendCommand("AUTO")
+      FanPin.sendCommand(cmd)
+    }
+    HeatingPin.sendCommand(cmd)
+  }
+
+  // Determin if the 2nd stage heating needs to be scheduled or canceled
+  val heating2Timer = "Heating2Timer"
+
+  // clears the timer and turns off the second stage heating
+  val heating2Off = [ |
+    if(Heating2Pin.state != OFF) {
+      logInfo(logName, "Turning off second stage heating")
+      TIMERS.get(heating2Timer)?.cancel
+      TIMERS.put(heating2Timer, null)
+      Heating2Pin.sendCommand(OFF)
+    }
+  ]
+
+  // Handle second stage heating. If it is cold enough, schedule it to turn on in
+  // Heating2Time minutes. If the temperature plus the Heating2Delta gets above
+  // the setpoint turn it off.
+  if(Heating2.state == ON) {
+
+    // Check to see if we need second stage heating
+    if(cmd == ON) {
+
+      // It's too warm, turn off second stage heating
+      if((MyTempProxy.state as Number + Heating2Delta.state as Number) >= TempSetpoint.state as Number) {
+        heating2Off.apply()
+      }
+
+      // It's too cold, schedule it to come on later if not already scheduled
+      else if((TIMERS.get(heating2Timer) === null || TIMERS.get(heating2Timer).hasTerminated) &&
+              Heating2Pin.state != ON){
+        logInfo(logName, "Scheduling second stage heating to start in " + Heating2Time.state + " minutes.")
+
+        TIMERS.put(heating2Timer, createTimer(now.plusMinutes((Heating2Time.state as Number).intValue), [ |
+          // It's later, still too cold? If so, turn it on
+          if((MyTempProxy.state as Number + Heating2Delta.state as Number) < TempSetpoint.state as Number) {
+            logInfo(logName, "Turning on second stage heating")
+            Heating2Pin.sendCommand(ON)
+          }
+          TIMERS.put(heating2Timer, null) // clear the Timer
+        ]))
+      }
+      // else timer is already set, let it run
+    }
+    else {
+      heating2Off.apply()
+    }
+  }
+]
+
+// -----------------------------------------------
+// Decides whether to turn on or off the cooling
+val cooling = [ String logName, Map<String, Timer> TIMERS,
+                Procedures$Procedure3<String, Map<String, Timer>, OnOffType> cooling_ctrl |
+  // negative means temp is higher than setpoint, positive means temp is lower than setpoint
+  val delta = (TempSetpoint.state as Number) - (MyTempProxy.state as Number)
+  if(delta < 0) cooling_ctrl.apply(logName, TIMERS, ON)  // TODO: Replace 0 with hysteresis value
+  else cooling_ctrl.apply(logName, TIMERS, OFF)
+]
+
+// -----------------------------------------------
+// Turns on or off the cooling. If the mode is not "US" just exit.
+val cooling_ctrl = [ String logName, Map<String, Timer> TIMERS, OnOffType cmd |
+  if(SystemType.state.toString != "US") {
+    logError(logName, "Cooling mode is not available for " + SystemType.state)
+    CoolingMode.sendCommand("OFF")
+    return;
+  }
+
+  if(CoolingPin.state != cmd || FanPin.state != cmd) {
+    logInfo(logName, "Turning " + cmd + " the cooling")
+    if(FanMode.state != "AUTO" && cmd == ON) FanMode.sendCommand("AUTO")
+    if(cmd == ON) MainSwitch.sendCommand(ON)
+    FanPin.sendCommand(cmd)
+    CoolingPin.sendCommand(cmd)
+  }
+]
+
+// -----------------------------------------------
+// Decides whether to turn on or off the fan
+val fan = [ String logName, Map<String, Timer> TIMERS,
+            Procedures$Procedure3<String, Map<String, Timer>, OnOffType> fan_ctrl |
+  // Do nothing if mode is not ON or OFF
+  switch(FanMode.state.toString) {
+    case "ON": fan_ctrl.apply(logName, TIMERS, ON)
+    case "OFF": fan_ctrl.apply(logName, TIMERS, OFF)
+  }
+]
+
+// -----------------------------------------------
+// Turns on or off the fan. If the mode is not "US" just exit
+val fan_ctrl = [ String logName, Map<String, Timer> TIMERS, OnOffType cmd |
+  if(SystemType.state.toString != "US") {
+    logError(logName, "Fan mode is not available for " + SystemType.state)
+    FanMode.sendCommand("OFF")
+    return;
+  }
+
+  if(cmd == ON && MainSwitch.state != ON) MainSwitch.sendCommand(ON)
+  if(FanPin.state != cmd) {
+    logInfo(logName, "Turning " + cmd + " the fan")
+    FanPin.sendCommand(cmd)
+  }
+]
+
+// -----------------------------------------------
+// Decides whether to turn on or off the humidifier, if the SystemType isn't EU exit
+val humidity = [ String logName, Map<String, Timer> TIMERS,
+                 Procedures$Procedure3<String, Map<String, Timer>, OnOffType> humidity_ctrl|
+  // negative delta means humidity is higher than the setpoint
+  val delta = (HumiSetpoint.state as Number) - (MyHumiProxy.state as Number)
+
+  if((HumidityType.state == "Dehumidify" && delta < 0) ||
+     (HumidityType.state == "Humidify" && delta > 0)) {
+    humidity_ctrl.apply(logName, TIMERS, ON)
+  }
+  else if((HumidityType.state == "Dehumidify" && delta > 0) ||
+          (HumidityType.state == "Humidify" && delta < 0)) {
+    humidity_ctrl.apply(logName, TIMERS, OFF)
+  }
+]
+
+// -----------------------------------------------
+// Controls the de/humidifier, if the SystemType isn't EU exit.
+val humidity_ctrl = [ String logName, Map<String, Timer> TIMERS, OnOffType cmd |
+  if(SystemType.state.toString != "EU") {
+    logError(logName, "Humidity mode is not available for " + SystemType.state)
+    HumidityMode.sendCommand("OFF")
+    return;
+  }
+  if(cmd == ON && MainSwitch.state != ON) MainSwitch.sendCommand(ON)
+  if(HumidityPin.state != cmd){
+    logInfo(logName, "Turning " + cmd + " " + HumidityType.state)
+    HumidityPin.sendCommand(cmd)
+  }
+]
+
+// -----------------------------------------------
+// Decides whether or not to turn on or off the hot water
+val hotwater = [ String logName, Map<String, Timer> TIMERS,
+                 Procedures$Procedure3<String, Map<String, Timer>, OnOffType> hotwater_ctrl |
+  switch(HotWaterMode.state.toString) {
+    case "ON": hotwater_ctrl.apply(logName, TIMERS, ON)
+    case "OFF", case "Schedule": hotwater_ctrl.apply(logName, TIMERS, OFF)
+  }
+]
+
+// -----------------------------------------------
+// Controls the hot water, if the SystemType isn't EU, exit
+val hotwater_ctrl = [ String logName, Map<String, Timer> TIMERS, OnOffType cmd |
+  if(SystemType.state.toString != "EU") {
+    logError(logName, "HotWater mode is not available for " + SystemType.state)
+    HotWaterMode.sendCommand("OFF") // TODO: Reset the UI
+    return;
+  }
+  if(cmd == ON && MainSwitch.state != ON) MainSwitch.sendCommand(ON)
+  if(HotWaterPin.state != cmd) {
+    logInfo(logName, "Turning " + cmd + " the hot water")
+    HotWaterPin.sendCommand(cmd)
+  }
+]
+
+// Makes sure that everything has a reasonable initial value at startup
+rule "Initialization"
+when
+    System started
+then
+  val initLogName = "initialization"
+
+  logInfo(initLogName, "Initializing settings")
+
+  // Reusable lambdas to check and initialize Items
+  val initFromScript = [ GenericItem i, String cmd |
+    if(i.state == NULL || i.state == UNDEF){
+      logInfo(initLogName, i.name + " is undefined")
+      val results = executeCommandLine(cmd, SCRIPT_TIMEOUT)
+      logInfo(initLogName, i.name + " is not set, initializing to " + results)
+      i.sendCommand(results)
+    }
+    else {
+        logDebug(initLogName, i.name + " is " + i.state)
+        i.sendCommand(i.state.toString) // The UI requires the command
+    }
+  ]
+
+  val initState = [ GenericItem i, String initState |
+    if(i.state == NULL || i.state == UNDEF) {
+      logInfo(initLogName, i.name + " is not set, initializing to " + initState)
+      i.sendCommand(initState)
+    }
+    else {
+      logDebug(initLogName, i.name + " is " + i.state)
+      i.sendCommand(i.state.toString) // The UI requires the command
+    }
+  ]
+
+  val initSetpoint = [ String iName, Number value, Number max, Number min |
+    val i = ScriptServiceUtil.getItemRegistry.getItem(iName)
+    if(i === null) {
+      logError(initLogName, iName + " does not exist!")
+      return;
+    }
+    if(i.state == NULL || i.state == UNDEF || (i.state as Number) > max || (i.state as Number) < min) {
+      logInfo(initLogName, i.name + " is " + i.state + ", initializing to " + value)
+      i.postUpdate(value)
+    }
+    else {
+      logDebug(initLogName, i.name + " is " + i.state)
+      i.sendCommand(i.state.toString) // The UI requires the command
+    }
+  ]
+
+  // Populate LAMBDAS so we can call them by name later
+  DECIDE_LAMBDAS.put("Heating", heating)
+  DECIDE_LAMBDAS.put("Cooling", cooling)
+  DECIDE_LAMBDAS.put("Fan", fan)
+  DECIDE_LAMBDAS.put("Humidity", humidity)
+  DECIDE_LAMBDAS.put("HotWater", hotwater)
+  CTRL_LAMBDAS.put("Heating", heating_ctrl)
+  CTRL_LAMBDAS.put("Cooling", cooling_ctrl)
+  CTRL_LAMBDAS.put("Fan", fan_ctrl)
+  CTRL_LAMBDAS.put("Humidity", humidity_ctrl)
+  CTRL_LAMBDAS.put("HotWater", hotwater_ctrl)
+
+  // Initialize type Items first
+  initFromScript.apply(SystemType, "/home/pi/scripts/getsystemtype.sh")
+  initFromScript.apply(TempUnit, "/home/pi/scripts/gettempunit.sh")
+  initFromScript.apply(HumidityType, "/home/pi/scripts/gethumiditymode.sh")
+
+  // Initialize mode Items
+  initState.apply(MainSwitch, "OFF")
+  initState.apply(HeatingMode, "OFF")
+  initState.apply(HotWaterMode, "OFF")
+  initState.apply(HumidityMode, "OFF")
+  initState.apply(Heating2, "OFF")
+  initState.apply(HumidityType, "Humidify")
+//  initState.apply(HumiTopic, "0")
+
+  // Initialize temp setpoint items
+  val unit = TempUnit.state.toString
+  val def = DEFAULTS.get(unit+"_DEF")
+  val max = DEFAULTS.get(unit+"_MAX")
+  val min = DEFAULTS.get(unit+"_MIN")
+  initSetpoint.apply("TempSetpoint", def, max, min)
+  initSetpoint.apply("TempSetpoint"+unit, def, max, min)
+
+  // Initialize humi setpoint
+  initSetpoint.apply("HumiSetpoint", DEFAULTS.get("HumiSetpoint"),
+                     DEFAULTS.get("HumiSetpoint_max"), DEFAULTS.get("HumiSetpoint_min"))
+
+  // Initialize misc settings
+  initState.apply(HeatingBoostTime, DEFAULTS.get("HeatingBoostTime").toString)
+  initState.apply(HotWaterBoostTime, DEFAULTS.get("HotWaterBoostTime").toString)
+  initState.apply(HumiBoostTime, DEFAULTS.get("HumiBoostTime").toString)
+  initState.apply(PreviousTempReading, "0")
+  initState.apply(PreviousHumiReading, "0")
+  initState.apply(Heating2Time, DEFAULTS.get("Heating2Time"))
+  initState.apply(Heating2Delta, DEFAULTS.get("Heating2Delta"))
+
+  // Do not rely on old values for network and system stats
+  Network_WLAN_IP.sendCommand(executeCommandLine("/home/pi/scripts/getwlan0ip.sh", SCRIPT_TIMEOUT))
+  Network_SSID.sendCommand(executeCommandLine("/home/pi/scripts/getssid.sh", SCRIPT_TIMEOUT))
+  Network_WLAN_INFO.sendCommand(executeCommandLine("/home/pi/scripts/getwifiinfo.sh", SCRIPT_TIMEOUT))
+  Network_WLAN_MAC.sendCommand(executeCommandLine("/home/pi/scripts/getwlan0mac.sh", SCRIPT_TIMEOUT))
+  System_CPU_TEMP.sendCommand(executeCommandLine("/home/pi/scripts/getcputemperature.sh", SCRIPT_TIMEOUT))
+  System_CPU_LOAD.sendCommand(executeCommandLine("/home/pi/scripts/getcpuload.sh", SCRIPT_TIMEOUT))
+  System_Used_Space.sendCommand(executeCommandLine("/home/pi/scripts/getuseddiskspace.sh", SCRIPT_TIMEOUT))
+
+  // Update previousMode variables, do this at the end to make sure the Item has
+  // time to update. Useful to boot strap the PrevMode Items the first time.
+  Modes.members.filter[ i | i.state.toString != "Boost"].forEach[ i |
+    postUpdate(i.name.replace("Mode", "PrevMode"), i.state.toString)
+  ]
+
+  initializing = false // Rules can now run
+
+  // Turn off boost mode if it was on before
+  Modes.members.filter[ m | m.state.toString == "Boost"].forEach[ m |
+    val prev = PrevModes.members.findFirst[ prev | prev.name == m.name.replace("Mode", "PrevMode")]
+    if(prev === null) logWarn(logName, "Item " + m.name.replace("Mode", "PrevMode") + " does not exist!")
+    val resetVal = if(prev !== null && prev.state != NULL && prev.state != UNDEF) prev.state.toString else "OFF"
+    m.sendCommand(resetVal) // Changing from Boost will reset the RemBoostTime Item and cancel the timers
+  ]
+
+  // Send out the change to the current readings to kick off the selected mode.
+  // The sensor should have updated at least once while this Rule was running.
+  Sensors.members.forEach[ s |
+    if(s.state instanceof UnDefType) logError(logName, s.name + " doesn't have a value!")
+    else {
+      val type = s.name.replace("My", "")
+      logInfo(initLogName, "Sending " + s.state + " to " + s.name + "Proxy")
+      sendCommand(s.name+"Proxy", s.state.toString)
+      logInfo(initLogName, "Sending 0 to Previous"+type+"Reading")
+      sendCommand("Previous"+type+"Reading", "0")
+    }
+  ]
+
+  logInfo(initLogName, "Done initializing settings")
+end
+
+// Updates the appropriate proxy items
+rule "Temp Proxy Sync"
+when
+  Member of Proxies changed
+then
+  // If the Item that triggers the rule ends in F or C, it's the unit's Item that
+  // changed, update the associated proxy. If not it's the proxy that changed,
+  // update the associated unit's Item.
+  val name = triggeringItem.name
+  if(name.endsWith("F") || name.endsWith("C")) {
+    sendCommand(triggeringItem.name.substring(0, name.length()-1), triggeringItem.state.toString)
+  }
+  else {
+    postUpdate(name+TempUnit.state, triggeringItem.state.toString)
+  }
+end
+
+// Activates the appropriate GPIO pin when a Pin Item changes
+rule "Pin changed"
+when
+  Member of Pins changed
+then
+  // If a Pin Item changes, look in the PIN_MAP to find the proper GPIO Pin Item
+  // and command to match.
+  if(triggeringItem.state == NULL || triggeringItem.state == UNDEF) return; // Ignore changes to NULL or UNDEF
+
+  val pinItem = if(SystemType.state.toString == "EU") GEN_PIN_MAP.get(triggeringItem.name) else HVAC_PIN_MAP.get(triggeringItem.name)
+  if(pinItem === null) {
+    logError("pins", triggeringItem.name + " does not have a corresponding Pin Item!")
+    return;
+  }
+
+  sendCommand(pinItem, triggeringItem.state.toString)
+  logDebug("pins", triggeringItem.name + " set to " + triggeringItem.state +
+                   ", commanding " + pinItem)
+end
+
+// Receives the raw sensor readings and populates the appropriate proxy Items
+rule "Process Sensor Changes"
+when
+  Member of Sensors changed
+then
+  val logName = "sensors"
+  logDebug(logName, "Processing a sensor change from " + triggeringItem.name)
+
+  // Parse the new reading
+  var newReading = 0
+  try {
+    newReading = new Double(triggeringItem.state.toString)
+  }
+  catch(Exception e){
+    logError(logName, "Error parsing new reading into a number:\n" + triggeringItem.state)
+    return;
+  }
+
+  // When any sensor changes update the corresponding proxies and previous
+  // reading Item if the difference is large enough.
+  val type = triggeringItem.name.replace("My", "")
+  val prev = ScriptServiceUtil.getItemRegistry.getItem("Previous"+type+"Reading")
+
+  // Update proxy and previous if the difference is big enough
+  sendCommand(triggeringItem.name+"Proxy", triggeringItem.state.toString)
+
+  val prevReading = if(prev.state instanceof DecimalType) prev.state as Number else 0 // Use 0 if prev doesn't have a numerical state
+  var diff = if(type == "Temp") DEFAULTS.get("Temp"+TempUnit.state+"_DIFF") else DEFAULTS.get(type+"_DIFF") // get the hysteresis for reporting from DEFAULTS
+  if(newReading < (prevReading - diff) || newReading > (prevReading + diff)) {
+    prev.postUpdate(triggeringItem.state.toString)
+  }
+  else {
+    logDebug(logName, "Ignoring change, it's too small")
+  }
+end
+
+// The temp or target setpoint changed
+rule "Temp or setpoint changed"
+when
+  Item TempSetpoint changed or
+  Item PreviousTempReading changed
+then
+  // The Rule triggers when the measured temp changes enough (previous Item changes)
+  // or the setpoint changes.
+  // ignore sensor changes if we are initializing
+  val logName = "temp-setpoint"
+  if(initializing) {
+    logWarn(logName, "System is still starting, ignoring change to " + triggeringItem.name)
+    return;
+  }
+
+  if(SystemType.state.toString == "US" &&
+     (CoolingMode.state == "ON" || CoolingMode.state == "Boost" || CoolingMode.state == "AUTO")){
+    cooling.apply(logName, TIMERS, cooling_ctrl)
+  }
+
+  if(HeatingMode.state == "ON" || HeatingMode.state == "Boost" || HeatingMode.state == "AUTO"){
+    heating.apply(logName, TIMERS, heating_ctrl)
+  }
+end
+
+rule "Humidity or setpoint changed"
+when
+  Item HumiSetpoint changed or
+  Item PreviousHumiReading changed
+then
+  // The Rule triggers when the measured humidity changed enough (previous Item changes)
+  // or the setpoint changes.
+  // ignore sensor changes if we are initializing
+  if(SystemType.state.toString != "EU") return; // Only run Rule if "EU"
+
+  val logName = "humi-setpoint"
+  if(initializing) {
+    logWarn(logName, "System is still starting, ignoring change to " + triggeringItem.name)
+    return;
+  }
+
+  humidity.apply(logName, TIMERS, humidity_control)
+end
+
+// Runs when any Mode Item changes. NOTE: this rule and the Boost rule below
+// will be triggered at the same time when it changes to "Boost". Based on the
+// mode, turn on or off the device.
+rule "Mode changed"
+when
+  Member of Modes changed
+then
+  val logName = "mode-change"
+
+  // ignore mode changes if we are initializing
+  if(initializing) {
+    logWarn(logName, "System is still starting, ignoring change to " + triggeringItem.name)
+    return;
+  }
+
+  val mode = triggeringItem.name.replace("Mode", "")
+
+  logInfo(logName, mode + " mode changed to " + triggeringItem.state)
+
+  val decide = DECIDE_LAMBDAS.get(mode)
+  val ctrl = CTRL_LAMBDAS.get(mode)
+
+  if(triggeringItem.state.toString != "Boost") postUpdate(mode+"PrevMode", triggeringItem.state.toString)
+
+  switch(triggeringItem.state){
+    case "ON", case "AUTO": decide.apply(logName, TIMERS, ctrl)
+    case "OFF": ctrl.apply(logName, TIMERS, OFF)
+    case "Schedule": ctrl.apply(logName, TIMERS, OFF) // Is this something to add later?
+    case "Boost": MainSwitch.sendCommand(ON) // see below
+  }
+
+  // Turn off boost if it was previously in boost mode
+  if(previousState.toString == "Boost") postUpdate(mode+"RemBoostTime", "0")
+end
+
+// TODO: If this is vestigal, remove completely
+// rule "HumidityPin changed"
+// when
+//     Item HumidityPin changed
+// then
+//     switch(HumidityPin.state) {
+//       case ON: {
+//         HumiTopic.sendCommand("1")
+//       }
+//       case OFF: {
+//         HumiTopicTimer = createTimer(now.plusSeconds(5), [|
+//             HumiTopicTimer = null
+//         ])
+//         HumiTopic.sendCommand("0")
+//       }
+//     }
+// end
+
+// rule "Humidity Topic changed"
+// when
+//     Item HumiTopic changed
+// then
+//     switch(HumiTopic.state) {
+//       case "1",
+//       case "ON": {
+//         if (HumidityMode.state != "Boost") {
+//           HumidityMode.sendCommand("ON")
+//         }
+//         if (((HumidityType.state == "Dehumidify") && (MyHumiProxy.state < HumiSetpoint.state)) || ((HumidityType.state == "Humidify") && (MyHumiProxy.state > HumiSetpoint.state))) {
+//           HumiTopicTimer = createTimer(now.plusSeconds(5), [|
+//               HumiTopicTimer = null
+//           ])
+//           HumidityPin.sendCommand(OFF)
+//         }
+//       }
+//       case "0",
+//       case "OFF": {
+//         if (HumiTopicTimer === null) {
+//           HumidityMode.sendCommand("OFF")
+//         }
+//       }
+//     }
+// end
+
+rule "Heating2 turned OFF"
+when
+    Item Heating2 changed to OFF
+then
+    Heating2Pin.sendCommand(OFF)
+    TIMERS.get("Heating2Timer")?.cancel
+end
+
+// Turn everything OFF if the main switch is turned off
+rule "MainSwitch OFF"
+when
+    Item MainSwitch changed to OFF
+then
+  logInfo("main", "Main switch turned off, turning everything off")
+  Modes.members.forEach[ i | postUpdate(i.name.replace("Mode", "PrevMode"), i.state.toString) ]
+  Modes.sendCommand("OFF")
+end
+
+// Runs when a mode changes to Boost. Activate the device and update the
+// RemBoostTime Item to the state of the BoostTime Item to kick off the timer.
+rule "Boost"
+when
+  Member of Modes changed to Boost
+then
+  // Boost mode started, kick off
+  val mode = triggeringItem.name.replace("Mode", "")
+  val logName = mode+"-boost"
+
+  // ignore mode changes if we are initializing
+  if(initializing) {
+    logWarn(logName, "System is still starting, ignoring change to " + triggeringItem.name)
+    return;
+  }
+
+  logInfo(logName, "Starting " + mode + " boost mode")
+
+  // Save the last mode
+  postUpdate(mode+"PrevMode", previousState.toString)
+
+  // Turn on the device
+  // TODO: turn on for boostTime regardless of the setpoint and current sensor
+  // replace the call to mode with call to mode_ctrl with ON as the cmd. Need to
+  // update the mode function to keep the heater ON regardless of current temp
+  // when in boost mode as well.
+  DECIDE_LAMBDAS.get(mode).apply(logName, TIMERS, CTRL_LAMBDAS.get(mode))
+
+  // Kick off the boost timer
+  val boostTime = ScriptServiceUtil.getItemRegistry.getItem(mode+"BoostTime")
+  postUpdate(mode+"RemBoostTime", boostTime.state.toString)
+
+end
+
+// As long as RemBoostTime is above zero, schedule a timer for a minute to subtract
+// one from it which retriggers this Rule. When it gets to zero, turn off boost.
+// If boost mode is cancelled by changing the mode, RemBoostTime is set to 0.
+rule "RemBoostTimeChanged"
+when
+  Member of RemBoostTimes changed
+then
+  val mode = triggeringItem.name.replace("RemBoostTime", "")
+  val logName = mode+"-remboosttime"
+
+  // Cancel the timer if it happens to exist
+  TIMERS.get(triggeringItem.name)?.cancel
+
+  // Boost time is over, turn it off
+  if((triggeringItem.state as Number) <= 0){
+    val prevMode = PrevModes.members.findFirst[ prev | prev.name == mode+"PrevMode" ]
+    logInfo(logName, "Boost for " + mode + " has ended, restoring to " + prevMode.state)
+    sendCommand(mode+"Mode", prevMode.state.toString) // will turn on/off devices based on previous mode
+    TIMERS.put(triggeringItem.name, null)
+  }
+  // Wait a minute and count down
+  else {
+    logInfo(logName, triggeringItem.state + " minutes remaining on boost for " + mode)
+    TIMERS.put(triggeringItem.name, createTimer(now.plusMinutes(1), [ |
+      triggeringItem.postUpdate(triggeringItem.state as Number - 1) // retriggers the rule
+    ]))
+  }
+end
+
+// If a boost time changes while in bost mode, update the BoostRemTime with the
+// new value
+rule "BoostTime changed"
+when
+  Member of BoostTimes changed
+then
+  val remTime = ScriptServiceUtil.getItemRegistry.getItem(triggeringItem.name.replace("BoostTime", "RemBoostTime"))
+
+  if((remTime.state instanceof DecimalType) && remTime.state as Number != 0)
+    remTime.postUpdate(triggeringItem.state.toString)
+end
+
+// Turn everything off and change the temperature units
+rule "TempUnit Changed"
+when
+  Item TempUnit changed from C or
+  Item TempUnit changed from F
+then
+  val logName = "temp-unit"
+  logInfo(logName, "Changing the tempunit to " + TempUnit.state)
+
+  if(TempUnit.state != "C" && TempUnit.state != "F") {
+    logError(logName, TempUnit.state + " is not a valid temp unit!")
+    TempUnit.postUpdate(previousState)
+    return;
+  }
+
+  MainSwitch.sendCommand("OFF")
+  val cmd = if(TempUnit.state == "F") "/home/pi/scripts/C2F.sh" else "/home/pi/scripts/F2C.sh"
+  val def = DEFAULTS.get(TempUnit.state+"_DEF")
+
+  val results = executeCommandLine(cmd, SCRIPT_TIMEOUT)
+  logInfo(logName, "Results from the script: \n" + results)
+
+  System_CPU_TEMP.sendCommand(executeCommandLine("/home/pi/scripts/getcputemperature.sh",SCRIPT_TIMEOUT))
+  TempSetpoint.postUpdate(def) // reinitialize the setpoint with the default for the new unit
+end
+
+// The humidifier changed types
+rule "HumidityType changed"
+when
+  Item HumidityType changed from Humidify or
+  Item humidityType changed from Dehumidify
+then
+  logInfo("humidity-type", "Changing humidity type to " + HumidityType.state)
+  if(HumidityType.state != "Dehumidify" && HumidityType.state != "Humidify"){
+    logError("humidity-type", HumidityType.state + " is not a valid humidity type!")
+    HumidityType.postUpdate(previousState)
+    return;
+  }
+  HumidityMode.sendCommand("OFF")
+  HumiSetpoint.sendCommand(DEFAULTS.get("HumiSetpoint"))
+  HumiBoostTime.sendCommand(DEFAULTS.get("HumiBoostTime"))
+end
+
+rule "SystemType changed"
+when
+  Item SystemType changed from EU or
+  Item SystemType changed from US
+then
+  val logName = "system-type"
+  logInfo(logName, "Changing the system type to " + SystemType.state)
+
+  if(SystemType.state != "EU" && SystemType.state != "US") {
+    logError(logName, SystemType.state + " is not a valid SystemType")
+    SystemType.postUpdate(previousState)
+    return;
+  }
+
+  MainSwitch.sendCommand(OFF)
+  BoostTimes.members.forEach[ b | b.sendCommand(DEFAULTS.get(b.name))]
+  TempSetpoint.sendCommand(DEFAULTS.get(TempUnit.state.toString+"_DEF"))
+  HumiSetpoint.sendCommand(DEFAULTS.get("HumiSetpoint"))
+
+  val sed = if(SystemType.state == "EU") "s/US/EU/g" else "s/EU/US/g"
+
+  var results = executeCommandLine("sudo sed -i '" + sed + "' /home/pi/scripts/systemtype", SCRIPT_TIMEOUT)
+  logInfo(logName, "systemtype script results:\n" + results)
+
+  logInfo(logName, "Rebooting...") // TODO: if the rules are not changing is the reboot still required?
+  RebootCommand.sendCommand(ON)
+end
+
+rule "Timezone Set"
+when
+  Item System_TZ_Set changed
+then
+  if(System_TZ_Set.state instanceof UnDefType) return; // we don't care about changes to NULL or UNDEF
+  var results = executeCommandLine("sudo /home/pi/scripts/settz.sh " + System_TZ_Set.state.toString,SCRIPT_TIMEOUT)
+  logInfo("tz", "Changing the timezone to " + System_TZ_Set.state + ", results:\n" + results)
+  System_TZ.postUpdate(System_TZ_Set.state.toString)
+end
+
+rule "Process Button Proxy"
+when
+  Member of Buttons received command ON
+then
+  logInfo("buttons", triggeringItem.name + " pressed!")
+  triggeringItem.postUpdate(OFF)
+  sendCommand(triggeringItem.name.replace("Button", "Command"), "ON")
+end
+
+rule "BackupButton triggered"
+when
+  Item BackupButton received command ON
+then
+  logInfo("backup","Button triggered, backing up")
+  BackupButton.postUpdate("Backing up...")
+  RestoreButton.postUpdate("")
+  BackupCommand.sendCommand(ON)
+end
+
+rule "BackupCommand completed"
+when
+  Item BackupCommand changed from ON to OFF
+then
+  logInfo("backup","Backup complete!")
+  BackupButton.postUpdate("Backup complete!")
+  BackupTimestampCommand.postUpdate(executeCommandLine("/home/pi/scripts/getbackuptimestamp.sh",SCRIPT_TIMEOUT))
+  // TODO: Link an item to the out channel and log out the results in case something
+  // went wrong we have the error in the logs.
+  createTimer(now.plusSeconds(10), [|
+    BackupButton.postUpdate("")
+  ])
+end
+
+rule "RestoreButton triggered"
+when
+  Item RestoreButton received command ON
+then
+  val logName = "restore"
+
+  if(!(BackupTimestampCommand.state instanceof StringType)) {
+    logWarn(logName, "BackupTimeStampCommand is not set, calling script to populate it.")
+    BackupTimestampCommand.sendCommand("ON")
+    Thread::sleep(SCRIPT_TIMEOUT) // give OH time to update the Item's state
+  }
+
+  if(BackupTimestampCommand.state.toString == "No backup found."){
+    logWarn(logName, "There is no backup file.")
+    RestoreButton.postUpdate("No backup found.")
+  }
+  else {
+    logInfo(logName, "Restoring from /home/pi/scripts/backup.zip")
+    RestoreButton.postUpdate("Restoring & restarting twice...") // TODO: why the restarts?
+    RestoreButton.postUpdate(executeCommandLine("/home/pi/scripts/restore.sh",SCRIPT_TIMEOUT))
+  }
+end
+
+// TODO: This is now restored from startup, is this Rule still needed? We can initialize
+// this at startup
+rule "BackupTimestampCommand triggered"
+when
+  Item BackupTimestampCommand received command ON
+then
+  logInfo("backup-timestamp", "Acquiring the timestamp of the most recent backup")
+  BackupTimestampCommand.postUpdate(executeCommandLine("/home/pi/scripts/getbackuptimestamp.sh",SCRIPT_TIMEOUT))
+end
+
+// TODO: This is now restored from startup, is this Rule still needed? We can initialize
+// this at startup
+rule "GitInstalledVersion triggered"
+when
+  Item GitInstalledVersion received command ON
+then
+  logInfo("git", "Getting the current installed verions of HestiaPi")
+  GitInstalledVersion.postUpdate(executeCommandLine("/home/pi/scripts/getgitinstalledversion.sh",SCRIPT_TIMEOUT));
+end
+
+// TODO: Maybe this should be triggered on a schedule (once a day, once a week)?
+rule "GitLatestVersion triggered"
+when
+  Item GitLatestVersion received command ON
+then
+  logInfo("git", "Getting the latest version of HestiaPi")
+  GitLatestVersion.postUpdate("Checking GitHub...");
+  GitLatestVersion.postUpdate(executeCommandLine("sudo /home/pi/scripts/getgitlatestversion.sh",SCRIPT_TIMEOUT))
+end
+
+rule "HestiaPi Upgrade triggered"
+when
+  Item GitInstallLatestVersion received command ON
+then
+  val logName = "upgrade"
+  if(!(GitInstalledVersion.state instanceof StringType) ||
+     !(GitLatestVersion.state instanceof StringType)) {
+    logWarn(logName, "Current version or latest version is not set! Querying for latest values.")
+    GitInstalledVersion.sendCommand("ON")
+    GitLatestVersion.sendCommand("ON")
+    Thread::sleep(SCRIPT_TIMEOUT*2) // Give the Items a chance to update
+  }
+
+  if(GitInstalledVersion.state.toString == GitLatestVersion.state.toString) {
+    logInfo(logName, "Latest version is installed")
+    GitInstallLatestVersion.postUpdate("You have the latest version.")
+    createTimer(now.plustSeconds(30), [ |
+      GitInstallLatestVersion.postUpdate("")
+    ])
+  }
+  else {
+    logInfo(logName, "Upgrading and restarting")
+    GitInstallLatestVersion.postUpdate("Updating & restarting...")
+    val results = executeCommandLine("/home/pi/scripts/updateone.sh",SCRIPT_TIMEOUT)
+    createTimer(now.plusSeconds(5), [ |  // TODO: Why the wait to report it, and since the script reboots it will never actually get a chance to execute this
+      GitInstallLatestVersion.postUpdate(results)
+    ])
+  }
+
+end
+
+rule "Monitor WAN IP"
+when
+    Item Network_WAN_IP changed
+then
+  if(Network_WAN_IP.state instanceof StringType || Network_WAN_IP.state.toString == "-"){
+    logInfo("wanip", "WAN IP changed to " + Network_WAN_IP.state)
+  }
+  else {
+    logWARN("wanip", "Unable to get WAN IP")
+  }
+end
+
+// Update Settings Topics for LCD
+rule "Send MQTT to LCD"
+when
+  Member of LCD changed
+then
+  logDebug("LCD", "Updating LCD for " + triggeringItem.name)
+  sendCommand(triggeringItem.name+"_Topic", triggeringItem.state.toString)
+end
