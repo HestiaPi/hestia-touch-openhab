@@ -869,11 +869,3 @@ then
   }
 end
 
-// Update Settings Topics for LCD
-rule "Send MQTT to LCD"
-when
-  Member of LCD changed
-then
-  logDebug("LCD", "Updating LCD for " + triggeringItem.name)
-  sendCommand(triggeringItem.name+"_Topic", triggeringItem.state.toString)
-end
