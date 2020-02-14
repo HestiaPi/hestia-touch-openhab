@@ -1,0 +1,416 @@
+TODO: turn this into a test harness, we should be able to automate this.
+
+Some common code is shared among all the devices, it is usually only verified once
+
+// Initialization, perform before each test steps below
+1. MainSwitch = OFF
+2. Unplug the sensor so we can control the temp and humidity readings ourselves,
+There will be lots of error messages but the Rules have been rewritten to hable
+those.
+
+// US F: Heating
+1. SystemType = US
+2. TempUnit = F
+3. TempSetpoint = 70
+4. Heating2 = ON
+5. Heating2Time = 1
+6. Heating2Delta = 3
+7. MyTemp.sendCommand(65)
+  - Verify nothing turns ON
+8. HeatingMode.sendCommand("AUTO")
+With the current settings the MainSwitch should turn on and the Heater should turn
+on.
+  - Verify MainSwitch changes to ON
+  - Verify HeatingMode changes to ON
+  - Verify HeatingPrevMode changes to ON
+  - Verify HeatingPin changes to ON
+  - Verify Pin12 changes to ON
+  - Verify FanMode changes to AUTO
+  - Verify FanPin changes to ON
+  - Verify Pin18 changes to ON
+  - Verify log message indicating second stage heating will start
+9. Wait one minute
+  - Verify Heating2Pin changes to ON
+  - Verify Pin16 changes to ON
+10. MyTemp.sendCommand(69)
+  - Verify Heating2Pin changes to OFF
+  - Verify Pin16 changes to OFF
+11. HeatingMode.sendCommand("ON")
+  - Verify nothing else changes
+12. MyTemp.sendCommand(65)
+  - Verify log message about Heating2 starting
+13. Wait a minute
+  - Verify Heating2 came ON
+14. HeatingMode.sendCommand("OFF")
+  - Verify HeatingPin changes to OFF
+  - Verify Pin12 changes to OFF
+  - Verify Heating2Pin changes to OFF
+  - Verify Pin16 changes to OFF
+  - Verify FanPin changes to OFF
+  - Verify Pin18 changes to OFF
+15. Heating2.sendCommand(OFF)
+16. HeatingMode.sendCommand("AUTO")
+  - Verify HeatingPin changes to ON
+  - Verify Pin16 changes to ON
+  - Verify FanPin changes to ON
+  - Verify Pin18 changes to ON
+  - Verify there is no log message about second stage heating
+17. Heating2.sendCommand(ON)
+18. MyTemp.sendCommand(66)
+  - Verify log message about Heating2 starting
+19. Wait a minute
+  - Verify Heating2Pin changed to ON
+  - Verify Pin16 changed to ON
+20. MyTemp.sendCommand(70)
+  - Verify HeatingPin changed to OFF
+  - Verify Pin12 changed to OFF
+  - Verify FanPin changed to OFF
+  - Verify Pin18 changes to OFF
+  - Verify Heating2Pin changes to OFF
+  - Verify Pin16 changes to OFF
+21. MyTemp.sendCommand(65)
+  - Verify HeatingPin turned on
+  - Verify log message to schedule 2nd stage heating
+22. MyTemp.sendCommand(66)
+  - Verify no log message to schedule 2nd stage heating
+23. Wait a minute
+  - Verify Heating2Pin turned on
+
+// US F: Cooling
+1. SystemType = US
+2. TempUnit = F
+3. TempSetpoint = 70
+4. MyTemp.sendCommand(72)
+  - Verify nothing turns on
+5. CoolingMode.sendCommand("AUTO")
+With the current settings Cooling should turn on
+  - Verify MainSwitch changed to ON
+  - Verify FanMode changed to AUTO
+  - Verify FanPin changed to ON
+  - Verify Pin18 changed to ON
+  - Verify CoolingPin changed to ON
+  - Verify Pin23 changed to ON
+6. MyTemp.sendCommand(70)
+  - Verify FanPin changed to OFF
+  - Verify Pin18 changed to OFF
+  - Verify CoolingPin changed to OFF
+  - Verify Pin23 changed to OFF
+7. MyTemp.sendCommand(72)
+  - Verify FanPin changed to ON
+  - Verify Pin18 changed to ON
+  - Verify CoolingPin changed to ON
+  - Verify Pin23 changed to ON
+8. CoolingMode.sendCommand("OFF")
+  - Verify FanPin changed to OFF
+  - Verify Pin18 changed to OFF
+  - Verify CoolingPin changed to OFF
+  - Verify Pin23 changed to OFF
+9. CoolingMode.sendCommand("ON")
+  - Verify FanPin changed to ON
+  - Verify Pin18 changed to ON
+  - Verify CoolingPin changed to ON
+  - Verify Pin23 changed to ON
+
+// US F: Fan
+1. SystemType = US
+2. TempUnit = F
+3. TempSetpoint = 70
+4. MyTemp.sendCommand(70)
+5. FanMode.sendCommand("ON")
+  - Verify FanPin changed to ON
+6. FanMode.sendCommand("OFF")
+  - Verify FanPin changed to OFF
+7. FanMode.sendCommand("AUTO")
+  - Verify FanPin doesn't change
+
+// US F: HotWater
+1. SystemType = US
+2. TempUnit = F
+3. TempSetpoint = 70
+4. MyTemp.sendCommand(70)
+5. HotWaterMode.sendCommand("ON")
+  - Verify error message in log
+  - Verify HotWaterMode changes to OFF
+  - There will be another error message
+
+// US F: Humidity
+1. SystemType = US
+2. TempUnit = F
+3. HumiSetpoint = 70
+4. MyHumi.sendCommand(71)
+5. HumidityMode.sendCommand("ON")
+  - Verify error message in log
+  - Verify HumidityMode changes to OFF
+  - There will be another error message
+
+// US F: Boost
+All of the devices share the same boost logic. I'll just test Heating as it has
+the most complex behaviors. But if it works for one it will work for them all.
+This test doesn't need to be repeated in EU mode.
+1. SystemType = US
+2. TempUnit = F
+3. TempSetpoint = 70
+4. Heating2 = ON
+5. Heating2Time = 1
+6. Heating2Delta = 3
+7. HeatingBoostTime = 3
+7. MyTemp.sendCommand(65)
+  - Verify nothing happens
+8. HeatingMode.sendCommand("Boost")
+  - Verify HeatingPin changes to ON
+  - Verify FanPin changes to ON
+  - Verify Heating2 log message
+9. Wait a minute
+  - Verify Heating2Pin changes to ON
+10. Wait 2 more minutes
+  - Verify HeatingMode returns to OFF
+  - Verify HeatingRemBoostTime counts down to zero
+11. HeatingMode.sendCommand("Boost")
+12. Wait a minute
+13. MyTemp.sendCommand(70)
+  - Verify HeatingPin turns OFF
+  - Verify Heating2Pin turns OFF
+  - Verify HeatingMode changes to OFF
+14. MyTemp.sendCommand(65)
+15. Wait a minute
+16. HeatingMode.sendCommand("OFF")
+  - Verify HeatingPin turns OFF
+  - Verify Heating2Pin turns OFF
+  - Verify HEatingRemBoostMode returns to 0
+17. HeatingMode.sendCommand("Boost")
+18. HeatingBoostTime.sendCommand(4)
+  - Verify HeatingRemBoostTime changes to 4
+19. HeatingRemBoostTime.sendCommand(5)
+  - Verify HeatingRemBoostTime changes to 5
+20. Wait a minute
+  - Verify HeatingRemBoostTime counts down to 4
+21. Wait for boost mode to conclude
+  - Verify everything returns to OFF
+  - Verify BasicUI is counting down
+  - Verify LCD is counting down !!!!!!!
+22. HeatingMode.sendCommand(ON)
+23. HeatingMode.sendCommand(Boost)
+24. HeatingMode.sendCommand(OFF)
+  - Verify everything returns to OFF, not ON
+
+// Change TempUnit to C
+1. SystemType = US
+2. TempUnit = F
+3. TempUnit.sendCommand("C")
+  - Verify everything gets turned OFF
+  - System_CPU_Temp changes to the new unit
+  - TempSetpoint changes to the default for the new unit
+  - /home/pi/scripts/tempunit changed to C
+4. TempUnit.sendCommand("X")
+  - Verify error log message
+  - Verify TempUnit returns to C
+
+// SystemType change to "EU"
+1. SystemType = US
+2. SystemType.sendCommand("EU")
+  - Verify everything turns OFF
+  - Verify reset BoostTimes to defaults
+  - Verify TempSetpoint to default
+  - Verify HumiSetpoint to default
+  - Verify /home/pi/scripts/systemtype set to EU
+  - Verify whole system reboots
+3. Wait for reboot
+  - Verify SystemType is "EU"
+  - Verify UI is set to "EU"
+4. SystemType.sendCommand("X")
+  - Verify error log message
+  - Verify SystemType returns to "EU"
+
+// EU C: humidity type
+1. SystemTypoe = EU
+2. HumidityType = Humidify
+3. HumidityType.sendCommand("Dehumidify")
+  - Verify HumidityType changed to Dehumidify
+4. HumidityType.sendCommand("X")
+  - Verify error log message
+  - Verify HumidityType restored to Dehumidify
+
+// EU C: Heating
+1. SystemType = EU
+2. TempUnit = C
+3. TempSetpoint = 22
+4. Heating2 = ON
+5. Heating2Time = 1
+6. Heating2Delta = 3
+7. MyTemp.sendCommand(17)
+  - Verify nothing turns ON
+8. HeatingMode.sendCommand("AUTO")
+With the current settings the MainSwitch should turn on and the Heater should turn
+on.
+  - Verify MainSwitch changes to ON
+  - Verify HeatingMode changes to ON
+  - Verify HeatingPrevMode changes to ON
+  - Verify HeatingPin changes to ON
+  - Verify Pin23 changes to ON
+  - Verify log message indicating second stage heating will start
+9. Wait one minute
+  - Verify Heating2Pin changes to ON
+  - Verify Pin16 changes to ON
+10. MyTemp.sendCommand(21)
+  - Verify Heating2Pin changes to OFF
+  - Verify Pin16 changes to OFF
+11. HeatingMode.sendCommand("ON")
+  - Verify nothing else changes
+12. MyTemp.sendCommand(17)
+  - Verify log message about Heating2 starting
+13. Wait a minute
+  - Verify Heating2 came ON
+14. HeatingMode.sendCommand("OFF")
+  - Verify HeatingPin changes to OFF
+  - Verify Pin23 changes to OFF
+  - Verify Heating2Pin changes to OFF
+  - Verify Pin16 changes to OFF
+15. Heating2.sendCommand(OFF)
+16. HeatingMode.sendCommand("AUTO")
+  - Verify HeatingPin changes to ON
+  - Verify Pin23 changes to ON
+  - Verify there is no log message about second stage heating
+18. MyTemp.sendCommand(21)
+17. Heating2.sendCommand(ON)
+  - Verify there is no log message about Heating2
+18. MyTemp.sendCommand(17)
+  - Verify log message about Heating2 starting
+19. Wait a minute
+  - Verify Heating2Pin changed to ON
+  - Verify Pin16 changed to ON
+20. MyTemp.sendCommand(22)
+  - Verify HeatingPin changed to OFF
+  - Verify Pin12 changed to OFF
+  - Verify FanPin changed to OFF
+  - Verify Pin18 changes to OFF
+  - Verify Heating2Pin changes to OFF
+  - Verify Pin16 changes to OFF
+21. MyTemp.sendCommand(17)
+  - Verify HeatingPin turned on
+  - Verify log message to schedule 2nd stage heating
+22. MyTemp.sendCommand(18)
+  - Verify no log message to schedule 2nd stage heating
+23. Wait a minute
+  - Verify Heating2Pin turned on
+
+// EU C: Humidify/Dehumidify
+1. SystemType = EU
+2. TempUnit = C
+3. HumiSetpoint = 50
+4. HumidityType = "Humidify"
+5. MyHumi.sendCommand(45)
+  - Verify nothing turns on
+6. HumidityMode.sendCommand("AUTO")
+With the current settings Humidity should turn on
+  - Verify MainSwitch changed to ON
+  - Verify HumidityMode changed to AUTO
+  - Verify HumidityPin changed to ON
+  - Verify Pin18 changed to ON
+7. MyTemp.sendCommand(50)
+  - Verify HumidityPin changed to OFF
+  - Verify Pin18 changed to OFF
+8. MyTemp.sendCommand(45)
+  - Verify HumidityPin changed to ON
+  - Verify Pin18 changed to ON
+9. HumidityMode.sendCommand("OFF")
+  - Verify HumidityPin changed to OFF
+  - Verify Pin18 changed to OFF
+10. HumidityMode.sendCommand("ON")
+  - Verify HumidityPin changed to ON
+  - Verify Pin18 changed to ON
+11. MyHumi.sendCommand(55)
+  - Verify HumidityPin changes to OFF
+  - Verify Pin18 changed to OFF
+12. MyHumi.sendCommand(50)
+13. HumidityType = "Dehumidify"
+  - Verify nothing turns on
+14. MyHumi.sendCommand(45)
+  - Verify nothing turns on
+15. MyHumi.sendCommand(55)
+  - Verify HumidityPin turns on
+  - Verify Pin18 turns on
+16. HumidityMode.sendCommand(OFF)
+  - Verify HumidityPin turns OFF
+  - Verify Pin18 turns off
+
+// EU C: HotWater
+1. SystemType = EU
+2. TempUnit = C
+3. HotWaterMode.sendCommand(ON)
+  - Verify HotWaterPin changed to ON
+  - Verify Pin12 changed to ON
+4. HotWaterMode.sendCommand(OFF)
+  - Verify HotWaterPin changed to OFF
+  - Verify Pin12 changed to OFF
+
+// EU C: Cooling
+1. SystemType = EU
+2. TempUnit = C
+3. CoolingMode.sendCommand("ON")
+  - Verify error message in log
+  - Verify CoolingMode changes to OFF
+
+// EU C: Fan
+1. SystemType = EU
+2. TempUnit = C
+3. FanMode.sendCommand("ON")
+  - Verify error message in log
+  - Verify FanMode changes to OFF
+
+// EU C: Boost Mode
+Just a quick test to show that boost mode works for the EU modes. It's shared
+code so if the US F Boost test passed they all should pass.
+1. SystemType = EU
+2. HotWaterMode = OFF
+3. HotWaterBoostTime = 3
+4. HotWaterMode.sendCommand(Boost)
+  - Verify HotWaterPin changes to ON
+5. Wait 3 minutes
+  - Verify HotWaterRemBoostTime changed to 3 and counts down to 0
+  - Verify that when HotWaterRemBoostTime reduced to 0 HotWaterPin turned off
+
+// Timezone set
+1. System_TZ.postUpdate(NULL)
+2. System_TZ_Set.postUpdate(NULL)
+3. Select your timezone from BasicUI
+  - Verify System_TZ changed to selected value
+  - Verify /etc/localtime points to selected TZ
+
+// Backup
+1. Click Backup on BasicUI
+  - Verify label changes to "Backing up..."
+  - Verify RestoreButton changes to empty string
+2. Wait for backup to finish
+  - Verify label changes to "Backup complete!"
+  - Verify Backup Timestamp shows correct time
+  - Verify /home/pi/scripts/backup.zip exists and isn't zero sized
+
+// Restore
+1. Delete backup.zip
+2. Click the RestoreButton
+  - Verify warning in the log
+  - Verify button changed to "No backup found"
+3. Backup button on BasicUI
+4. Click the RestoreButton
+  - Verify two reboots
+  - Verify everything appears as it was
+  - Verify the restore worked is out of scope for these procedures
+
+// reboot
+1. Click the reboot button
+  - Verify the system reboots
+
+// shutdown
+1. click the shutdown button
+  - Verify the system shutsdown
+
+// Git Stuff
+1. Click check next to Installed version in BasicUI
+  - Verify it updates with the current version
+2. Click check nest to latest version in BasicUI
+  - Verify it updates with the current version
+3. Assumes that both values are the same, click Update and Restart
+  - Verify you get a message saying you have the latest version
+4. Modify "GitInstalledVersion" so it's different (make a backup of all your changes)
+5. Click Update and Restart
+  - Verify it reboots and everything is returned to the stock github version
