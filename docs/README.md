@@ -1,8 +1,8 @@
 # Documentation
 This directory holds the owner's manual for the Hestia project, including an
-(owners manual)[hestiapi-one.pdf].  In addition to the documentation here,
-there is also the (community forum)[https://community.hestiapi.com/] and the
-(wiki on GitHub)[https://github.com/HestiaPi/hestia-touch-openhab/wiki].
+[owners manual](hestiapi-one.pdf).  In addition to the documentation here,
+there is also the [community forum](https://community.hestiapi.com/) and the
+[wiki on GitHub](https://github.com/HestiaPi/hestia-touch-openhab/wiki).
 
 LaTeX (pronounced LAH tech or LAY tech) is used to generate the PDF owners
 manual, which should cover all normal operations, configuration, and provide
