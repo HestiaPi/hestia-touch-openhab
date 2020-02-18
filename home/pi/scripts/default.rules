@@ -484,7 +484,7 @@ then
     return;
   }
 
-  humidity.apply(logName, TIMERS, humidity_control)
+  humidity.apply(logName, TIMERS, humidity_ctrl)
 end
 
 // Runs when any Mode Item changes. NOTE: this rule and the Boost rule below
