@@ -38,14 +38,14 @@ Number PreviousTempReading "Temperature" <temperature> (RestoreOnStartup)
 Number HumiSetpoint "Humidity Setpoint[%.0f %%]" (RestoreOnStartup) { channel="mqtt:topic:mosquitto:sensors:humisetpoint", autoupdate="true" }
 Number PreviousHumiReading "Humidity" <humidity> (RestoreOnStartup)
 
-Number HeatingBoostTime "Heating Boost Time [%.0f min]" (RestoreOnStartup, BoostTimes) { channel="mqtt:topic:mosquitto:heating:boost", autoupdate="true" }
+Number HeatingBoostTime "Heating Boost Time [%.0f min]" (RestoreOnStartup, BoostTimes) // TODO: Create a Channel so this can be changed remotely
 Number HeatingRemBoostTime "Heating Remaining Boost Time [%.0f min]" (RestoreOnStartup, RemBoostTimes) { channel="mqtt:topic:mosquitto:heating:boost", autoupdate="true" }
-Number CoolingBoostTime "Cooling Boost Time [%.0f min]" (RestoreOnStartup, BoostTimes) { channel="mqtt:topic:mosquitto:cooling:boost", autoupdate="true" }
+Number CoolingBoostTime "Cooling Boost Time [%.0f min]" (RestoreOnStartup, BoostTimes) // TODO: Create a Channel so this can be changed remotely
 Number CoolingRemBoostTime "Cooling Remaining Boost Time [%.0f min]" (RestoreOnStartup, RemBoostTimes) { channel="mqtt:topic:mosquitto:cooling:boost", autoupdate="true" }
-Number HotWaterBoostTime "Hot Water Boost Time [%.0f min]" (RestoreOnStartup, BoostTimes) { channel="mqtt:topic:mosquitto:hotwater:boost", autoupdate="true" }
+Number HotWaterBoostTime "Hot Water Boost Time [%.0f min]" (RestoreOnStartup, BoostTimes) // TODO: Create a Channel so this can be changed remotely
 Number HotWaterRemBoostTime "Hot Water Remaining Boost Time [%.0f min]" (RestoreOnStartup, RemBoostTimes) { channel="mqtt:topic:mosquitto:hotwater:boost", autoupdate="true" }
-Number HumiBoostTime "Humidity Boost Time [%.0f min]" (RestoreOnStartup, BoostTimes) { channel="mqtt:topic:mosquitto:humidty:boost", autoupdate="true" }
-Number HumiRemBoostTime "Humidity Remaining Boost Time [%.0f min]" (RestoreOnStartup, RemBoostTimes) { channel="mqtt:topic:mosquitto:humidty:boost", autoupdate="true" }
+Number HumidityBoostTime "Humidity Boost Time [%.0f min]" (RestoreOnStartup, BoostTimes) // TODO: Create a Channel so this can be changed remotely
+Number HumidityRemBoostTime "Humidity Remaining Boost Time [%.0f min]" (RestoreOnStartup, RemBoostTimes) { channel="mqtt:topic:mosquitto:humidty:boost", autoupdate="true" }
 
 String HeatingMode "Heating Mode []" (RestoreOnStartup, Modes) { channel="mqtt:topic:mosquitto:heating:mode", autoupdate="true" }
 String HeatingPrevMode "Heating Previous Mode [%s]" (RestoreOnStartup, PrevModes)
