@@ -367,6 +367,15 @@ then
     }
   ]
 
+  // All the modes are set but they won't change to trigger the Mode rule below
+  // so call the lambdas to cause the devices to turn on/off as appropriate.
+  heating.apply(initLogName, TIMERS, heating_ctrl)
+  if(SystemType.state == "EU") {
+    humidity.apply(initLogName, TIMERS, humidity_ctrl)
+    hotwater.apply(initLogName, TIMERS, hotwater_ctrl)
+  }
+  else cooling.apply(initLogName, TIMERS, cooling_ctrl)
+
   logInfo(initLogName, "Done initializing settings")
 end
 
@@ -868,4 +877,3 @@ then
     logWARN("wanip", "Unable to get WAN IP")
   }
 end
-
