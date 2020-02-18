@@ -354,18 +354,14 @@ then
     m.sendCommand(resetVal) // Changing from Boost will reset the RemBoostTime Item and cancel the timers
   ]
 
-  // Send out the change to the current readings to kick off the selected mode.
-  // The sensor should have updated at least once while this Rule was running.
-  Sensors.members.forEach[ s |
-    if(s.state instanceof UnDefType) logError(logName, s.name + " doesn't have a value!")
-    else {
-      val type = s.name.replace("My", "")
-      logInfo(initLogName, "Sending " + s.state + " to " + s.name + "Proxy")
-      sendCommand(s.name+"Proxy", s.state.toString)
-      logInfo(initLogName, "Sending 0 to Previous"+type+"Reading")
-      sendCommand("Previous"+type+"Reading", "0")
-    }
-  ]
+  // All the modes are set but they won't change to trigger the Mode rule below
+  // so call the lambdas to cause the devices to turn on/off as appropriate.
+  heating.apply(initLogName, TIMERS, heating_ctrl)
+  if(SystemType.state == "EU") {
+    humidity.apply(initLogName, TIMERS, humidity_ctrl)
+    hotwater.apply(initLogName, TIMERS, hotwater_ctrl)
+  }
+  else cooling.apply(initLogName, TIMERS, cooling_ctrl)
 
   logInfo(initLogName, "Done initializing settings")
 end
@@ -868,4 +864,3 @@ then
     logWARN("wanip", "Unable to get WAN IP")
   }
 end
-
