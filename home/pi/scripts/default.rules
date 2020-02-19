@@ -63,7 +63,7 @@ val heating = [ String logName, Map<String, Timer> TIMERS,
 val heating_ctrl = [ String logName, Map<String, Timer> TIMERS, OnOffType cmd |
 
   // Turns on/off the heating if it isn't already
-  if(HeatingPin.state != cmd || (SystemType.state == "US" && FanPin != cmd)) {
+  if(HeatingPin.state != cmd || (SystemType.state == "US" && FanPin.state != cmd)) {
     logInfo(logName, "Turning " + cmd + " the heater")
 
     // Command the rest of the heating pins

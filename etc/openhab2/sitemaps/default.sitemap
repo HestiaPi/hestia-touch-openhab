@@ -37,7 +37,7 @@ sitemap default label="Main Menu"
   Frame label="Hot Water" visibility=[SystemType=="EU"] {
     Switch item=HotWaterMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
     Setpoint item=HotWaterBoostTime minValue=10 maxValue=120 step=10 icon="clock" visibility=[HotWaterRemBoostTime<=0]
-    Setpoint item=HotWaterBoostTime minValue=0 maxValue=120 step=1 icon="clock" visibility=[HotWaterRemBoostTime>0]
+    Setpoint item=HotWaterRemBoostTime minValue=0 maxValue=120 step=1 icon="clock" visibility=[HotWaterRemBoostTime>0]
   }
 
   Frame label="Humidity" visibility=[SystemType=="EU"] {
