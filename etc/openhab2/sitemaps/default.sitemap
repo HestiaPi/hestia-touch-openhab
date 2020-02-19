@@ -42,7 +42,7 @@ sitemap default label="Main Menu"
   Frame label="Humidity" visibility=[SystemType=="EU"] {
     Switch item=HumidityMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
     Text item=MyHumiProxy
-    Setpoint item=HumimidityBoostTime minValue=10 maxValue=120 step=10 icon="clock" visibility=[HumidityRemBoostTime<=0]
+    Setpoint item=HumidityBoostTime minValue=10 maxValue=120 step=10 icon="clock" visibility=[HumidityRemBoostTime<=0]
     Setpoint item=HumidityRemBoostTime minValue=0 maxValue=120 step=1 icon="clock" visibility=[HumidityRemBoostTime>0]
     Setpoint item=HumiSetpoint minValue=0 maxValue=100 step=1 icon="humidity"
   }
