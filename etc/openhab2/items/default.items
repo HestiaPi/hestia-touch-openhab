@@ -53,6 +53,7 @@ String CoolingMode "Cooling Mode []" (RestoreOnStartup, Modes) { channel="mqtt:t
 String CoolingPrevMode "Cooling Previous Mode [%s]" (RestoreOnStartup, PrevModes)
 String FanMode "Fan Mode []" (RestoreOnStartup, Modes) { channel="mqtt:topic:mosquitto:fan:mode", autoupdate="true" }
 String FanPrevMode "Fan Previous Mode [%s]" (RestoreOnStartup, PrevModes)
+Switch FanCtrl (RestoreOnStartup) // Used to show/hide the fan controls when in heating/cooling mode
 String HotWaterMode "Hot Water Mode []" (RestoreOnStartup, Modes) { channel="mqtt:topic:mosquitto:hotwater:mode", autoupdate="true" }
 String HotWaterPrevMode "Hot Water Previous Mode [%s]" (RestoreOnStartup, PrevModes)
 String HumidityMode "Humidity Mode []" (RestoreOnStartup, Modes) { channel="mqtt:topic:mosquitto:humidty:mode", autoupdate="true" }

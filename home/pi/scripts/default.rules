@@ -65,13 +65,27 @@ val heating_ctrl = [ String logName, Map<String, Timer> TIMERS, OnOffType cmd |
   // Turns on/off the heating if it isn't already
   if(HeatingPin.state != cmd || (SystemType.state == "US" && FanPin != cmd)) {
     logInfo(logName, "Turning " + cmd + " the heater")
+
     // Command the rest of the heating pins
-    if(cmd == ON && MainSwitch.state != ON) MainSwitch.sendCommand(ON)
-    if(SystemType.state.toString == "US") {
-      if(FanMode.state.toString != "AUTO" && cmd == ON) FanMode.sendCommand("AUTO")
-      FanPin.sendCommand(cmd)
+    if(cmd == ON){
+      if(MainSwitch.state != ON) MainSwitch.sendCommand(ON)
+      if(SystemType.state == "US") {
+        if(FanMode.state.toString != "AUTO") FanMode.sendCommand("AUTO")
+        if(FanCtrl.state != OFF) FanCtrl.sendCommand(OFF)
+        FanPin.sendCommand(ON)
+        createTimer(now.plusSeconds(1), [ | HeatingPin.sendCommand(ON) ])
+      }
+      else HeatingPin.sendCommand(ON)
     }
-    HeatingPin.sendCommand(cmd)
+    else {
+      HeatingPin.sendCommand(OFF)
+      if(SystemType.state == "US") {
+        createTimer(now.plusSeconds(1), [ |
+          FanPin.sendCommand(OFF)
+          FanCtrl.sendCommand(ON)
+        ])
+      }
+    }
   }
 
   // Determin if the 2nd stage heating needs to be scheduled or canceled
@@ -148,10 +162,21 @@ val cooling_ctrl = [ String logName, Map<String, Timer> TIMERS, OnOffType cmd |
 
   if(CoolingPin.state != cmd || FanPin.state != cmd) {
     logInfo(logName, "Turning " + cmd + " the cooling")
-    if(FanMode.state != "AUTO" && cmd == ON) FanMode.sendCommand("AUTO")
-    if(cmd == ON) MainSwitch.sendCommand(ON)
-    FanPin.sendCommand(cmd)
-    CoolingPin.sendCommand(cmd)
+
+    if(cmd == ON) {
+      if(MainSwitch.state != ON) MainSwitch.sendCommand(ON)
+      if(FanMode.state != "AUTO") FanMode.sendCommand("AUTO")
+      if(FanCtrl.state != OFF) FanCtrl.postUpdate(OFF) // hide the controls on sitemap
+      FanPin.sendCommand(ON)
+      createTimer(now.plusSeconds(1), [ | CoolingPin.sendCommand(ON)])
+    }
+    else {
+      CoolingPin.sendCommand(OFF)
+      createTimer(now.plusSeconds(1), [ |
+        FanPin.sendCommand(OFF)
+        FanCtrl.postUpdate(ON) // show controls on sitemap
+      ])
+    }
   }
 ]
 
@@ -159,6 +184,7 @@ val cooling_ctrl = [ String logName, Map<String, Timer> TIMERS, OnOffType cmd |
 // Decides whether to turn on or off the fan
 val fan = [ String logName, Map<String, Timer> TIMERS,
             Procedures$Procedure3<String, Map<String, Timer>, OnOffType> fan_ctrl |
+
   // Do nothing if mode is not ON or OFF
   switch(FanMode.state.toString) {
     case "ON", case "Boost": fan_ctrl.apply(logName, TIMERS, ON)
@@ -176,9 +202,17 @@ val fan_ctrl = [ String logName, Map<String, Timer> TIMERS, OnOffType cmd |
   }
 
   if(cmd == ON && MainSwitch.state != ON) MainSwitch.sendCommand(ON)
-  if(FanPin.state != cmd) {
-    logInfo(logName, "Turning " + cmd + " the fan")
-    FanPin.sendCommand(cmd)
+
+  val sendCmd = if(HeatingPin.state == ON || CoolingPin.state == ON) ON else cmd
+  if(sendCmd != cmd) {
+    logWarn(logName, "Heating or cooling is ON, restoring Fan to AUTO mode")
+    FanMode.sendCommand("AUTO")
+    FanCtrl.sendCommand(OFF)
+  }
+
+  if(FanPin.state != sendCmd) {
+    logInfo(logName, "Turning " + sendCmd + " the fan")
+    FanPin.sendCommand(sendCmd)
   }
 ]
 
@@ -343,8 +377,10 @@ then
   initState.apply(PreviousHumiReading, "0")
   initState.apply(Heating2Time, DEFAULTS.get("Heating2Time"))
   initState.apply(Heating2Delta, DEFAULTS.get("Heating2Delta"))
+  initState.apply(FanCtrl, "ON")
 
   // Do not rely on old values for network and system stats
+  logDebug(initLogName, "Getting system stats")
   Network_WLAN_IP.sendCommand(executeCommandLine("/home/pi/scripts/getwlan0ip.sh", SCRIPT_TIMEOUT))
   Network_SSID.sendCommand(executeCommandLine("/home/pi/scripts/getssid.sh", SCRIPT_TIMEOUT))
   Network_WLAN_INFO.sendCommand(executeCommandLine("/home/pi/scripts/getwifiinfo.sh", SCRIPT_TIMEOUT))
@@ -355,13 +391,16 @@ then
 
   // Update previousMode variables, do this at the end to make sure the Item has
   // time to update. Useful to boot strap the PrevMode Items the first time.
+  logDebug(initLogName, "Updating PreceMode Items for those that are Boost")
   Modes.members.filter[ i | i.state.toString != "Boost"].forEach[ i |
     postUpdate(i.name.replace("Mode", "PrevMode"), i.state.toString)
   ]
 
+  logDebug(initLogName, "Initializing flag cancelled, the system is ready to operate")
   initializing = false // Rules can now run
 
   // Turn off boost mode if it was on before
+  logDebug(initLogName, "Cancelling Boost mode where needed")
   Modes.members.filter[ m | m.state.toString == "Boost"].forEach[ m |
     val prev = PrevModes.members.findFirst[ prev | prev.name == m.name.replace("Mode", "PrevMode")]
     if(prev === null) logWarn(logName, "Item " + m.name.replace("Mode", "PrevMode") + " does not exist!")
@@ -371,12 +410,13 @@ then
 
   // All the modes are set but they won't change to trigger the Mode rule below
   // so call the lambdas to cause the devices to turn on/off as appropriate.
-  heating.apply(initLogName, TIMERS, heating_ctrl)
+  logDebug(initLogName, "Triggering devices")
+  if(HeatingMode.state != "OFF") heating.apply(initLogName, TIMERS, heating_ctrl)
   if(SystemType.state == "EU") {
-    humidity.apply(initLogName, TIMERS, humidity_ctrl)
-    hotwater.apply(initLogName, TIMERS, hotwater_ctrl)
+    if(HumidityMode.state != "OFF") humidity.apply(initLogName, TIMERS, humidity_ctrl)
+    if(HotWaterMode.state != "OFF") hotwater.apply(initLogName, TIMERS, hotwater_ctrl)
   }
-  else cooling.apply(initLogName, TIMERS, cooling_ctrl)
+  else if(CoolingMode.state != "OFF") cooling.apply(initLogName, TIMERS, cooling_ctrl)
 
   logInfo(initLogName, "Done initializing settings")
 end
@@ -406,6 +446,16 @@ then
   // If a Pin Item changes, look in the PIN_MAP to find the proper GPIO Pin Item
   // and command to match.
   if(triggeringItem.state == NULL || triggeringItem.state == UNDEF) return; // Ignore changes to NULL or UNDEF
+
+  // Prevent the fan from turning OFF if Heating or Cooling.
+  if(SystemType.state.toString == "US" && triggeringItem.name == "FanPin" &&
+     (HeatingPin.state == ON || CoolingPin.state == ON) && triggeringItem.state != ON) {
+    logWarn("pins", "Heating or cooling is ON, cannot turn off the Fan!")
+    triggeringItem.sendCommand(ON)
+    FanMode.sendCommand("AUTO")
+    FanCtrl.sendCommand(OFF)
+    return;
+  }
 
   val pinItem = if(SystemType.state.toString == "EU") GEN_PIN_MAP.get(triggeringItem.name) else HVAC_PIN_MAP.get(triggeringItem.name)
   if(pinItem === null) {
@@ -869,7 +919,7 @@ when
     Item Network_WAN_IP changed
 then
   if(Network_WAN_IP.state instanceof StringType || Network_WAN_IP.state.toString == "-"){
-    logInfo("wanip", "WAN IP changed to " + Network_WAN_IP.state)
+    logDebug("wanip", "WAN IP changed to " + Network_WAN_IP.state)
   }
   else {
     logWARN("wanip", "Unable to get WAN IP")
