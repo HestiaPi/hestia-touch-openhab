@@ -19,7 +19,7 @@ val Map<String, Number> DEFAULTS = newHashMap("C_MIN" -> 0,                  // 
                                               "HumiSetpoint_max" -> 100,     // Default Humidifier Setpoint
                                               "HumiSetpoint_min" -> 0,       // Default Humidifier Setpoint
                                               "HotWaterBoostTime" -> 10,     // Default Hot Water Boost Time
-                                              "HumiBoostTime" -> 10)         // Default Humidifier Boost Time
+                                              "HumidityBoostTime" -> 10)     // Default Humidifier Boost Time
 
 val SCRIPT_TIMEOUT = 5000 // How long to wait for a script to finish
 
@@ -46,13 +46,15 @@ val Map<String, Procedures$Procedure3<String, Map<String, Timer>, OnOffType>> CT
 // Decides whether to turn on or off the heater
 val heating = [ String logName, Map<String, Timer> TIMERS,
                 Procedures$Procedure3<String, Map<String, Timer>, OnOffType> heating_ctrl|
-  // negative means temp is higher than setpoint, positive means temp is lower than setpoint
-  if(TempSetpoint.state instanceof UnDefType || MyTempProxy.state instanceof UnDefType) {
+  if(TempSetpoint.state == NULL || TempSetpoint.state == UNDEF ||
+     MyTempProxy.state == NULL || MyTempProxy.state == UNDEF) {
     logError(logName, "TempSetpoint ==" + TempSetpoing.state + " and MyTempProxy == " + MyTempProxy.state)
+    return;
   }
+  // negative means temp is higher than setpoint, positive means temp is lower than setpoint
   val delta = (TempSetpoint.state as Number) - (MyTempProxy.state as Number)
-  if(delta > 0) heating_ctrl.apply(logName, TIMERS, ON) // TODO: Replace 0 with hysteresis value
-  else heating_ctrl.apply(logName, TIMERS, OFF)
+  if(delta > 0 || HeatingMode.state.toString == "Boost") heating_ctrl.apply(logName, TIMERS, ON) // TODO: Replace 0 with hysteresis value for hysteresis
+  else heating_ctrl.apply(logName, TIMERS, OFF) // TODO: Replace with else if(MyTemp.state >= TempSetpoint.state) for hysteresis
 ]
 
 // -----------------------------------------------
@@ -124,10 +126,15 @@ val heating_ctrl = [ String logName, Map<String, Timer> TIMERS, OnOffType cmd |
 // Decides whether to turn on or off the cooling
 val cooling = [ String logName, Map<String, Timer> TIMERS,
                 Procedures$Procedure3<String, Map<String, Timer>, OnOffType> cooling_ctrl |
+  if(TempSetpoint.state == NULL || TempSetpoint.state == UNDEF ||
+     MyTempProxy.state == NULL || MyTempProxy.state == UNDEF) {
+    logError(logName, "TempSetpoint ==" + TempSetpoing.state + " and MyTempProxy == " + MyTempProxy.state)
+    return;
+  }
   // negative means temp is higher than setpoint, positive means temp is lower than setpoint
   val delta = (TempSetpoint.state as Number) - (MyTempProxy.state as Number)
-  if(delta < 0) cooling_ctrl.apply(logName, TIMERS, ON)  // TODO: Replace 0 with hysteresis value
-  else cooling_ctrl.apply(logName, TIMERS, OFF)
+  if(delta < 0 || CoolingMode.state.toString == "Boost") cooling_ctrl.apply(logName, TIMERS, ON)  // TODO: Replace 0 with hysteresis value for hysteresis
+  else cooling_ctrl.apply(logName, TIMERS, OFF) // TODO: Replace with else if(MyTemp.state <= TempSetpoint.state) for hysteresis
 ]
 
 // -----------------------------------------------
@@ -154,7 +161,7 @@ val fan = [ String logName, Map<String, Timer> TIMERS,
             Procedures$Procedure3<String, Map<String, Timer>, OnOffType> fan_ctrl |
   // Do nothing if mode is not ON or OFF
   switch(FanMode.state.toString) {
-    case "ON": fan_ctrl.apply(logName, TIMERS, ON)
+    case "ON", case "Boost": fan_ctrl.apply(logName, TIMERS, ON)
     case "OFF": fan_ctrl.apply(logName, TIMERS, OFF)
   }
 ]
@@ -179,11 +186,19 @@ val fan_ctrl = [ String logName, Map<String, Timer> TIMERS, OnOffType cmd |
 // Decides whether to turn on or off the humidifier, if the SystemType isn't EU exit
 val humidity = [ String logName, Map<String, Timer> TIMERS,
                  Procedures$Procedure3<String, Map<String, Timer>, OnOffType> humidity_ctrl|
+
+  if(HumiSetpoint.state == NULL || HumiSetpoint.state == UNDEF ||
+     MyHumiProxy.state == NULL || MyHumiProxy.state == UNDEF) {
+    logError(logName, "TempSetpoint ==" + TempSetpoing.state + " and MyTempProxy == " + MyTempProxy.state)
+    return;
+  }
   // negative delta means humidity is higher than the setpoint
   val delta = (HumiSetpoint.state as Number) - (MyHumiProxy.state as Number)
 
+  // TODO: Should implement hysteresis for this as well
   if((HumidityType.state == "Dehumidify" && delta < 0) ||
-     (HumidityType.state == "Humidify" && delta > 0)) {
+     (HumidityType.state == "Humidify" && delta > 0) ||
+     HumidityMode.state.toString == "Boost") {
     humidity_ctrl.apply(logName, TIMERS, ON)
   }
   else if((HumidityType.state == "Dehumidify" && delta > 0) ||
@@ -212,7 +227,7 @@ val humidity_ctrl = [ String logName, Map<String, Timer> TIMERS, OnOffType cmd |
 val hotwater = [ String logName, Map<String, Timer> TIMERS,
                  Procedures$Procedure3<String, Map<String, Timer>, OnOffType> hotwater_ctrl |
   switch(HotWaterMode.state.toString) {
-    case "ON": hotwater_ctrl.apply(logName, TIMERS, ON)
+    case "ON", case "Boost": hotwater_ctrl.apply(logName, TIMERS, ON)
     case "OFF", case "Schedule": hotwater_ctrl.apply(logName, TIMERS, OFF)
   }
 ]
@@ -323,7 +338,7 @@ then
   // Initialize misc settings
   initState.apply(HeatingBoostTime, DEFAULTS.get("HeatingBoostTime").toString)
   initState.apply(HotWaterBoostTime, DEFAULTS.get("HotWaterBoostTime").toString)
-  initState.apply(HumiBoostTime, DEFAULTS.get("HumiBoostTime").toString)
+  initState.apply(HumidityBoostTime, DEFAULTS.get("HumidityBoostTime").toString)
   initState.apply(PreviousTempReading, "0")
   initState.apply(PreviousHumiReading, "0")
   initState.apply(Heating2Time, DEFAULTS.get("Heating2Time"))
@@ -602,15 +617,11 @@ then
   postUpdate(mode+"PrevMode", previousState.toString)
 
   // Turn on the device
-  // TODO: turn on for boostTime regardless of the setpoint and current sensor
-  // replace the call to mode with call to mode_ctrl with ON as the cmd. Need to
-  // update the mode function to keep the heater ON regardless of current temp
-  // when in boost mode as well.
   DECIDE_LAMBDAS.get(mode).apply(logName, TIMERS, CTRL_LAMBDAS.get(mode))
 
   // Kick off the boost timer
   val boostTime = ScriptServiceUtil.getItemRegistry.getItem(mode+"BoostTime")
-  postUpdate(mode+"RemBoostTime", boostTime.state.toString)
+  sendCommand(mode+"RemBoostTime", boostTime.state.toString)
 
 end
 
@@ -638,7 +649,7 @@ then
   else {
     logInfo(logName, triggeringItem.state + " minutes remaining on boost for " + mode)
     TIMERS.put(triggeringItem.name, createTimer(now.plusMinutes(1), [ |
-      triggeringItem.postUpdate(triggeringItem.state as Number - 1) // retriggers the rule
+      triggeringItem.sendCommand(triggeringItem.state as Number - 1) // retriggers the rule
     ]))
   }
 end
@@ -652,7 +663,7 @@ then
   val remTime = ScriptServiceUtil.getItemRegistry.getItem(triggeringItem.name.replace("BoostTime", "RemBoostTime"))
 
   if((remTime.state instanceof DecimalType) && remTime.state as Number != 0)
-    remTime.postUpdate(triggeringItem.state.toString)
+    remTime.sendCommand(triggeringItem.state.toString)
 end
 
 // Turn everything off and change the temperature units
@@ -695,7 +706,7 @@ then
   }
   HumidityMode.sendCommand("OFF")
   HumiSetpoint.sendCommand(DEFAULTS.get("HumiSetpoint"))
-  HumiBoostTime.sendCommand(DEFAULTS.get("HumiBoostTime"))
+  HumidityBoostTime.sendCommand(DEFAULTS.get("HumidityBoostTime"))
 end
 
 rule "SystemType changed"
