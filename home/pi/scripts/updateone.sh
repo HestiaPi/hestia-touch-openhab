@@ -11,7 +11,8 @@ fi
 sudo mkdir /home/pi/scripts/gitupdate;
 cd /home/pi/scripts/gitupdate;
 sudo git clone --single-branch --branch ONE https://github.com/HestiaPi/hestia-touch-openhab.git;
-cd /home/pi/scripts/gitupdate/hestia-touch-openhab
+cd /home/pi/scripts/gitupdate/hestia-touch-openhab;
+sudo mv docs /home/pi/scripts/docs;
 sudo rm -rf .git LICENSE README.md;
 
 ### PREPARE FILES AND OVERWRITE THEM
