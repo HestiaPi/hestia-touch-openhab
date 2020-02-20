@@ -20,7 +20,8 @@ sitemap default label="Main Menu"
   }
 
   Frame label="Fan" visibility=[SystemType=="US"] {
-    Switch item=FanMode mappings=[ "ON"="ON", "OFF"="OFF", "AUTO"="AUTO"]
+    Text item=FanPin label="Fan [%s]" icon="switch" visibility=[FanCtrl==OFF]
+    Switch item=FanMode mappings=[ "ON"="ON", "OFF"="OFF", "AUTO"="AUTO"] visibility=[FanCtrl!=OFF]
   }
 
   Frame label="Heating" visibility=[SystemType=="EU"] {
