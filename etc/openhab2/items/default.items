@@ -88,7 +88,7 @@ Switch RestoreCommand "Restore" { channel="exec:command:restorecommand:run" }
 
 String GitInstalledVersion "Installed version [%s]" <shield> (RestoreOnStartup)
 String GitLatestVersion "Latest version [%s]" <returnpipe> (RestoreOnStartup)
-String GitInstallLatestVersion "Update & restart [%s]" <returnpipe> (RestoreOnStartup)
+String GitInstallLatestVersion "Update & restart [%s]" <returnpipe>
 
 String RebootButton "Reboot" <switch> (Buttons)
 String ShutdownButton "Shutdown" <switch> (Buttons)
