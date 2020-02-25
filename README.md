@@ -19,7 +19,7 @@ For **HestiaPi Touch ONE** select "Branch" menu above and then "ONE"
 * [Documentation & Getting Started Guides](https://github.com/HestiaPi/hestia-touch-openhab/wiki)
 * [Community forum](https://community.hestiapi.com/)
 * [Code (this repo)](https://github.com/HestiaPi/hestia-touch-openhab) - For **HestiaPi Touch ONE** select "Branch" menu above and then "ONE"
-
+* [LCD User Interface repo](https://github.com/HestiaPi/hestia-touch-one-ui)
 * [Electronics](https://github.com/HestiaPi/hestia-touch-pcb-dev)
 * [3D Case](https://github.com/HestiaPi/hestia-touch-case)
 
