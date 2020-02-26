@@ -81,7 +81,6 @@ val heating_ctrl = [ String logName, Map<String, Timer> TIMERS, OnOffType cmd |
       HeatingPin.sendCommand(OFF)
       if(SystemType.state == "US") {
         createTimer(now.plusSeconds(1), [ |
-          logInfo(logName, "FanPrevMode = " + FanPrevMode.state)
           FanMode.sendCommand(if(FanPrevMode.state.toString != "ON") "OFF" else "ON")
           FanCtrl.sendCommand(ON)
         ])
