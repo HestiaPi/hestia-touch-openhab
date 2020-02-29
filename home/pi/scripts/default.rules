@@ -81,7 +81,7 @@ val heating_ctrl = [ String logName, Map<String, Timer> TIMERS, OnOffType cmd |
       HeatingPin.sendCommand(OFF)
       if(SystemType.state == "US") {
         createTimer(now.plusSeconds(1), [ |
-          FanPin.sendCommand(OFF)
+          FanMode.sendCommand(if(FanPrevMode.state.toString != "ON") "OFF" else "ON")
           FanCtrl.sendCommand(ON)
         ])
       }
@@ -173,7 +173,7 @@ val cooling_ctrl = [ String logName, Map<String, Timer> TIMERS, OnOffType cmd |
     else {
       CoolingPin.sendCommand(OFF)
       createTimer(now.plusSeconds(1), [ |
-        FanPin.sendCommand(OFF)
+        FanMode.sendCommand(if(FanPrevMode.state.toString != "ON") "OFF" else "ON")
         FanCtrl.postUpdate(ON) // show controls on sitemap
       ])
     }
@@ -287,6 +287,10 @@ when
     System started
 then
   val initLogName = "initialization"
+
+  // Temporary exec.whitelist work around
+  // executeCommandLine("/usr/bin/touch@@/etc/openhab2/misc/exec.whitelist")
+
 
   logInfo(initLogName, "Initializing settings")
 
@@ -570,7 +574,9 @@ then
   val decide = DECIDE_LAMBDAS.get(mode)
   val ctrl = CTRL_LAMBDAS.get(mode)
 
-  if(triggeringItem.state.toString != "Boost") postUpdate(mode+"PrevMode", triggeringItem.state.toString)
+  if(triggeringItem.state.toString != "Boost" &&
+     triggeringItem.state.toString != "AUTO")
+    postUpdate(mode+"PrevMode", triggeringItem.state.toString)
 
   switch(triggeringItem.state){
     case "ON", case "AUTO": decide.apply(logName, TIMERS, ctrl)
@@ -712,7 +718,7 @@ when
 then
   val remTime = ScriptServiceUtil.getItemRegistry.getItem(triggeringItem.name.replace("BoostTime", "RemBoostTime"))
 
-  if((remTime.state instanceof DecimalType) && remTime.state as Number != 0)
+  if((remTime.state instanceof DecimalType) && remTime.state as Number > 0)
     remTime.sendCommand(triggeringItem.state.toString)
 end
 
