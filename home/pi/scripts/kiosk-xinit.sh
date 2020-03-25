@@ -112,7 +112,7 @@ kweb -KJ /home/pi/scripts/openhabloader.html &
 sleep 20;
 while :
 do
-  if (($(echo "$(top -b -n1 | grep "load average:" | awk '{print $(NF-2)}' | cut -d, -f1) > 0.5" | bc -l))); then
+  if (($(echo "$(top -b -n1 | grep "load average:" | awk '{print $(NF-2)}' | cut -d, -f1) > 2.00" | bc -l))); then
     echo 'Too busy'
     sleep 10; #Check again later
   else
@@ -124,23 +124,7 @@ do
       unclutter &
 
       echo "Easy Startup found. Loading UI...";
-#      if [ -f /home/pi/scripts/default.rules ]; then
       sudo -u openhab cp /home/pi/scripts/default.rules /etc/openhab2/rules/default.rules;
-#      else
-#        sudo -u openhab cp /home/pi/scripts/hestiapi-one.rules /etc/openhab2/rules/default.rules;
-#        # Read /home/pi/scripts/systemtype
-#        if grep -Fxq "EU" /home/pi/scripts/systemtype
-#        then
-#            echo "EU Loaded.";
-#            sudo -u openhab cp /home/pi/scripts/generic.rules /etc/openhab2/rules/default.rules;
-#        else
-#            echo "Default US Loaded.";
-#            sudo -u openhab cp /home/pi/scripts/hvac.rules /etc/openhab2/rules/default.rules;
-#        fi
-#      fi
-
-#     sudo chmod 755 /etc/openhab2/rules/default.rules;
-#     sudo chown openhab:openhab /etc/openhab2/rules/default.rules;
 
       while :
       do

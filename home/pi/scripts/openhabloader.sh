@@ -73,7 +73,7 @@ DISPLAY=:0 kweb -KJ /home/pi/scripts/openhabloader.html &
 sleep 20;
 while :
 do
-  if (($(echo "$(top -b -n1 | grep "load average:" | awk '{print $(NF-2)}' | cut -d, -f1) > 0.5" | bc -l))); then
+  if (($(echo "$(top -b -n1 | grep "load average:" | awk '{print $(NF-2)}' | cut -d, -f1) > 0.75" | bc -l))); then
     echo 'Too busy'
     sleep 10; #Check again later
   else
