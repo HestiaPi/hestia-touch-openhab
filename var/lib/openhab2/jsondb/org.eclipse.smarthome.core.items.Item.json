@@ -1,0 +1,1217 @@
+{
+  "PreviousHumiReading": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Previous Humidity [%.0f %%]",
+      "category": "humidity"
+    }
+  },
+  "MyPressure": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "Sensors"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Pressure",
+      "category": "pressure"
+    }
+  },
+  "PreviousTempReading": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Previous Temperature [%.1f °]",
+      "category": "temperature"
+    }
+  },
+  "PreviousPressureReading": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Previous Pressure",
+      "category": "pressure"
+    }
+  },
+  "Initialized": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Initialized",
+      "category": "switch"
+    }
+  },
+  "HumidityPrevMode": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "PrevModes"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Humidity Previous Mode [%s]",
+      "category": "heating"
+    }
+  },
+  "HumidityType": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Humidity Mode [%s]",
+      "category": "water"
+    }
+  },
+  "CoolingRemBoostTime": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "RemBoostTimes"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Cooling Remaining Boost Time [%.0f min]",
+      "category": "time"
+    }
+  },
+  "RestoreButton": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "String",
+      "tags": [],
+      "label": "Restore [%s]",
+      "category": "switch"
+    }
+  },
+  "MyHumiProxy": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Humidity [%.0f %%]",
+      "category": "humidity"
+    }
+  },
+  "TempSetpoint": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "Proxies"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Proxy Temperature Setpoint [%.1f °]",
+      "category": "temperature"
+    }
+  },
+  "FanModeCtrl": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Control the fan",
+      "category": "switch"
+    }
+  },
+  "Heating2Delta": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Threshold [%.1f °]",
+      "category": "temperature"
+    }
+  },
+  "CPUTemperatureCommand": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Get CPU Temperature",
+      "category": "switch"
+    }
+  },
+  "HeatingCtrl": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Control heating",
+      "category": "switch"
+    }
+  },
+  "RebootButton": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "Buttons"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Reboot",
+      "category": "switch"
+    }
+  },
+  "Heating2Time": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Delay [%.0f min]",
+      "category": "time"
+    }
+  },
+  "ExternalTempMax": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Number",
+      "tags": [],
+      "label": "External Max Temperature [%.0f °]",
+      "category": "temperature"
+    }
+  },
+  "MyPressureProxy": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Pressure [%.2f hPa]",
+      "category": "pressure"
+    }
+  },
+  "HotWaterBoostTime": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "BoostTimes"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Hot Water Boost Time [%.0f min]",
+      "category": "time"
+    }
+  },
+  "GitLatestVersionCommand": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Get latest version",
+      "category": "switch"
+    }
+  },
+  "TempUnit": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Temperature Unit [%s]",
+      "category": "temperature"
+    }
+  },
+  "HotWaterCheck": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Determine Hot Water state",
+      "category": "switch"
+    }
+  },
+  "GetTemp": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Get current temperature",
+      "category": "switch"
+    }
+  },
+  "Sensors": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Group",
+      "tags": [],
+      "label": "Sensors",
+      "category": "none"
+    }
+  },
+  "System_CPU_TEMP": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "String",
+      "tags": [],
+      "label": "CPU Temp [%s]",
+      "category": "temperature"
+    }
+  },
+  "RemBoostTimes": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "baseItemType": "Number",
+      "groupNames": [],
+      "itemType": "Group",
+      "tags": [],
+      "label": "Remaining Boost Times",
+      "category": "time",
+      "functionName": "MAX"
+    }
+  },
+  "HeatingCheck": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Determines the heater state",
+      "category": "switch"
+    }
+  },
+  "HeatingRemBoostTime": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "RemBoostTimes"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Heating Remaining Boost Time [%.0f min]",
+      "category": "time"
+    }
+  },
+  "GetTempUnit": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Get TempUnit",
+      "category": "switch"
+    }
+  },
+  "HumidityCheck": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Determines the humidifier/dehumidifer state",
+      "category": "switch"
+    }
+  },
+  "HotWaterMode": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "Modes"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Hot Water Mode [%s]",
+      "category": "heating"
+    }
+  },
+  "MainSwitch": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Main Switch"
+    }
+  },
+  "ExternalHumiMin": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Number",
+      "tags": [],
+      "label": "External Min Humidity [%.0f %%]",
+      "category": "humidity"
+    }
+  },
+  "System_TZ": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Timezone [%s]",
+      "category": "time"
+    }
+  },
+  "HeatingBoostTime": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "BoostTimes"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Heating Boost Time [%.0f min]",
+      "category": "time"
+    }
+  },
+  "BackupButton": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "String",
+      "tags": [],
+      "label": "Backup [%s]",
+      "category": "none"
+    }
+  },
+  "PrevModes": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Group",
+      "tags": [],
+      "label": "Previous Modes",
+      "category": "none"
+    }
+  },
+  "Network_WLAN_MAC": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "Network"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "WiFi MAC Address [%s]",
+      "category": "network"
+    }
+  },
+  "Heating2": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "2nd Stage Heating [%s]",
+      "category": "heating"
+    }
+  },
+  "Heating2InitialTemp": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "2nd Stage Heating Initial Temp [%.1f]",
+      "category": "temperature"
+    }
+  },
+  "BoostTimes": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "baseItemType": "Number",
+      "groupNames": [],
+      "itemType": "Group",
+      "tags": [],
+      "label": "Boost Times",
+      "category": "time",
+      "functionName": "MAX"
+    }
+  },
+  "CoolingPin": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "Pins"
+      ],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Cooling",
+      "category": "climate"
+    }
+  },
+  "Network_WAN_IP": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "Network"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Public IP [%s]",
+      "category": "zoom"
+    }
+  },
+  "HotWaterPrevMode": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "PrevModes"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Hot Water Previous Mode [%s]",
+      "category": "heating"
+    }
+  },
+  "Buttons": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Group",
+      "tags": [],
+      "label": "UI Buttons",
+      "category": "wallswitch"
+    }
+  },
+  "MyTempProxy": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "Proxies"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Current Temperature",
+      "category": "temperature"
+    }
+  },
+  "GitLatestVersion": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Latest version [%s]",
+      "category": "returnpipe"
+    }
+  },
+  "GitInstalledVersion": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Installed version [%s]",
+      "category": "shield"
+    }
+  },
+  "SystemType": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "System Type [%s]",
+      "category": "pump"
+    }
+  },
+  "F2CCommand": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "F to C Temp Unit",
+      "category": "switch"
+    }
+  },
+  "Network": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Group",
+      "tags": [],
+      "label": "Network Items",
+      "category": "network"
+    }
+  },
+  "UpgradeCommand": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Upgrade",
+      "category": "switch"
+    }
+  },
+  "FanPrevMode": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "PrevModes"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Fan Previous Mode [%s]",
+      "category": "heating"
+    }
+  },
+  "HumidityCtrl": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Control humidifier/dehumidifier",
+      "category": "switch"
+    }
+  },
+  "MyTempProxyF": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "Proxies"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Temperature [%.0f °F]",
+      "category": "temperature"
+    }
+  },
+  "HeatingPrevMode": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "PrevModes"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Heating Previous Mode [%s]",
+      "category": "heating"
+    }
+  },
+  "MyTempProxyC": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "Proxies"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Temperature [%.1f °C]",
+      "category": "temperature"
+    }
+  },
+  "CoolingMode": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "Modes"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Cooling Mode [%s]",
+      "category": "heating"
+    }
+  },
+  "FanCtrl": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Enable Fan Controls"
+    }
+  },
+  "TempSetpointC": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "Proxies"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Temperature Setpoint [%.1f °C]",
+      "category": "temperature"
+    }
+  },
+  "FanPin": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "Pins"
+      ],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Fan",
+      "category": "fan"
+    }
+  },
+  "TempSetpointF": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "Proxies"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Temperature Setpoint [%.0f °F]",
+      "category": "temperature"
+    }
+  },
+  "Modes": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Group",
+      "tags": [],
+      "label": "Modes",
+      "category": "none"
+    }
+  },
+  "MyHumi": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "String",
+      "tags": [],
+      "label": "Humidity",
+      "category": "humidity"
+    }
+  },
+  "CoolingBoostTime": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "BoostTimes"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Cooling Boost Time [%.0f min]",
+      "category": "time"
+    }
+  },
+  "HumidityBoostTime": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "BoostTimes"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Humidity Boost Time [%.0f min]",
+      "category": "time"
+    }
+  },
+  "Network_WLAN_IP": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "String",
+      "tags": [],
+      "label": "Local IP [%s]",
+      "category": "house"
+    }
+  },
+  "CoolingPrevMode": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "PrevModes"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Cooling Previous Mode [%s]",
+      "category": "heating"
+    }
+  },
+  "C2FCommand": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "C to F Temp Unit",
+      "category": "switch"
+    }
+  },
+  "HotWaterCtrl": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Control hot water",
+      "category": "switch"
+    }
+  },
+  "ShutdownButton": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "Buttons"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Shutdown",
+      "category": "switch"
+    }
+  },
+  "Network_WLAN_INFO": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "Network"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "WiFi Signal [%s %%]",
+      "category": "line"
+    }
+  },
+  "ExternalTempMin": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Number",
+      "tags": [],
+      "label": "External Min Temperature [%.0f °]",
+      "category": "temperature"
+    }
+  },
+  "FanMode": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "Modes"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Fan Mode [%s]",
+      "category": "heating"
+    }
+  },
+  "Network_SSID": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "Network"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "WiFi SSID",
+      "category": "network"
+    }
+  },
+  "HeatingMode": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "Modes"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Heating Mode [%s]",
+      "category": "heating"
+    }
+  },
+  "Proxies": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Group",
+      "tags": [],
+      "label": "Proxies",
+      "category": "none"
+    }
+  },
+  "CoolingCtrl": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Control cooling",
+      "category": "switch"
+    }
+  },
+  "ExternalHumiMax": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Number",
+      "tags": [],
+      "label": "External Max Humidity [%.0f %%]",
+      "category": "humidity"
+    }
+  },
+  "BackupTimestampCommand": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Last Backup [%s]",
+      "category": "calendar"
+    }
+  },
+  "HotWaterRemBoostTime": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "RemBoostTimes"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Hot Water Remaining Boost Time [%.0f min]",
+      "category": "time"
+    }
+  },
+  "System_CPU_LOAD": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "String",
+      "tags": [],
+      "label": "CPU Load [%s %%]",
+      "category": "line"
+    }
+  },
+  "FanCheck": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Determines the fan state",
+      "category": "switch"
+    }
+  },
+  "GitInstalledVersionCommand": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Get the currently running version",
+      "category": "switch"
+    }
+  },
+  "GitInstallLatestVersion": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Update \u0026 restart [%s]",
+      "category": "returnpipe"
+    }
+  },
+  "Pins": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Group",
+      "tags": [],
+      "label": "Pins",
+      "category": "none"
+    }
+  },
+  "BackupTimestampResults": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Backup Timestamp [%s]",
+      "category": "calendar"
+    }
+  },
+  "RebootCommand": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Reboot"
+    }
+  },
+  "System_TZ_Set": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Timezone [%s]",
+      "category": "time"
+    }
+  },
+  "RestoreCommand": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Restore",
+      "category": "switch"
+    }
+  },
+  "ShutdownCommand": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Shutdown"
+    }
+  },
+  "HeatingPin": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "Pins"
+      ],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Heating",
+      "category": "fire"
+    }
+  },
+  "StartInitialization": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Start Initialization",
+      "category": "switch"
+    }
+  },
+  "HumidityRemBoostTime": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "RemBoostTimes"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Humidity Remaining Boost Time [%.0f min]",
+      "category": "time"
+    }
+  },
+  "HumidityPin": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "Pins"
+      ],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Humidity",
+      "category": "flow"
+    }
+  },
+  "System_CPU_UPTIME": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "String",
+      "tags": [],
+      "label": "Uptime [%s]",
+      "category": "status"
+    }
+  },
+  "HumidityMode": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "Modes"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Humidity Mode [%s]",
+      "category": "heating"
+    }
+  },
+  "System_Used_Space": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "String",
+      "tags": [],
+      "label": "Used Disk [%s]",
+      "category": "pie"
+    }
+  },
+  "CoolingCheck": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Determines the AC state",
+      "category": "switch"
+    }
+  },
+  "BackupCommand": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Backup",
+      "category": "none"
+    }
+  },
+  "HumiSetpoint": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Humidity Setpoint [%.0f %%]",
+      "category": "humidity"
+    }
+  },
+  "HotWaterPin": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "Pins"
+      ],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Hot Water",
+      "category": "water"
+    }
+  },
+  "GetSystemType": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Get SystemTyupe",
+      "category": "switch"
+    }
+  },
+  "RestoreOnStartup": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Group",
+      "tags": [],
+      "label": "Restore on Startup",
+      "category": "none"
+    }
+  },
+  "MyTemp": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "Sensors"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Temperature",
+      "category": "temperature"
+    }
+  },
+  "Heating2Pin": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "Pins"
+      ],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Heating2",
+      "category": "fire"
+    }
+  },
+  "GetHumidityMode": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Get HumidityMode",
+      "category": "switch"
+    }
+  }
+}
