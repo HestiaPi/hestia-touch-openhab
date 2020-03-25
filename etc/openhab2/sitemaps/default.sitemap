@@ -21,7 +21,7 @@ sitemap default label="Main Menu"
 
   Frame label="Fan" visibility=[SystemType=="US"] {
     Text item=FanPin label="Fan [%s]" icon="switch" visibility=[FanCtrl==OFF]
-    Switch item=FanMode mappings=[ "ON"="ON", "OFF"="OFF"] visibility=[FanCtrl!=OFF]
+    Switch item=FanMode mappings=[ "ON"="ON", "OFF"="OFF" ] visibility=[FanCtrl!=OFF]
   }
 
   Frame label="Heating" visibility=[SystemType=="EU"] {
@@ -49,13 +49,13 @@ sitemap default label="Main Menu"
   }
 
   Frame label="Configuration" {
-    Text item=SettingsPage label="Settings" {
+    Text label="Settings" icon=settings {
       Frame {
         Text label="Maintenance" icon="error" {
           Frame {
             Switch item=MainSwitch mappings=[ "ON"="ON", "OFF"="OFF"]
             Switch item=BackupButton icon="lock" mappings=["ON"="Backup"]
-            Switch item=BackupTimestampCommand mappings=["ON"="Check"]
+            Switch item=BackupTimestampResults mappings=["ON"="Check"]
             Switch item=RestoreButton icon="lock" mappings=["ON"="Restore"]
 
             Switch item=GitInstalledVersion mappings=["ON"="Check"]
@@ -454,7 +454,7 @@ sitemap default label="Main Menu"
         ]
       }
     }
-    Text item=InfoPage label="Info" {
+    Text label="Info" icon="pie" {
       Frame label="Network" {
           Text item=Network_WAN_IP
           Text item=Network_WLAN_IP
@@ -467,7 +467,7 @@ sitemap default label="Main Menu"
         Text item=System_CPU_LOAD
         Text item=System_CPU_UPTIME
         Text item=System_Used_Space
-        Text item=System_TZ
+        Text item=System_TZ_Set
       }
     }
   }
