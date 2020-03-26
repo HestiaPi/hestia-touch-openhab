@@ -95,16 +95,6 @@
       "category": "time"
     }
   },
-  "RestoreButton": {
-    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
-    "value": {
-      "groupNames": [],
-      "itemType": "String",
-      "tags": [],
-      "label": "Restore [%s]",
-      "category": "switch"
-    }
-  },
   "MyHumiProxy": {
     "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
     "value": {
@@ -113,6 +103,16 @@
       "tags": [],
       "label": "Humidity [%.0f %%]",
       "category": "humidity"
+    }
+  },
+  "RestoreButton": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "String",
+      "tags": [],
+      "label": "Restore [%s]",
+      "category": "switch"
     }
   },
   "TempSetpoint": {
@@ -311,6 +311,16 @@
       "category": "switch"
     }
   },
+  "HeatingBoostTimer": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Heating Boost Timer Exists",
+      "category": "switch"
+    }
+  },
   "HeatingRemBoostTime": {
     "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
     "value": {
@@ -481,6 +491,16 @@
       "tags": [],
       "label": "Cooling",
       "category": "climate"
+    }
+  },
+  "HotWaterBoostTimer": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Hot Water Boost Timer Exists",
+      "category": "switch"
     }
   },
   "Network_WAN_IP": {
@@ -716,6 +736,16 @@
       "tags": [],
       "label": "Temperature Setpoint [%.0f °F]",
       "category": "temperature"
+    }
+  },
+  "FanBoostTimer": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Fan Boost Timer Exists",
+      "category": "switch"
     }
   },
   "Modes": {
@@ -984,6 +1014,16 @@
       "category": "none"
     }
   },
+  "HumidityBoostTimer": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Humidity Boost Timer Exists",
+      "category": "switch"
+    }
+  },
   "BackupTimestampResults": {
     "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
     "value": {
@@ -1190,6 +1230,16 @@
       "tags": [],
       "label": "Temperature",
       "category": "temperature"
+    }
+  },
+  "CoolingBoostTimer": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Cooling Boost Timer Exists",
+      "category": "switch"
     }
   },
   "Heating2Pin": {
