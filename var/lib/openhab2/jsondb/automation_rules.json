@@ -1,0 +1,1923 @@
+{
+  "10aa9679-eddb-4c5b-b101-d3abefcad1e6": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "RebootButton commanded ON",
+          "description": "RebootButton commanded to ON",
+          "configuration": {
+            "itemName": "RebootButton",
+            "command": "ON"
+          },
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "Reset RebootButton",
+          "description": "Commands the RebootButton to OFF",
+          "configuration": {
+            "itemName": "RebootButton",
+            "command": "OFF"
+          },
+          "type": "core.ItemCommandAction"
+        },
+        {
+          "inputs": {},
+          "id": "3",
+          "label": "Run the reboot script",
+          "description": "Sends a command to a specified item.",
+          "configuration": {
+            "itemName": "RebootCommand",
+            "command": "ON"
+          },
+          "type": "core.ItemCommandAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "10aa9679-eddb-4c5b-b101-d3abefcad1e6",
+      "name": "Reboot Button Command",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Resets the Reboot Button  Item and kicks off the Reboot command"
+    }
+  },
+  "7e6899b0-9013-42e7-8218-85d33794a817": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "HumidityType changed from Humidify",
+          "description": "",
+          "configuration": {
+            "itemName": "HumidityType",
+            "previousState": "Humidify"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "2",
+          "label": "HumidityType changed from Dehumidify",
+          "description": "",
+          "configuration": {
+            "itemName": "HumidityType",
+            "previousState": "Dehumidify"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "3",
+          "label": "New state is valid?",
+          "description": "Reverts to oldState if it\u0027s not a valid state.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar ok \u003d (newState \u003d\u003d \"Humidify\" || newState \u003d\u003d \"Dehumidify\");\nif(!ok){\n  var revert \u003d (oldState !\u003d NULL \u0026\u0026 oldState !\u003d UNDEF) ? oldState : \"Humidify\";\n  logWarn(\"humiditytype\", newState + \" is not a valid state, reverting to \" + revert);\n  events.postUpdate(\"HumidityType\", oldState);\n}\nok;"
+          },
+          "type": "script.ScriptCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "7",
+          "label": "Cancle humidity",
+          "description": "Sets humidity mode to OFF and cancels Boost",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/defaults.js\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar logName \u003d \"humitype\";\n\n// Updating humiditymode file handle by the Exec binding when\n// the Item changed.\n\nif(items[\"HumidityRemBoostTime\"].intValue() \u003e 0){\n  logInfo(logName, \"Cancelling boost for humidity mode\");\n  events.sendCommand(\"HumidityRemBoostTime\", 0);\n}\n\nlogInfo(logName, \"Turning off humidity mode\");\nevents.sendCommand(\"HumidityMode\", \"OFF\");\n\nlogInfo(logName, \"Restoring setpoint to default\");\nevents.postUpdate(\"HumiSetpoint\", DEFAULTS.get(\"Humi_DEF\"));"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "7e6899b0-9013-42e7-8218-85d33794a817",
+      "name": "Humidity Type Changed",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Processes a humidity/dehumidifier type changes, resets the Item if an invalid value is passed"
+    }
+  },
+  "b412a401-eff8-4944-982c-7f5856913a0a": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "GitInstallLatest commanded ON",
+          "description": "",
+          "configuration": {
+            "itemName": "GitInstallLatestVersion",
+            "command": "ON"
+          },
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "Call the upgrade script",
+          "description": "Checks the installed and latest version numbers and if different calls the upgrade script.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar logName \u003d \"update\";\n\n// Don\u0027t rely on the version Items to be up to date, call the\n// scripts directly.\nvar installed \u003d executeCommandLine(\"/home/pi/scripts/getgitinstalledversion.sh\", 5000);\nvar latest \u003d executeCommandLine(\"sudo /home/pi/scripts/getgitlatestversion.sh\", 5000);\n\nlogInfo(logName, \"installed version \u003d \" + installed + \" latest version \u003d \" + latest);\n\nif(installed \u003d\u003d latest) {\n  logInfo(logName, \"The latest version is already installed\");\n  createTimerSecs(30, function(){ events.postUpdate(\"GitInstalledVersion\", \"\"); }); \n}\nelse {\n  logInfo(logName, \"Upgrading and restarting\");\n  events.postUpdate(\"GitInstallLatestVersion\", \"Updating \u0026 restarting...\");\n  events.sendCommand(\"UpgradeCommand\", ON);\n}"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "b412a401-eff8-4944-982c-7f5856913a0a",
+      "name": "Upgrade",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "If the current version is different from the GitHub version, call the upgrade script."
+    }
+  },
+  "5bae7bc4-c1cd-4e3f-a1a4-19be8033be6f": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "GitInstalledVersion received command ON",
+          "description": "",
+          "configuration": {
+            "itemName": "GitInstalledVersion",
+            "command": "ON"
+          },
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "Command ON GitInstalledVersionCommand",
+          "description": "",
+          "configuration": {
+            "itemName": "GitInstalledVersionCommand",
+            "command": "ON"
+          },
+          "type": "core.ItemCommandAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "5bae7bc4-c1cd-4e3f-a1a4-19be8033be6f",
+      "name": "GitInstalledVersion to GitInstalledVersionCommand",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Forwards the UI command to the Exec binding Item to execute the script."
+    }
+  },
+  "0e266c8c-f97a-4c74-a0cf-d67419aab0c6": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "HeatingPin changed",
+          "description": "",
+          "configuration": {
+            "itemName": "HeatingPin"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "2",
+          "label": "Heating2Pin changed",
+          "description": "",
+          "configuration": {
+            "itemName": "Heating2Pin"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "3",
+          "label": "CoolingPin changed",
+          "description": "",
+          "configuration": {
+            "itemName": "CoolingPin"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "4",
+          "label": "FanPin changed",
+          "description": "",
+          "configuration": {
+            "itemName": "FanPin"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "5",
+          "label": "HotWaterPin changed",
+          "description": "",
+          "configuration": {
+            "itemName": "HotWaterPin"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "6",
+          "label": "HumidityPin changed",
+          "description": "",
+          "configuration": {
+            "itemName": "HumidityPin"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "7",
+          "label": "Ignore changes to NULL and UNDEF",
+          "description": "",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "(newState !\u003d NULL \u0026\u0026 newState !\u003d UNDEF);"
+          },
+          "type": "script.ScriptCondition"
+        },
+        {
+          "inputs": {},
+          "id": "10",
+          "label": "Fan Protection",
+          "description": "Prevent the fan from turning off unless the heater or cooler are off.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar ok \u003d true\nif(event.itemName \u003d\u003d \"FanPin\"){\n  logInfo(\"pins\", \"FanPin commanded to \" + newState);\n  if(items[\"SystemType\"] \u003d\u003d \"US\" \u0026\u0026\n     (items[\"HeatingPin\"] \u003d\u003d ON || items[\"CoolingPin\"] \u003d\u003d ON) \u0026\u0026\n     newState \u003d\u003d OFF){\n    logWarn(\"pins\", \"Cannot turn off the fan when heating or cooling in US system type! Restoring fan states!\");\n    commandIfDifferent(\"FanMode\", \"AUTO\");\n    commandIfDifferent(\"FanCtrl\", \"OFF\");\n    events.sendCommand(\"FanPin\", ON);\n    ok \u003d false;\n  }\n}\n(ok);"
+          },
+          "type": "script.ScriptCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "9",
+          "label": "Map a device to gpio pin",
+          "description": "The mappings are defined in defaults.js",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/defaults.js\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar key \u003d items[\"SystemType\"]+\"_\"+event.itemName;\nvar pinItem \u003d PIN_MAP.get(key); // checking the key is not null was done in the conditions clause\nlogInfo(\"pins\", \"Commanding \" + pinItem + \" to \" + newState + \" for \" + event.itemName);\nevents.sendCommand(pinItem, newState);"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "0e266c8c-f97a-4c74-a0cf-d67419aab0c6",
+      "name": "Map Pin to GPIO",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Maps a command to a device pin Item to the GPIO Pin Item."
+    }
+  },
+  "5635a61b-859b-48d5-82f4-a53f6e1c34d1": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "HeatingRemBoostTime changed",
+          "description": "",
+          "configuration": {
+            "itemName": "HeatingRemBoostTime"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "3",
+          "label": "CoolingRemBoostTime changed",
+          "description": "",
+          "configuration": {
+            "itemName": "CoolingRemBoostTime"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "4",
+          "label": "HotWaterRemBoostTime changed",
+          "description": "",
+          "configuration": {
+            "itemName": "HotWaterRemBoostTime"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "5",
+          "label": "HumidityRemBoostTime changed",
+          "description": "",
+          "configuration": {
+            "itemName": "HumidityRemBoostTime"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        }
+      ],
+      "conditions": [],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "Boost time control",
+          "description": "Manages the boost time loop.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar logName \u003d \"boost\";\n\nvar mode \u003d event.itemName.replace(\"RemBoostTime\", \"\");\n\n// Boost mode is done, restore previous state\nif(newState.intValue() \u003c\u003d 0){\n  if(items[mode+\"Mode\"] \u003d\u003d \"Boost\"){\n    var prevMode \u003d items[mode+\"PrevMode\"];\n    logInfo(logName, \"Boost for \" + mode + \" has ended, restoring to \" + prevMode);\n    events.sendCommand(mode+\"Mode\", prevMode);\n  }\n}\n// Count down remaining boost time\nelse {\n  logInfo(logName, newState + \" minutes remaining on boost for \" + mode);\n  var runme \u003d function(){ \n    events.sendCommand(mode+\"BoostTimer\", OFF);\n    var timeLeft \u003d newState.intValue() - 1;\n    logDebug(\"Minutes \u003d \" + newState + \"  Time Left \u003d \" + timeLeft.toString());\n    events.sendCommand(event.itemName, timeLeft.toString());\n  }\n  if(items[mode+\"BoostTimer\"] !\u003d ON) {\n    events.sendCommand(mode+\"BoostTimer\", ON);\n    createTimerSecs(60, runme);\n  }\n}"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "5635a61b-859b-48d5-82f4-a53f6e1c34d1",
+      "name": "Boost Looping Timer",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Called once a minute to count down boost time"
+    }
+  },
+  "4c614d58-3b56-4e2a-8e03-db980168bb2c": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "System_TZ changed",
+          "description": "This triggers the rule if an item state has changed.",
+          "configuration": {
+            "itemName": "System_TZ"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "System_TX is difference from SystemTZ_Set",
+          "description": "Allows the definition of a condition through a script",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "items[\"System_TZ\"] !\u003d items[\"System_TZ_Set\"];"
+          },
+          "type": "script.ScriptCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "3",
+          "label": "Updates System_TZ_Set to the state of System_TZ",
+          "description": "",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "events.postUpdate(\"System_TZ_Set\", items[\"System_TZ\"]);"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "4c614d58-3b56-4e2a-8e03-db980168bb2c",
+      "name": "System_TZ to System_TZ_Set",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Keeps the UI up to date when the tz file changes"
+    }
+  },
+  "09f7d047-1650-4995-8add-e554f6bdddf6": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "SystemType changed from EU",
+          "description": "This triggers the rule if an item state has changed.",
+          "configuration": {
+            "itemName": "SystemType",
+            "previousState": "EU"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "2",
+          "label": "SystemType changes from US",
+          "description": "",
+          "configuration": {
+            "itemName": "SystemType",
+            "previousState": "US"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "3",
+          "label": "Makes sure the new value is US or EU only",
+          "description": "Updates the Item back to oldState if it\u0027s not US or EU, ignore changes from NULL/UNDEF",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar ok \u003d (newState \u003d\u003d \"US\" || newState \u003d\u003d \"EU\");\nif(!ok){\n  logWarn(\"systemtype\", newState + \" is not a valid state, reverting to \" + oldState);\n  var restState \u003d (oldState \u003d\u003d \"US\" || oldState \u003d\u003d \"EU\") ? oldState : \"EU\";\n  events.sendCommand(\"SystemType\", restState); // executes the script to update the file\n}\nelse if(oldState \u003d\u003d NULL || oldState \u003d\u003d UNDEF) {\n  logWarn(\"systemtype\", \"Previous state was \" + oldState + \" ignoring change.\");\n  ok \u003d false;\n}\nok;"
+          },
+          "type": "script.ScriptCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "4",
+          "label": "Turn everything off and switch SystemType",
+          "description": "",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/defaults.js\u0027);\n\nvar logName \u003d \"systemtype\";\n\n// Turn everything OFF\nevents.sendCommand(\"MainSwitch\", OFF);\n\n// Waiting for all the modes to turn OFF\nvar notOff \u003d function(i) { return items[i.name] !\u003d \"OFF\"; }\nwhile(ir.getItem(\"Modes\").members.stream().filter(notOff).size \u003e 0) {\n  logInfo(logName, \"Waiting for everything to become OFF.\");\n  sleep(1);\n}\n\n// Reset the setpoints\nevents.sendCommand(\"TempSetpoint\", DEFAULTS.get(items[\"TempUnit\"]+\"_DEF\"));\nevents.sendCommand(\"HumiSetpoint\", DEFAULTS.get(\"Humi_DEF\"));\n\n// Executing the sed to update the systemtype file is now done by\n// the Exec binding when the SystemType Item received the command\n// to change.\nlogInfo(logName, \"Rebooting...\");\nsleep(20); // give everything time to settle down\nevents.sendCommand(\"RebootButton\", ON);\nlogInfo(logName, \"Done\");"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "09f7d047-1650-4995-8add-e554f6bdddf6",
+      "name": "SystemType changed",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Updates scripts to support a change in the SystemType"
+    }
+  },
+  "d5d51d34-4a2e-4df2-819c-666a8197c670": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "HumidityCtrl",
+          "description": "This triggers the rule if an item receives a command.",
+          "configuration": {
+            "itemName": "HumidityCtrl"
+          },
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "SystemType is EU",
+          "description": "Compares the item state with the given value",
+          "configuration": {
+            "itemName": "SystemType",
+            "state": "EU",
+            "operator": "\u003d"
+          },
+          "type": "core.ItemStateCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "3",
+          "label": "Turns on/off the humidifier/dehumidifier",
+          "description": "Allows the execution of a user-defined script.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nlogInfo(\"humidity\", \"Turning \" + command + \" the \" + items[\"HumidityType\"] +\n        \": curr humidity \u003d \" + items[\"MyHumi\"] + \n        \" setpoint \u003d \" + items[\"HumiSetpoint\"] +\n        \" mode \u003d \" + items[\"HumidityMode\"]);\nif(command \u003d\u003d ON) commandIfDifferent(\"MainSwitch\", ON);\ncommandIfDifferent(\"HumidityPin\", command);\nevents.sendCommand(\"HumidityMode\", items[\"HumidityMode\"]); // update the LCD"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "d5d51d34-4a2e-4df2-819c-666a8197c670",
+      "name": "Humidity Control",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Turns on/off the humidifier/dehumidifier"
+    }
+  },
+  "36a8de28-1604-4ddd-ac1a-3a836628fba4": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "HeatingMode changed",
+          "description": "This triggers the rule if an item state has changed.",
+          "configuration": {
+            "itemName": "HeatingMode"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "2",
+          "label": "CoolingMode changed",
+          "description": "This triggers the rule if an item state has changed.",
+          "configuration": {
+            "itemName": "CoolingMode"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "3",
+          "label": "FanMode changes",
+          "description": "This triggers the rule if an item state has changed.",
+          "configuration": {
+            "itemName": "FanMode"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "4",
+          "label": "HotWaterMode changed",
+          "description": "This triggers the rule if an item state has changed.",
+          "configuration": {
+            "itemName": "HotWaterMode"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "5",
+          "label": "HumidityMode changed",
+          "description": "This triggers the rule if an item state has changed.",
+          "configuration": {
+            "itemName": "HumidityMode"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "6",
+          "label": "Initialized is ON",
+          "description": "Compares the item state with the given value",
+          "configuration": {
+            "itemName": "Initialized",
+            "state": "ON",
+            "operator": "\u003d"
+          },
+          "type": "core.ItemStateCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "7",
+          "label": "Process a mode change",
+          "description": "Allows the execution of a user-defined script.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar device \u003d event.itemName.replace(\"Mode\", \"\");\nlogInfo(\"mode\", device + \" mode changed from \" + oldState + \" to \" + newState);\n\n// Update PrevMode\nif(newState !\u003d \"Boost\" \u0026\u0026 newState !\u003d \"AUTO\") {\n  events.postUpdate(device+\"PrevMode\", newState);\n}\n\nswitch(newState.toString()){\n  case \"ON\":\n  case\"AUTO\":\n    events.sendCommand(device+\"Check\", ON);\n    break;\n  case \"OFF\":\n  case \"Schedule\":\n    var item \u003d (device \u003d\u003d \"Fan\") ? \"FanModeCtrl\" : device+\"Ctrl\";\n    events.sendCommand(item, OFF);\n    break;\n  case \"Boost\":\n    // Boost is handled by other rules\n    events.sendCommand(\"MainSwitch\", ON);\n    break;\n}"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "36a8de28-1604-4ddd-ac1a-3a836628fba4",
+      "name": "Mode changed",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Triggered when any device\u0027s mode changes"
+    }
+  },
+  "32223121-5acf-423f-a9f5-1dffbe665927": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "3",
+          "label": "StartInitialization received command ON",
+          "description": "This triggers the rule if an item receives a command.",
+          "configuration": {
+            "itemName": "StartInitialization",
+            "command": "ON"
+          },
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "4",
+          "label": "Initialized is NULL",
+          "description": "Compares the item state with the given value",
+          "configuration": {
+            "itemName": "Initialized",
+            "state": "NULL",
+            "operator": "\u003d"
+          },
+          "type": "core.ItemStateCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "Initialize all the setting Items",
+          "description": "Use defaults to initialize those Items that are not restored on startup",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/defaults.js\u0027);\n\nvar logName \u003d \"initialization\";\n\n// Set the flag to indicate initialization is in progress\nevents.postUpdate(\"Initialized\", OFF);\n\nlogInfo(logName, \"Initializing settings...\");\n\nvar initFromScript \u003d function(i){\n  // This shouldn\u0027t be possible, the Exec binding should have\n  // called the script already. But we will try to kick it off\n  // again here.\n  if(items[i] \u003d\u003d NULL || items[i] \u003d\u003d UNDEF){\n    logInfo(logName, i + \" is undefined, initializing from script \" + cmd);\n    events.sendCommand(\"Get\"+i, ON);\n    waitForUpdate(i, 5);\n  }\n  else {\n    logDebug(logName, i + \" is \" + items[i]);\n    events.sendCommand(i, items[i]);\n  }\n}\n\nvar initState \u003d function(i, st) {\n  if(items[i] \u003d\u003d NULL || items[i] \u003d\u003d UNDEF){\n    logInfo(logName, i + \" is undefined, initializing to \" + st);\n    events.sendCommand(i, st);\n  }\n  else {\n    logDebug(logName, i + \" is \" + items[i]);\n    events.sendCommand(i, items[i]);\n  }\n}\n\nvar initSetpoint \u003d function(i, value, max, min) {\n  if(items[i] \u003d\u003d NULL || items[i] \u003d\u003d UNDEF || \n     items[i].floatValue() \u003e max || items[i].floatValue() \u003c min){\n    logInfo(logName, i + \" is \" + items[i] + \", initializing to \" + value);\n    events.sendCommand(i, value);\n  }\n  else {\n    logDebug(i + \" is \" + items[i]);\n    events.sendCommand(i, items[i]);\n  }\n}\n\n// Initialize type Items first\ninitFromScript(\"SystemType\");\ninitFromScript(\"TempUnit\");\ninitFromScript(\"HumidityType\");\n\n// Get the current temp reading\nevents.sendCommand(\"GetTemp\", ON);\n\n// Initialize the mode Items\ninitState(\"FanMode\", \"OFF\");\ninitState(\"MainSwitch\", \"OFF\");\ninitState(\"HeatingMode\", \"OFF\");\ninitState(\"CoolingMode\", \"OFF\");\ninitState(\"HotWaterMode\", \"OFF\");\ninitState(\"HumidityMode\", \"OFF\");\ninitState(\"Heating2\", \"OFF\");\n\n\n// Initialize setpoint Items\nvar unit \u003d items[\"TempUnit\"];\nvar def \u003d DEFAULTS.get(unit+\"_DEF\");\nvar min \u003d DEFAULTS.get(unit+\"_MIN\");\nvar max \u003d DEFAULTS.get(unit+\"_MAX\");\ninitSetpoint(\"TempSetpoint\", def, max, min);\ninitSetpoint(\"TempSetpoint\"+unit, def, max, min);\n\ndef \u003d DEFAULTS.get(\"Humi_DEF\");\nmin \u003d DEFAULTS.get(\"Humi_MIN\");\nmax \u003d DEFAULTS.get(\"Humi_MAX\");\ninitSetpoint(\"HumiSetpoint\", 50, 100, 0);\n\n// Initialize misc settings\ninitState(\"HeatingBoostTime\", DEFAULTS.get(\"HeatingBoostTime\"));\ninitState(\"HotWaterBoostTime\",DEFAULTS.get(\"HotWaterBoostTime\"));\ninitState(\"HumidityBoostTime\", DEFAULTS.get(\"HumidityBoostTime\"));\ninitState(\"CoolingBoostTime\", DEFAULTS.get(\"CoolingBoostTime\"));\ninitState(\"PreviousTempReading\", 0);\ninitState(\"PreviousHumiReading\", 0);\ninitState(\"PreviousPressureReading\", 0);\ninitState(\"Heating2Time\", DEFAULTS.get(\"Heating2Time\"));\ninitState(\"Heating2Delta\", DEFAULTS.get(\"Heating2Delta\"));\ninitState(\"FanCtrl\", ON);\n\n// Let the Exec binding init the network and system info Items\n\n// We are initialized enough to operate, set the flag\nevents.postUpdate(\"Initialized\", ON);\nlogInfo(logName, \"System is ready to operate, kicking off restored behaviors\");\n\n// Update PrevMode Items and cancel Boosts\nlogDebug(logName, \"Updating PrevModes\");\nfor each(var i in ir.getItem(\"Modes\").members){\n  if(items[i.name] !\u003d \"Boost\"){\n    var prevName \u003d i.name.replace(\"Mode\", \"PrevMode\");\n    logDebug(logName, i.name + \" is \" + items[i.name] + \", updating \" + prevName + \" to \" + items[i.name]);\n    events.postUpdate(prevName, items[i.name]);\n  }\n  else {\n    var prev \u003d items[i.name.replace(\"Mode\", \"PrevMode\")]\n    var resetVal \u003d (prev !\u003d NULL \u0026\u0026 prev !\u003d UNDEF)? prev : \"OFF\";\n    logInfo(logName, \"Cancelling Boost mode for \" + i.name + \", restoring to \" + resetVal);\n    events.sendCommand(i.name, resetVal);\n  }\n}\n\n// Sometimes the timing works out that MyTemp is updated before the\n// rule that synchronizes it with the proxy Items is loaded, leaving \n// the temp proxy Items NULL until the temp changes enough to register.\nif(items[\"MyTempProxy\"] \u003d\u003d NULL || items[\"MyTempProxy\"+items[\"TempUnit\"]] \u003d\u003d NULL) {\n  logDebug(logName, \"MyTempProxy is not set, initializing it with MyTemp.\");\n  events.sendCommand(\"MyTempProxy\", items[\"MyTemp\"]);\n}\n\nevents.postUpdate(\"Initialized\", ON); // Allow changes to run\n\nlogDebug(logName, \"Triggering devices\");\n// Do the fan mode first so screen ends up at Heating or Cooling\n// if either are on\nif(items[\"SystemType\"] \u003d\u003d \"US\" \u0026\u0026 items[\"FanMode\"] !\u003d \"OFF\"){\n  events.sendCommand(\"FanMode\", ON);\n}\n\nif(items[\"HeatingMode\"] !\u003d \"OFF\") events.sendCommand(\"HeatingCheck\", ON);\n\nif(items[\"SystemType\"] \u003d\u003d \"EU\"){\n  if(items[\"HotWaterMode\"] !\u003d \"OFF\") events.sendCommand(\"HotWaterCheck\", ON);\n  if(items[\"HumidityMode\"] !\u003d \"OFF\") events.sendCommand(\"HumidityCheck\", ON);\n}\n\n// Heating and cooling are handled by the same rule. We only need\n// to command CoolingMode if it wasn\u0027t already triggered by HeatingMode.\nif(items[\"CoolingMode\"] !\u003d \"OFF\") events.sendCommand(\"CoolingCheck\", ON);\n\nlogDebug(logName, \"Done initializing settings\");"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "32223121-5acf-423f-a9f5-1dffbe665927",
+      "name": "Initialization",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Called from other Rules, initializes all the settings when necessary."
+    }
+  },
+  "ac2fa36a-9833-4457-82ac-ca02aa372911": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "GitLatestVersion commanded to ON",
+          "description": "",
+          "configuration": {
+            "itemName": "GitLatestVersion",
+            "command": "ON"
+          },
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "3",
+          "label": "noop",
+          "description": "exists only to eliminate error logs at boot",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "(true);"
+          },
+          "type": "script.ScriptCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "Executes the GitLatestVersionCommand",
+          "description": "Updates the button label and kicks off the scipt.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nlogInfo(\"git\", \"Getting the latest version of HestiaPi ONE.\");\nevents.postUpdate(\"GitLatestVersion\", \"Checking GitHub...\");\nevents.sendCommand(\"GitLatestVersionCommand\", ON);"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "ac2fa36a-9833-4457-82ac-ca02aa372911",
+      "name": "GitLatestVersion to GitLatestVersionCommand",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Translates the request to the shell script and provides feedback to the user."
+    }
+  },
+  "e407446b-dadb-4822-a2c0-8cd84e6e5a1f": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "MyTemp changed",
+          "description": "",
+          "configuration": {
+            "itemName": "MyTemp"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "2",
+          "label": "MyHumi changed",
+          "description": "",
+          "configuration": {
+            "itemName": "MyHumi"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "3",
+          "label": "MyPressure changed",
+          "description": "",
+          "configuration": {
+            "itemName": "MyPressure"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "4",
+          "label": "The sensor reading is parsable to a float",
+          "description": "",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar logName \u003d \"sensor\";\n\nvar parsed \u003d parseFloat(newState.toString());\nif(parsed \u003d\u003d NaN) {\n  logError(logName, newState + \" is not a valid number!\");\n}\n\n(parsed !\u003d NaN)"
+          },
+          "type": "script.ScriptCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "5",
+          "label": "execute a given script",
+          "description": "Allows the execution of a user-defined script.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/defaults.js\u0027);\n\nvar logName \u003d \"sensor\";\n\n// Update the proxy\nevents.sendCommand(event.itemName+\"Proxy\", newState);\n\n// Verifying the newState can be parsed is already checked in the but only if...\nvar newReading \u003d parseFloat(newState.toString());\n\nvar device \u003d event.itemName.replace(\"My\", \"\");\nvar prev \u003d items[\"Previous\"+device+\"Reading\"].floatValue();\nif(prev \u003d\u003d NaN) prev \u003d 0;\n\nvar hyst \u003d (device \u003d\u003d \"Temp\") ? DEFAULTS.get(\"Temp\"+items[\"TempUnit\"]+\"_DIFF\") : DEFAULTS.get(device+\"_DIFF\");\n\nlogDebug(logName, \"Processing \" + device + \" with value \" + newState + \" and prevState \" + prev + \" and delta \" + delta);\nvar delta \u003d Math.abs(newReading - prev);\nif(delta \u003e hyst) {\n  logDebug(logName, \"Updating Previous\"+device+\"Reading with \" + newState);\n  events.postUpdate(\"Previous\"+device+\"Reading\", newState);\n}\nelse {\n  logDebug(logName, \"Ignoring \" + device + \" sensor reading, change is too small\");\n}"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "e407446b-dadb-4822-a2c0-8cd84e6e5a1f",
+      "name": "Process Sensor Changes",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Triggers to process raw sensor changes."
+    }
+  },
+  "d222dfeb-aacf-496e-a61f-4542c202e8b8": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "ShutdownButton commanded ON",
+          "description": "This triggers the rule if an item receives a command.",
+          "configuration": {
+            "itemName": "ShutdownButton",
+            "command": "ON"
+          },
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "Reset ShutdownButton",
+          "description": "Sends a command to a specified item.",
+          "configuration": {
+            "itemName": "ShutdownButton",
+            "command": "OFF"
+          },
+          "type": "core.ItemCommandAction"
+        },
+        {
+          "inputs": {},
+          "id": "3",
+          "label": "Call shutdown script",
+          "description": "Sends a command to a specified item.",
+          "configuration": {
+            "itemName": "ShutdownCommand",
+            "command": "ON"
+          },
+          "type": "core.ItemCommandAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "d222dfeb-aacf-496e-a61f-4542c202e8b8",
+      "name": "Shutdown Button",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Resets the ShutdownButton and calls the shutdown script"
+    }
+  },
+  "01eeaad0-fc93-46ed-86c6-d4cbdeec0507": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "BackupCommand changes to OFF",
+          "description": "This triggers the rule if an item state has changed.",
+          "configuration": {
+            "itemName": "BackupCommand",
+            "state": "OFF",
+            "previousState": "ON"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "3",
+          "label": "noop",
+          "description": "Doesn\u0027t do anything, place holder to remove error log statements",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "(true);"
+          },
+          "type": "script.ScriptCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "backup completed action",
+          "description": "Allows the execution of a user-defined script.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nlogInfo(\"backup\", \"Backup complete!\");\nevents.postUpdate(\"BackupButton\", \"Backup complete!\");\nevents.sendCommand(\"BackupTimestampCommand\", \"ON\"); // gets the latest timestamp\n\ncreateTimerSecs(5, function(){ events.postUpdate(\"BackupButton\", \"\"); });"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "01eeaad0-fc93-46ed-86c6-d4cbdeec0507",
+      "name": "Backup Completed",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Called when the backup script completes"
+    }
+  },
+  "4913010e-de8e-4f01-85b9-25999dd0b247": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "FanCheck received command ON",
+          "description": "This triggers the rule if an item receives a command.",
+          "configuration": {
+            "itemName": "FanCheck",
+            "command": "ON"
+          },
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "3",
+          "label": "SystemType is US",
+          "description": "Compares the item state with the given value",
+          "configuration": {
+            "itemName": "SystemType",
+            "state": "US",
+            "operator": "\u003d"
+          },
+          "type": "core.ItemStateCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "4",
+          "label": "Turn on or off the fan",
+          "description": "ON or Boost turns ON, OFF turns OFF.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar cmd \u003d OFF;\n\nlogInfo(\"fan\", \"FanMode is \" + items[\"FanMode\"]);\nif(items[\"FanMode\"] \u003d\u003d \"ON\" || \n   items[\"FanMode\"] \u003d\u003d \"Boost\" || \n   items[\"FanMode\"] \u003d\u003d \"AUTO\") cmd \u003d ON;\n\nevents.sendCommand(\"FanModeCtrl\", cmd);"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "4913010e-de8e-4f01-85b9-25999dd0b247",
+      "name": "Fan Check",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Decides whether or not to turn on the fan (heating and cooling control the fan independently)"
+    }
+  },
+  "68e1726b-f4a2-4964-afe0-b6717295a513": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "Netowrk_WAN_IP changes",
+          "description": "Triggers the Rule when the external WAN IP address changes",
+          "configuration": {
+            "itemName": "Network_WAN_IP"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        }
+      ],
+      "conditions": [],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "Log WAN IP",
+          "description": "Logs a warning when the WAN IP cannot be determined,, a DEBUG level for routine changes",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar logName \u003d \"wanip\";\n\nvar wanip \u003d items[\"Network_WAN_IP\"]\nif(wanip \u003d\u003d NULL || wanip \u003d\u003d UNDEF) {\n  logWarn(logName, \"Unable to get WAN IP\")\n}\nelse {\n  logInfo(logName, \"WAN IP changed to \" + wanip)\n}"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "68e1726b-f4a2-4964-afe0-b6717295a513",
+      "name": "Monitor WAN IP",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Log a warning to openhab.log when the WAN PI address changes"
+    }
+  },
+  "4a43616b-e5d0-4816-bed8-5554b6ea34a4": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "MyTempProxy changed",
+          "description": "",
+          "configuration": {
+            "itemName": "MyTempProxy"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "2",
+          "label": "MyTempProxyF changed",
+          "description": "",
+          "configuration": {
+            "itemName": "MyTempProxyF"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "3",
+          "label": "MyTempProxyC changed",
+          "description": "",
+          "configuration": {
+            "itemName": "MyTempProxyC"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "4",
+          "label": "TempSetpoint changed",
+          "description": "",
+          "configuration": {
+            "itemName": "TempSetpoint"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "5",
+          "label": "TempSetpointF changed",
+          "description": "",
+          "configuration": {
+            "itemName": "TempSetpointF"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "6",
+          "label": "TempSetpointC changed",
+          "description": "",
+          "configuration": {
+            "itemName": "TempSetpointC"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        }
+      ],
+      "conditions": [],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "7",
+          "label": "Synchronize the temp proxies",
+          "description": "",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\n// If the change is from MyTempProxyF or MyTempProxyC, forward the new value\n// to MyTempProxy\nvar toItem \u003d (event.itemName.endsWith(\"F\") || event.itemName.endsWith(\"C\")) ? event.itemName.substring(0, event.itemName.length-1) : event.itemName+items[\"TempUnit\"];\n\nlogDebug(\"tempproxy\", \"Updating \" + toItem + \" with \" + newState);\nevents.sendCommand(toItem, newState);"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "4a43616b-e5d0-4816-bed8-5554b6ea34a4",
+      "name": "Synchronize Temp Proxies",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Synchronizes the temp and temp setpoint proxies to each other."
+    }
+  },
+  "faff6a48-0775-4a4b-bdd9-c3a399126802": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "MainSwitch changed from ON to OFF",
+          "description": "",
+          "configuration": {
+            "itemName": "MainSwitch",
+            "state": "OFF",
+            "previousState": "ON"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        }
+      ],
+      "conditions": [],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "execute a given script",
+          "description": "Allows the execution of a user-defined script.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar logName \u003d \"mainswitch\";\n\nlogInfo(logName, \"Main switch turned off, turning everything off\");\n\n// Cancel Boost modes\nlogInfo(logName, \"Cancelling boost modes\");\nfor each (var rem in ir.getItem(\"RemBoostTimes\")) {\n  events.sendCommand(rem, 0);\n}\nsleep(5);\n\n// Record PrevModes\nlogInfo(logName, \"Recording previous modes\");\nfor each (var m in ir.getItem(\"Modes\").members){\n  events.postUpdate(m.name.replace(\"Mode\", \"PrevMode\"), m.state.toString());\n}\nsleep(1);\n\n// Turn everything OFF\nlogInfo(logName, \"Turning everything OFF\");\nevents.sendCommand(\"Modes\", OFF);\n\n// Make sure the Fan get\u0027s turned off since the command to\n// Modes won\u0027t do that if Heating or Cooling is ON.\ncreateTimerSecs(15, function(){\n  logInfo(logName, \"Making sure the fan turned off\");\n  events.sendCommand(\"FanMode\", OFF);\n});"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "faff6a48-0775-4a4b-bdd9-c3a399126802",
+      "name": "Main Switch turned off",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Turn off everything"
+    }
+  },
+  "bb0b73b3-a99b-4f57-b441-e0265c37813a": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "TempSetpoint changed",
+          "description": "This triggers the rule if an item state has changed.",
+          "configuration": {
+            "itemName": "TempSetpoint"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "2",
+          "label": "PreviousTempReading changed",
+          "description": "This triggers the rule if an item state has changed.",
+          "configuration": {
+            "itemName": "PreviousTempReading"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "3",
+          "label": "HumiSetpoint",
+          "description": "This triggers the rule if an item state has changed.",
+          "configuration": {
+            "itemName": "HumiSetpoint"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "4",
+          "label": "PreviousHumiReading",
+          "description": "This triggers the rule if an item state has changed.",
+          "configuration": {
+            "itemName": "PreviousHumiReading"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "5",
+          "label": "Initialized is ON",
+          "description": "Compares the item state with the given value",
+          "configuration": {
+            "itemName": "Initialized",
+            "state": "ON",
+            "operator": "\u003d"
+          },
+          "type": "core.ItemStateCondition"
+        },
+        {
+          "inputs": {},
+          "id": "7",
+          "label": "Ignore changes from NULL and UNDEF",
+          "description": "Allows the definition of a condition through a script.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "(oldState !\u003d NULL \u0026\u0026 oldState !\u003d UNDEF);"
+          },
+          "type": "script.ScriptCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "6",
+          "label": "Checks to see if we need to turn on/off the device.",
+          "description": "Allows the execution of a user-defined script.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var heating \u003d items[\"HeatingMode\"];\nvar cooling \u003d items[\"CoolingMode\"];\nvar humidity \u003d items[\"HumidityMode\"];\nvar type \u003d items[\"SystemType\"];\n\nif(event.itemName.contains(\"Temp\")){\n  if(heating \u003d\u003d \"ON\" || heating \u003d\u003d \"Boost\" || heating \u003d\u003d \"AUTO\"){\n    events.sendCommand(\"HeatingCheck\", ON);\n  }\n  if(type \u003d\u003d \"US\" \u0026\u0026 (cooling \u003d\u003d \"ON\" || cooling \u003d\u003d \"Boost\" || cooling \u003d\u003d \"AUTO\")){\n    events.sendCommand(\"CoolingCheck\", ON);\n  }\n}\nelse if(type \u003d\u003d \"EU\" \u0026\u0026 event.itemName.contains(\"Humi\")){\n  if(humidity \u003d\u003d \"ON\" || humidity \u003d\u003d \"Boost\" || humidity \u003d\u003d \"AUTO\") {\n    events.sendCommand(\"HumidityCheck\", ON);\n  }\n}"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "bb0b73b3-a99b-4f57-b441-e0265c37813a",
+      "name": "Sensor Setpoint Changed",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "When the temp or humidity sensor reading or setpoint changes, check to see if a device needs to turn on"
+    }
+  },
+  "0184677b-a2c8-4c8e-a9e8-21b616413cc9": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "HumidityCheck received command ON",
+          "description": "This triggers the rule if an item receives a command.",
+          "configuration": {
+            "itemName": "HumidityCheck",
+            "command": "ON"
+          },
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "SystemType is EU",
+          "description": "Compares the item state with the given value",
+          "configuration": {
+            "itemName": "SystemType",
+            "state": "EU",
+            "operator": "\u003d"
+          },
+          "type": "core.ItemStateCondition"
+        },
+        {
+          "inputs": {},
+          "id": "3",
+          "label": "HumiSetpoint and MyHumidity have usable states",
+          "description": "Allows the definition of a condition through a script.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar ok \u003d (items[\"HumiSetpoint\"] !\u003d NULL \u0026\u0026 items[\"HumiSetpoint\"] !\u003d UNDEF \u0026\u0026\n          items[\"MyHumiProxy\"] !\u003d NULL \u0026\u0026 items[\"MyHumiProxy\"] !\u003d UNDEF);\n\nif(!ok){\n  logError(\"humidifier\", \"Cannot determine humidifier/dehumidifier state, HumiSetpoint \u003d \" + items[\"HumiSetpoint\"] + \" and MyHumiProxy \u003d \" + items[\"MyHumiProxy\"]);\n}\n\n(ok);"
+          },
+          "type": "script.ScriptCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "4",
+          "label": "Determine the state of the humidifer/dehumidifier",
+          "description": "Allows the execution of a user-defined script.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\n// negative delta means humidity is higher than the setpoint\nvar delta \u003d items[\"HumiSetpoint\"].floatValue() - items[\"MyHumiProxy\"].floatValue();\n\n// TODO: add hysteresis\nvar cmd \u003d OFF\nif((items[\"HumidityType\"] \u003d\u003d \"Humidify\" \u0026\u0026 delta \u003e 0) ||\n   (items[\"HumidityType\"] \u003d\u003d \"Dehumidify\" \u0026\u0026 delta \u003c 0) ||\n   items[\"HumidityMode\"] \u003d\u003d \"Boost\") {\n  cmd \u003d ON;\n}\n\nevents.sendCommand(\"HumidityCtrl\", cmd);"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "0184677b-a2c8-4c8e-a9e8-21b616413cc9",
+      "name": "Humidity Check",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Determines if the humidifier/dehumidifier should turn on"
+    }
+  },
+  "79e9a0ba-b377-4324-ac31-e187674a13f1": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "CoolingCtrl",
+          "description": "This triggers the rule if an item receives a command.",
+          "configuration": {
+            "itemName": "CoolingCtrl"
+          },
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "SystemType is US",
+          "description": "Compares the item state with the given value",
+          "configuration": {
+            "itemName": "SystemType",
+            "state": "US",
+            "operator": "\u003d"
+          },
+          "type": "core.ItemStateCondition"
+        },
+        {
+          "inputs": {},
+          "id": "4",
+          "label": "The command is different from the current cooling and fan states",
+          "description": "Allows the definition of a condition through a script.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var ok \u003d true;\n\nif(items[\"CoolingPin\"] \u003d\u003d command) ok \u003d false;\nif(command \u003d\u003d ON){\n  if(items[\"FanPin\"] \u003d\u003d ON \u0026\u0026\n     items[\"FanMode\"] \u003d\u003d \"AUTO\" \u0026\u0026\n     items[\"MainSwitch\"] \u003d\u003d ON \u0026\u0026\n     items[\"FanCtrl\"] \u003d\u003d ON)\n    ok \u003d false;\n}\n(ok);"
+          },
+          "type": "script.ScriptCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "3",
+          "label": "Turns on of off the cooling and fan based on received command",
+          "description": "Allows the",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nlogInfo(\"cooling\", \"Turning \" + command + \" the cooling: curr temp \u003d \" + items[\"MyTemp\"] +\n                 \" setpoint \u003d \" + items[\"TempSetpoint\"] +\n                 \" mode \u003d \" + items[\"CoolingMode\"]);\n\nif(command \u003d\u003d ON){\n  commandIfDifferent(\"MainSwitch\", ON);\n  commandIfDifferent(\"FanMode\", \"AUTO\");\n  commandIfDifferent(\"FanCtrl\", OFF);\n  createTimerSecs(10, function(){ commandIfDifferent(\"CoolingPin\", ON); });\n  events.sendCommand(\"CoolingMode\", items[\"CoolingMode\"]); // update the LCD\n}\nelse {\n  commandIfDifferent(\"CoolingPin\", OFF);\n  createTimerSecs(10, function(){\n    events.sendCommand(\"FanMode\", (items[\"FanPrevMode\"] !\u003d \"ON\") ? \"OFF\" : \"ON\");\n    events.sendCommand(\"FanCtrl\", ON);\n  });\n}"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "79e9a0ba-b377-4324-ac31-e187674a13f1",
+      "name": "Cooling Control",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Issues commands to turn on the cooling and fan if necessary"
+    }
+  },
+  "5d68f26b-d0e7-4280-8297-336112e92b07": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "HotWaterCheck received command ON",
+          "description": "This triggers the rule if an item receives a command.",
+          "configuration": {
+            "itemName": "HotWaterCheck",
+            "command": "ON"
+          },
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "SystemType is EU",
+          "description": "Compares the item state with the given value",
+          "configuration": {
+            "itemName": "SystemType",
+            "state": "EU",
+            "operator": "\u003d"
+          },
+          "type": "core.ItemStateCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "3",
+          "label": "execute a given script",
+          "description": "Allows the execution of a user-defined script.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var cmd \u003d OFF;\nif(items[\"HotWaterMode\"] \u003d\u003d \"ON\" || items[\"HotWaterMode\"] \u003d\u003d \"Boost\") cmd \u003d ON;\n\nevents.sendCommand(\"HotWaterCtrl\", cmd);"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "5d68f26b-d0e7-4280-8297-336112e92b07",
+      "name": "Hot Water Check",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Determines whether to turn on the hot water"
+    }
+  },
+  "d28192cb-54be-490a-803b-733a5e037812": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "BackupButton commanded ON",
+          "description": "This triggers the rule if an item receives a command.",
+          "configuration": {
+            "itemName": "BackupButton",
+            "command": "ON"
+          },
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "3",
+          "label": "noop",
+          "description": "does nothing, exists to eliminate error logs at boot",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "(true);"
+          },
+          "type": "script.ScriptCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "Kicks off a backup",
+          "description": "Logs about the backup, sets the label, and calls the script",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nlogInfo(\"backup\", \"Button triggered, backing up\");\nevents.postUpdate(\"BackupButton\", \"Backing up...\");\nevents.postUpdate(\"RestoreButton\", \"\");\nevents.sendCommand(\"BackupCommand\", ON);"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "d28192cb-54be-490a-803b-733a5e037812",
+      "name": "Backup triggered",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Kicks off a backup"
+    }
+  },
+  "7f38faaa-ed29-49a9-a5ff-180de02bcb84": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "HeatingCheck received command ON",
+          "description": "This triggers the rule if an item receives a command.",
+          "configuration": {
+            "itemName": "HeatingCheck",
+            "command": "ON"
+          },
+          "type": "core.ItemCommandTrigger"
+        },
+        {
+          "id": "4",
+          "label": "CoolingCheck received command",
+          "description": "This triggers the rule if an item receives a command.",
+          "configuration": {
+            "itemName": "CoolingCheck",
+            "command": "ON"
+          },
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "TempSetpoint and MyTempProxy are valid",
+          "description": "Allows the definition of a condition through a script.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar logName\u003d\"heatcool\";\n\nvar ok \u003d (items[\"TempSetpoint\"] !\u003d NULL || items[\"TempSetpoint\"] !\u003d UNDEF ||\n          items[\"MyTempProxy\"] !\u003d NULL || items[\"MyTempProxy\"] !\u003d UNDEF);\n\nif(!ok){\n  logError(logName, \"Cannot determine heating/cooling: TempSetpoint \u003d \" + items[\"TempSetpoint\"] + \" MyTempProxy \u003d \" + items[\"MyTempProxy\"]);\n}\n\n(ok);"
+          },
+          "type": "script.ScriptCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "3",
+          "label": "Determines whether to turn on/off the heater/ac based on temp and setpoint.",
+          "description": "Sends command to Heating/CoolingCtrl to change device\u0027s state.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar mode \u003d event.itemName.replace(\"Check\", \"\");\nvar delta \u003d items[\"TempSetpoint\"].floatValue() - items[\"MyTempProxy\"].floatValue();\n\n// TODO: Replace 0 with hysteresis, if heating check for \n// positive dela, if cooling check for negative delta\nvar turnOn \u003d (mode \u003d\u003d \"Heating\") ? (delta \u003e 0) : (delta \u003c 0);\n\nvar cmd \u003d (items[mode+\"Mode\"] \u003d\u003d \"Boost\" || turnOn) ? ON : OFF;\nevents.sendCommand(mode+\"Ctrl\", cmd);\n\nsleep(10); // keep the rule from running again too soon"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "7f38faaa-ed29-49a9-a5ff-180de02bcb84",
+      "name": "Heating/Cooling Check",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Determines when to turn on or off the heating or cooling"
+    }
+  },
+  "1b57d609-6184-4304-90f6-cfb09941dae9": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "FanModeCtrl received command",
+          "description": "This triggers the rule if an item receives a command.",
+          "configuration": {
+            "itemName": "FanModeCtrl"
+          },
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "SystemType is US",
+          "description": "Compares the item state with the given value",
+          "configuration": {
+            "itemName": "SystemType",
+            "state": "US",
+            "operator": "\u003d"
+          },
+          "type": "core.ItemStateCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "5",
+          "label": "forward the command to FanPin",
+          "description": "Allows the execution of a user-defined script.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nlogInfo(\"fan\", \"Turning \" + command + \" the fan: fan mode \u003d \" + items[\"FanMode\"]);\nevents.sendCommand(\"FanPin\", command);"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "1b57d609-6184-4304-90f6-cfb09941dae9",
+      "name": "Fan Control",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Control the fan"
+    }
+  },
+  "05a775d5-554d-4bf9-9012-166e6a217d6d": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "HeatingCtrl received command",
+          "description": "This triggers the rule if an item receives a command.",
+          "configuration": {
+            "itemName": "HeatingCtrl"
+          },
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "3",
+          "label": "heating isn\u0027t in the right state already",
+          "description": "Allows the definition of a condition through a script.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var ok \u003d true;\n\nif(items[\"HeatingPin\"] \u003d\u003d command) ok \u003d false;\nif(command \u003d\u003d ON){\n  if(items[\"FanPin\"] \u003d\u003d ON \u0026\u0026\n     items[\"FanMode\"] \u003d\u003d \"AUTO\" \u0026\u0026\n     items[\"MainSwitch\"] \u003d\u003d ON \u0026\u0026\n     items[\"FanCtrl\"] \u003d\u003d ON)\n    ok \u003d false;\n}\n(ok);"
+          },
+          "type": "script.ScriptCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "Controls the HeatingPin and Heating2Pin",
+          "description": "Turns on heating/ 2nd stage heating when ON is received, OFF when OFF is received",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar logName \u003d \"heating\";\n\nlogInfo(logName, \"Turning \" + command + \" the heater: curr temp \u003d \" + items[\"MyTemp\"] +\n                 \" setpoint \u003d \" + items[\"TempSetpoint\"] +\n                 \" mode \u003d \" + items[\"HeatingMode\"]);\n\nvar turnedOn \u003d false;\n\n// Turns ON/OFF heating and the Fan (if US type) if it isn\u0027t already\nif(command \u003d\u003d ON) {\n  commandIfDifferent(\"MainSwitch\", ON);\n\n  // Also turn on the Fan if US mode\n  if(items[\"SystemType\"] \u003d\u003d \"US\") {\n    commandIfDifferent(\"FanMode\", \"AUTO\");\n    commandIfDifferent(\"FanCtrl\", OFF);\n    createTimerSecs(10, function(){ commandIfDifferent(\"HeatingPin\", ON); });\n  }\n  else {\n    commandIfDifferent(\"HeatingPin\", ON);\n  }\n  if(items[\"HeatingPin\"] !\u003d ON) turnedOn \u003d true;\n  events.sendCommand(\"HeatingMode\", items[\"HeatingMode\"]); // Update the LCD if necessary\n}\nelse {\n  commandIfDifferent(\"HeatingPin\", OFF);\n  if(items[\"SystemType\"] \u003d\u003d \"US\") {\n    createTimerSecs(10, function() {\n      commandIfDifferent(\"FanCtrl\", ON);\n      var mode \u003d (items[\"FanPrevMode\"] !\u003d \"ON\") ? \"OFF\" : \"ON\";\n      events.sendCommand(\"FanMode\", mode);\n    });\n  }\n}\n\n// Second stage heating\nif(items[\"Heating2\"] \u003d\u003d ON) {\n\n  logInfo(logName, \"Second stage heating\");\n\n  var heating2Off \u003d function(){\n    if(items[\"Heating2Pin\"] !\u003d OFF){\n      logInfo(logName, \"Turning off second stage heating\");\n      events.sendCommand(\"Heating2Pin\", OFF);\n    }\n    else {\n      logInfo(logName, \"Second stage heating is already off\");\n    }\n  };\n\n  // Heating turned on, schedule second stage heating if not already\n  if(command \u003d\u003d ON) {\n  \n    // It\u0027s too warm, turn off the second stage heating\n    if(items[\"MyTempProxy\"].floatValue() + items[\"Heating2Delta\"].floatValue() \u003e\u003d items[\"TempSetpoint\"].floatValue()){\n      heating2Off();\n    }\n\n    // It\u0027s cold, schedule second stage to turn on later if not already on or shceduled to come on\n    else if(turnedOn \u0026\u0026 items[\"Heating2Pin\"] !\u003d ON){\n      var heat2StartMins \u003d items[\"Heating2Time\"].intValue();\n      logInfo(logName, \"Scheduling second stage heating to start in \" + heat2StartMins + \" minutes.\");\n\n      createTimerSecs(heat2StartMins*60, function(){\n        // It\u0027s later now, still too cold? If so, turn on 2nd stage heating\n        if(items[\"HeatingPin\"] \u003d\u003d ON \u0026\u0026\n           items[\"MyTempProxy\"].floatValue() + items[\"Heating2Delta\"].floatValue() \u003c items[\"TempSetpoint\"].floatValue()) {\n          logInfo(logName, \"Turning on second stage heating\");\n          events.sendCommand(\"Heating2Pin\", ON);\n        }\n      });\n    } // end schedule\n  }\n  \n  else { // command \u003d\u003d OFF\n    heating2Off();\n  }\n}"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "05a775d5-554d-4bf9-9012-166e6a217d6d",
+      "name": "Heating Control",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Issues the commands to turn on/off the heating, manage 2nd stage heating, and the fan."
+    }
+  },
+  "f1849091-6ac9-4e2f-ad46-eba679edf633": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "TempUnit changed from C",
+          "description": "",
+          "configuration": {
+            "itemName": "TempUnit",
+            "previousState": "C"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "2",
+          "label": "TempUnit changes from F",
+          "description": "This triggers the rule if an item state has changed.",
+          "configuration": {
+            "itemName": "TempUnit",
+            "previousState": "F"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "3",
+          "label": "Is the new unit valid",
+          "description": "Reverts Item to oldState if not a valid unit",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar logName \u003d \"tempunit\";\n\nvar ok \u003d (newState \u003d\u003d \"C\" || newState \u003d\u003d \"F\");\nif(!ok){\n  var revert \u003d (oldState !\u003d NULL || oldState !\u003d UNDEF) ? oldState : \"C\";\n  logWarn(logName, newState + \" is not a valid state, reverting to \" + revert);\n  events.postUpdate(\"TempUnit\", revert);\n}\nok;"
+          },
+          "type": "script.ScriptCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "4",
+          "label": "Update the Temp Unit",
+          "description": "Turn everything off and update the scripts.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/defaults.js\u0027);\n\nvar logName \u003d \"tempunit\";\n\nlogInfo(logName, \"Turning everything off\");\nevents.sendCommand(\"MainSwitch\", OFF);\nsleep(20); // give everything time to turn off\n\nlogInfo(logName, \"Executing the X2X script\");\nvar cmd \u003d (newState \u003d\u003d \"F\"? \"C2FCommand\" : \"F2CCommand\");\nevents.sendCommand(cmd, ON);\nevents.postUpdate(\"TempSetpoint\", DEFAULTS.get(newState+\"_DEF\"));\n\nlogInfo(logName, \"Getting CPU Temp\");\ncreateTimerSecs(15, function(){ \n  events.sendCommand(\"CPUTemperatureCommand\", ON); \n  logInfo(logName, \"Done changing temp unit\");\n});"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "f1849091-6ac9-4e2f-ad46-eba679edf633",
+      "name": "TempUnit changed",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Makes sure a temp unit change is valid and then applies it"
+    }
+  },
+  "98a83f54-83d3-44d5-990d-74da6ae8be2b": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "CoolingBoostTime changes",
+          "description": "",
+          "configuration": {
+            "itemName": "CoolingBoostTime"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "2",
+          "label": "HeatingBoostTime changes",
+          "description": "",
+          "configuration": {
+            "itemName": "HeatingBoostTime"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "3",
+          "label": "HotWaterBoostTime changed",
+          "description": "",
+          "configuration": {
+            "itemName": "HotWaterBoostTime"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "4",
+          "label": "HumidityBoostTime changed",
+          "description": "",
+          "configuration": {},
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "5",
+          "label": "Boost mode is actually active",
+          "description": "Determined by seeing if the corresponding RemBoostTime is \u003e 0",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "items[event.itemName.replace(\"BoostTime\", \"RemBoostTime\")] \u003e 0;"
+          },
+          "type": "script.ScriptCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "6",
+          "label": "Command the corresponding RemBoostTime Item",
+          "description": "",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "events.sendCommand(event.itemName.replace(\"BoostTime\", \"RemBoostTime\"), newState);"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "98a83f54-83d3-44d5-990d-74da6ae8be2b",
+      "name": "BoostTime changed",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "If we are running a boost mode, update the RemBoostTime Item"
+    }
+  },
+  "739435b8-49d7-429b-b1ed-6b442e741c7d": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "HeatingMode changed to Boost",
+          "description": "This triggers the rule if an item state has changed.",
+          "configuration": {
+            "itemName": "HeatingMode",
+            "state": "Boost"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "2",
+          "label": "CoolingMode changed to Boost",
+          "description": "This triggers the rule if an item state has changed.",
+          "configuration": {
+            "itemName": "CoolingMode",
+            "state": "Boost"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "3",
+          "label": "FanMode changed to Boost",
+          "description": "This triggers the rule if an item state has changed.",
+          "configuration": {
+            "itemName": "FanMode",
+            "state": "Boost"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "4",
+          "label": "HotWaterMode changed to Boost",
+          "description": "This triggers the rule if an item state has changed.",
+          "configuration": {
+            "itemName": "HotWaterMode",
+            "state": "Boost"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "5",
+          "label": "HumidityMode changed to Boost",
+          "description": "This triggers the rule if an item state has changed.",
+          "configuration": {
+            "itemName": "HumidityMode",
+            "state": "Boost"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "6",
+          "label": "Initialized is ON",
+          "description": "Compares the item state with the given value",
+          "configuration": {
+            "itemName": "Initialized",
+            "state": "ON",
+            "operator": "\u003d"
+          },
+          "type": "core.ItemStateCondition"
+        },
+        {
+          "inputs": {},
+          "id": "8",
+          "label": "forbid heating and cooling at the same time",
+          "description": "If one is already ON, cancel the Boost mode.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar ok \u003d true;\n\nif(items[\"SystemType\"] \u003d\u003d \"US\"){\n  var device \u003d event.itemName.replace(\"Mode\", \"\");\n  var pairDevice \u003d (device \u003d\u003d \"Heating\") ? \"Cooling\" : \"Heating\";\n  if(items[pairDevice+\"Pin\"] \u003d\u003d ON) {\n    logError(\"boost\", pairDevice + \" is already ON, cannot activate Boost for \" + device);\n    events.postUpdate(event.itemName, oldState);\n\n    // Restore the LCD to the other mode\u0027s display\n    sleep(5);\n    events.sendCommand(pairDevice+\"Mode\", items[pairDevice+\"Mode\"]);\n    ok \u003d false;\n  }\n}\n\n(ok);"
+          },
+          "type": "script.ScriptCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "7",
+          "label": "Turns on the device and kicks off the countdown timer",
+          "description": "Allows the execution of a user-defined script.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar device \u003d event.itemName.replace(\"Mode\", \"\");\n\nlogInfo(\"boost\", \"Starting \" + device + \" boost\");\nevents.postUpdate(device+\"PrevMode\", oldState);\n\nevents.sendCommand(device+\"Check\", ON);\nevents.sendCommand(device+\"RemBoostTime\", items[device+\"BoostTime\"]);"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "739435b8-49d7-429b-b1ed-6b442e741c7d",
+      "name": "Boost",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Triggers when a mode changes to Boost"
+    }
+  },
+  "ff096f8f-d5a6-4306-98df-fc2502045aba": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "HotWaterCtrl received command",
+          "description": "This triggers the rule if an item receives a command.",
+          "configuration": {
+            "itemName": "HotWaterCtrl"
+          },
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "SystemType is EU",
+          "description": "Compares the item state with the given value",
+          "configuration": {
+            "itemName": "SystemType",
+            "state": "EU",
+            "operator": "\u003d"
+          },
+          "type": "core.ItemStateCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "3",
+          "label": "Turns on or off the hot water",
+          "description": "Allows the execution of a user-defined script.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nlogInfo(\"hotwater\", \"Turning \" + command + \" the hot water: mode \u003d \" +\n        items[\"HotWaterMode\"]);\nif(command \u003d\u003d ON) commandIfDifferent(\"MainSwitch\", ON);"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "ff096f8f-d5a6-4306-98df-fc2502045aba",
+      "name": "Hot Water Control",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Turns on or off the hot water."
+    }
+  },
+  "d2a429a8-80b2-4e49-9bce-9ceeab6ff3e7": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "BackupTimestampResults commanded to \"ON\"",
+          "description": "",
+          "configuration": {
+            "itemName": "BackupTimestampResults",
+            "command": "ON"
+          },
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "Command on BackupTimestampCommand ON",
+          "description": "",
+          "configuration": {
+            "itemName": "BackupTimestampCommand",
+            "command": "ON"
+          },
+          "type": "core.ItemCommandAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "d2a429a8-80b2-4e49-9bce-9ceeab6ff3e7",
+      "name": "BackupTimestampResults to BackupTimestampCommand",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Forwards an ON command on BackupTimestampResults to BackupTimestampCommand"
+    }
+  },
+  "13e9ccee-f134-47f3-80f5-a5734634529f": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "RestoreButton commanded to ON",
+          "description": "",
+          "configuration": {
+            "itemName": "RestoreButton",
+            "command": "ON"
+          },
+          "type": "core.ItemCommandTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "3",
+          "label": "BackupTimestampResults is valid",
+          "description": "If it\u0027s not set, call the script and wait. If \"No backup found\", don\u0027t execute the rule.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar logName \u003d \"restore\";\n\n//if(items[\"BackupTimestampResults\"] \u003d\u003d NULL || items[\"BackupTimestampResults\"] \u003d\u003d UNDEF){\n//  logInfo(logName, \"Checking backup timestamp\");\n//  events.sendCommand(\"BackupTimestampCommand\", ON);\n//  waitForUpdate(\"BackupTimestampCommand\", 5);\n//}\n//\nvar ts \u003d items[\"BackupTimestampResults\"];\nif(ts \u003d\u003d NULL || ts \u003d\u003d UNDEF || ts \u003d\u003d \"\"){\n  logInfo(logName, \"Timestamp isn\u0027t set, calling script to get latest\");\n  var ts \u003d executeCommandLine(\"/home/pi/scripts/getbackuptimestamp.sh\", 5000);\n  events.postUpdate(\"BackupTimestampResults\", ts);\n}\n\nlogInfo(logName, \"Timestamp obtained: \" + ts);\n\nif(ts \u003d\u003d \"No backup found.\") {\n  logger.warn(\"There is no backup file!\");\n  events.postUpdate(\"RestoreButton\", \"No backup found.\");\n}\n\n(ts !\u003d \"No backup found.\" \u0026\u0026 ts !\u003d NULL \u0026\u0026 ts !\u003d UNDEF);"
+          },
+          "type": "script.ScriptCondition"
+        }
+      ],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "Restore",
+          "description": "Triggers the restore script after first checking for a backup",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nlogInfo(\"restore\", \"Restoring from /home/pi/scripts/backup.zip\");\nevents.postUpdate(\"RestoreButton\", \"Restoring \u0026 restarting twice...\");\nevents.sendCommand(\"RestoreCommand\", ON);"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "13e9ccee-f134-47f3-80f5-a5734634529f",
+      "name": "Restore from backup",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Kicks off a restore, or logs an error if there isn\u0027t a backup available."
+    }
+  }
+}

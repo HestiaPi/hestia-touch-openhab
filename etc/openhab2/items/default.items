@@ -1,107 +1,19 @@
-Group RestoreOnStartup
-Group Proxies
-Group Pins
-Group Sensors
-Group:String Modes
-Group:Number BoostTimes
-Group:Number RemBoostTimes
-Group:String PrevModes
-Group Buttons
+// var logger = Java.type("org.slf4j.LoggerFactory").getLogger("org.eclipse.smarthome.model.script.rules.backup");
+//
+// var ExecUtil = Java.type("org.eclipse.smarthome.io.net.exec.ExecUtil");
+// var r1 = ExecUtil.executeCommandLineAndWaitResponse("echo 'wait for result'", 5000);
+//
+// var ScriptExecution = Java.type("org.eclipse.smarthome.model.script.actions.ScriptExecution");
+// var DateTime = Java.type("org.joda.time.DateTime");
+// var runme1 = function(){ logInfo("Native Quartz Timer completed"); }
+// var timer1 = ScriptExecution.createTimer( DateTime.now().plusSeconds(5), runme1);
+//
+//var OPENHAB_CONF = Java.type('java.lang.System').getenv('OPENHAB_CONF');
+//load(OPENHAB_CONF + '/automation/lib/hestia/utils.js');
+//load(OPENHAB_CONF + '/automation/lib/hestia/defaults.js');
 
-Switch HeatingPin "Heating" (Pins) { channel="mqtt:topic:mosquitto:heating:control" }
-Switch Heating2Pin "Heating2" (Pins) { channel="mqtt:topic:mosquitto:heating:control2" }
-Switch CoolingPin "Cooling" (Pins) { channel="mqtt:topic:mosquitto:cooling:control" }
-Switch FanPin "Fan" (Pins) { channel="mqtt:topic:mosquitto:fan:control" }
-Switch HotWaterPin "Hot Water" (Pins) { channel="mqtt:topic:mosquitto:hotwater:control" }
-Switch HumidityPin "Humidity" (Pins) { channel="mqtt:topic:mosquitto:humidty:control" }
 
 Switch Pin12 { gpio="pin:12" }
 Switch Pin16 { gpio="pin:16" }
 Switch Pin18 { gpio="pin:18" }
 Switch Pin23 { gpio="pin:23" }
-
-String MyTemp "Temperature" <temperature> (Sensors) { channel="exec:command:gettemp:output"}
-Number MyTempProxy <temperature> (Proxies) { channel="mqtt:topic:mosquitto:sensors:temperature" }
-Number MyTempProxyC "Temperature [%.1f °C]" <temperature> (Proxies)
-Number MyTempProxyF "Temperature [%.0f °F]" <temperature> (Proxies)
-
-String MyHumi "Humidity" <humidity> (Sensors) { channel="exec:command:gethumi:output" }
-Number MyHumiProxy "Humidity [%.0f %%]" <humidity> { channel="mqtt:topic:mosquitto:sensors:humidity" }
-
-//String MyPressure "Pressure" <pressure> (Sensors) { channel="exec:command:getpress:output" }
-//Number MyPressureProxy "Pressure [%.2f hPa]" <pressure>  { channel="mqtt:topic:mosquitto:sensors:pressure" }
-
-Number TempSetpoint "Proxy Temperature Setpoint[%.1f °-]" (RestoreOnStartup, Proxies) { channel="mqtt:topic:mosquitto:sensors:tempsetpoint", autoupdate="true" }
-Number TempSetpointC "Temperature Setpoint[%.1f °C]" (RestoreOnStartup, Proxies)
-Number TempSetpointF "Temperature Setpoint[%.0f °F]" (RestoreOnStartup, Proxies)
-Number PreviousTempReading "Temperature" <temperature> (RestoreOnStartup)
-Number HumiSetpoint "Humidity Setpoint[%.0f %%]" (RestoreOnStartup) { channel="mqtt:topic:mosquitto:sensors:humisetpoint", autoupdate="true" }
-Number PreviousHumiReading "Humidity" <humidity> (RestoreOnStartup)
-
-Number HeatingBoostTime "Heating Boost Time [%.0f min]" (RestoreOnStartup, BoostTimes) // TODO: Create a Channel so this can be changed remotely
-Number HeatingRemBoostTime "Heating Remaining Boost Time [%.0f min]" (RestoreOnStartup, RemBoostTimes) { channel="mqtt:topic:mosquitto:heating:boost", autoupdate="true" }
-Number CoolingBoostTime "Cooling Boost Time [%.0f min]" (RestoreOnStartup, BoostTimes) // TODO: Create a Channel so this can be changed remotely
-Number CoolingRemBoostTime "Cooling Remaining Boost Time [%.0f min]" (RestoreOnStartup, RemBoostTimes) { channel="mqtt:topic:mosquitto:cooling:boost", autoupdate="true" }
-Number HotWaterBoostTime "Hot Water Boost Time [%.0f min]" (RestoreOnStartup, BoostTimes) // TODO: Create a Channel so this can be changed remotely
-Number HotWaterRemBoostTime "Hot Water Remaining Boost Time [%.0f min]" (RestoreOnStartup, RemBoostTimes) { channel="mqtt:topic:mosquitto:hotwater:boost", autoupdate="true" }
-Number HumidityBoostTime "Humidity Boost Time [%.0f min]" (RestoreOnStartup, BoostTimes) // TODO: Create a Channel so this can be changed remotely
-Number HumidityRemBoostTime "Humidity Remaining Boost Time [%.0f min]" (RestoreOnStartup, RemBoostTimes) { channel="mqtt:topic:mosquitto:humidty:boost", autoupdate="true" }
-
-String HeatingMode "Heating Mode []" (RestoreOnStartup, Modes) { channel="mqtt:topic:mosquitto:heating:mode", autoupdate="true" }
-String HeatingPrevMode "Heating Previous Mode [%s]" (RestoreOnStartup, PrevModes)
-String CoolingMode "Cooling Mode []" (RestoreOnStartup, Modes) { channel="mqtt:topic:mosquitto:cooling:mode", autoupdate="true" }
-String CoolingPrevMode "Cooling Previous Mode [%s]" (RestoreOnStartup, PrevModes)
-String FanMode "Fan Mode []" (RestoreOnStartup, Modes) { channel="mqtt:topic:mosquitto:fan:mode", autoupdate="true" }
-String FanPrevMode "Fan Previous Mode [%s]" (RestoreOnStartup, PrevModes)
-Switch FanCtrl (RestoreOnStartup) // Used to show/hide the fan controls when in heating/cooling mode
-String HotWaterMode "Hot Water Mode []" (RestoreOnStartup, Modes) { channel="mqtt:topic:mosquitto:hotwater:mode", autoupdate="true" }
-String HotWaterPrevMode "Hot Water Previous Mode [%s]" (RestoreOnStartup, PrevModes)
-String HumidityMode "Humidity Mode []" (RestoreOnStartup, Modes) { channel="mqtt:topic:mosquitto:humidty:mode", autoupdate="true" }
-String HumidityPrevMode "Humidity Previous Mode [%s]" (RestoreOnStartup, PrevModes)
-Switch Heating2 "2nd Stage Heating []" (RestoreOnStartup)
-
-Switch MainSwitch "MainSwitch" (RestoreOnStartup)
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//    SETTINGS START    ///////////////////////////////////////////////////////////////////////////////////////////////
-String SettingsPage <settings>
-String InfoPage <pie>
-String Network_WAN_IP "Public IP [%s]" <zoom> (Network) { channel="exec:command:getpublicip:output", channel="mqtt:topic:mosquitto:networking:wanip" [profile="follow"] }
-String Network_WLAN_IP "Local IP [%s]" <house> (Network) { channel="exec:command:getwlanip:output", channel="mqtt:topic:mosquitto:networking:wlanip" [profile="follow"] }
-String Network_SSID "WiFi SSID [%s]" <network> (Network) { channel="exec:command:getssid:output", channel="mqtt:topic:mosquitto:networking:ssid" [profile="follow"] }
-String Network_WLAN_INFO "WiFi Signal [%s %%]" <line> (Network) { channel="exec:command:getwifiinfo:output", channel="mqtt:topic:mosquitto:networking:wlaninfo" [profile="follow"] }
-String Network_WLAN_MAC "WiFi MAC Address [%s]" <network> (Network) { channel="exec:command:getwlanmac:output", channel="mqtt:topic:mosquitto:networking:wlanmac" [profile="follow"] }
-String System_CPU_TEMP "CPU Temp [%s]" <temperature> { channel="exec:command:getcputemperature:output", channel="mqtt:topic:mosquitto:system:cputemp" [profile="follow"] }
-String System_CPU_LOAD "CPU Load [%s %%]" <line> { channel="exec:command:getcpuload:output", channel="mqtt:topic:mosquitto:system:cpuload" [profile="follow"] }
-String System_CPU_UPTIME "Uptime [%s]" <status> { channel="exec:command:getuptime:output" }
-String System_Used_Space "Used Disk [%s]" <pie> { channel="exec:command:getuseddiskspace:output", channel="mqtt:topic:mosquitto:system:space" [profile="follow"] }
-
-String System_TZ "Timezone [%s]" <time> (RestoreOnStartup) { channel="exec:command:gettz:output" }
-String System_TZ_Set "Timezone [%s]" <time> (RestoreOnStartup)
-
-String BackupButton "Backup [%s]"
-Switch BackupCommand "Backup" { channel="exec:command:backupcommand:run" }
-String BackupTimestampCommand "Last Backup [%s]" <calendar> (RestoreOnStartup) { channel="exec:command:getbackuptimestampcommand:output" }
-
-String RestoreButton "Restore [%s]" <switch>
-Switch RestoreCommand "Restore" { channel="exec:command:restorecommand:run" }
-
-String GitInstalledVersion "Installed version [%s]" <shield> (RestoreOnStartup)
-String GitLatestVersion "Latest version [%s]" <returnpipe> (RestoreOnStartup)
-String GitInstallLatestVersion "Update & restart [%s]" <returnpipe>
-
-String RebootButton "Reboot" <switch> (Buttons)
-String ShutdownButton "Shutdown" <switch> (Buttons)
-Switch RebootCommand "Reboot" { channel="exec:command:rebootcommand:run" }
-Switch ShutdownCommand "Shutdown" { channel="exec:command:shutdowncommand:run" }
-
-Number Heating2Time "Delay [%.0f min]" <clock> (RestoreOnStartup)
-Number Heating2Delta "Threshold [%.1f °]" <temperature> (RestoreOnStartup)
-Number Heating2InitialTemp "Heating2InitialTemp [%.1f ]" (RestoreOnStartup)
-
-String TempUnit "Temperature Unit []" <temperature> (RestoreOnStartup) { channel="exec:command:gettempunit:output", channel="mqtt:topic:mosquitto:types:tempunit" [profile="follow"] }
-String SystemType "System Type []" <pump> (RestoreOnStartup) { channel="exec:command:getsystemtype:output", channel="mqtt:topic:mosquitto:types:systype" [profile="follow"] }
-
-String HumidityType "Humidity Mode []" <water> (RestoreOnStartup) { channel="exec:command:gethumiditymode:output" }
-//    SETTINGS END    /////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

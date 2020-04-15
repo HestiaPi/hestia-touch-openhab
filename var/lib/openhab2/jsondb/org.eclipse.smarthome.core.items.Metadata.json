@@ -1,0 +1,145 @@
+{
+  "autoupdate:TempSetpoint": {
+    "class": "org.eclipse.smarthome.core.items.Metadata",
+    "value": {
+      "key": {
+        "segments": [
+          "autoupdate",
+          "TempSetpoint"
+        ]
+      },
+      "value": "true",
+      "configuration": {}
+    }
+  },
+  "autoupdate:HumidityMode": {
+    "class": "org.eclipse.smarthome.core.items.Metadata",
+    "value": {
+      "key": {
+        "segments": [
+          "autoupdate",
+          "HumidityMode"
+        ]
+      },
+      "value": "true",
+      "configuration": {}
+    }
+  },
+  "autoupdate:HumidityRemBoostTime": {
+    "class": "org.eclipse.smarthome.core.items.Metadata",
+    "value": {
+      "key": {
+        "segments": [
+          "autoupdate",
+          "HumidityRemBoostTime"
+        ]
+      },
+      "value": "true",
+      "configuration": {}
+    }
+  },
+  "autoupdate:HumiSetpoint": {
+    "class": "org.eclipse.smarthome.core.items.Metadata",
+    "value": {
+      "key": {
+        "segments": [
+          "autoupdate",
+          "HumiSetpoint"
+        ]
+      },
+      "value": "true",
+      "configuration": {}
+    }
+  },
+  "autoupdate:HeatingRemBoostTime": {
+    "class": "org.eclipse.smarthome.core.items.Metadata",
+    "value": {
+      "key": {
+        "segments": [
+          "autoupdate",
+          "HeatingRemBoostTime"
+        ]
+      },
+      "value": "true",
+      "configuration": {}
+    }
+  },
+  "autoupdate:CoolingRemBoostTime": {
+    "class": "org.eclipse.smarthome.core.items.Metadata",
+    "value": {
+      "key": {
+        "segments": [
+          "autoupdate",
+          "CoolingRemBoostTime"
+        ]
+      },
+      "value": "true",
+      "configuration": {}
+    }
+  },
+  "autoupdate:HeatingMode": {
+    "class": "org.eclipse.smarthome.core.items.Metadata",
+    "value": {
+      "key": {
+        "segments": [
+          "autoupdate",
+          "HeatingMode"
+        ]
+      },
+      "value": "true",
+      "configuration": {}
+    }
+  },
+  "autoupdate:HotWaterRemBoostTime": {
+    "class": "org.eclipse.smarthome.core.items.Metadata",
+    "value": {
+      "key": {
+        "segments": [
+          "autoupdate",
+          "HotWaterRemBoostTime"
+        ]
+      },
+      "value": "true",
+      "configuration": {}
+    }
+  },
+  "autoupdate:HotWaterMode": {
+    "class": "org.eclipse.smarthome.core.items.Metadata",
+    "value": {
+      "key": {
+        "segments": [
+          "autoupdate",
+          "HotWaterMode"
+        ]
+      },
+      "value": "true",
+      "configuration": {}
+    }
+  },
+  "autoupdate:CoolingMode": {
+    "class": "org.eclipse.smarthome.core.items.Metadata",
+    "value": {
+      "key": {
+        "segments": [
+          "autoupdate",
+          "CoolingMode"
+        ]
+      },
+      "value": "true",
+      "configuration": {}
+    }
+  },
+  "autoupdate:FanMode": {
+    "class": "org.eclipse.smarthome.core.items.Metadata",
+    "value": {
+      "key": {
+        "segments": [
+          "autoupdate",
+          "FanMode"
+        ]
+      },
+      "value": "true",
+      "configuration": {}
+    }
+  }
+}

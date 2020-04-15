@@ -1,0 +1,1305 @@
+{
+  "System_CPU_TEMP -\u003e exec:command:getcputemperature:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "getcputemperature",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "System_CPU_TEMP"
+    }
+  },
+  "System_TZ -\u003e exec:command:gettz:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "gettz",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "System_TZ"
+    }
+  },
+  "TempUnit -\u003e mqtt:topic:mosquitto:types:tempunit": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "types",
+          "tempunit"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:follow"
+        }
+      },
+      "itemName": "TempUnit"
+    }
+  },
+  "Network_SSID -\u003e exec:command:getssid:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "getssid",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "Network_SSID"
+    }
+  },
+  "CoolingPin -\u003e mqtt:topic:mosquitto:cooling:control": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "cooling",
+          "control"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "CoolingPin"
+    }
+  },
+  "GetTemp -\u003e exec:command:gettemp:run": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "gettemp",
+          "run"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "GetTemp"
+    }
+  },
+  "HotWaterRemBoostTime -\u003e mqtt:topic:mosquitto:hotwater:boost": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "hotwater",
+          "boost"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "HotWaterRemBoostTime"
+    }
+  },
+  "HumidityPin -\u003e mqtt:topic:mosquitto:humidty:control": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "humidty",
+          "control"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "HumidityPin"
+    }
+  },
+  "BackupTimestampResults -\u003e exec:command:getbackuptimestampcommand:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "getbackuptimestampcommand",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "BackupTimestampResults"
+    }
+  },
+  "Heating2Pin -\u003e mqtt:topic:mosquitto:heating:control2": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "heating",
+          "control2"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "Heating2Pin"
+    }
+  },
+  "System_CPU_LOAD -\u003e exec:command:getcpuload:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "getcpuload",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "System_CPU_LOAD"
+    }
+  },
+  "FanMode -\u003e mqtt:topic:mosquitto:fan:mode": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "fan",
+          "mode"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "FanMode"
+    }
+  },
+  "BackupCommand -\u003e exec:command:backupcommand:run": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "backupcommand",
+          "run"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "BackupCommand"
+    }
+  },
+  "GitLatestVersionCommand -\u003e exec:command:gitlatest:run": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "gitlatest",
+          "run"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "GitLatestVersionCommand"
+    }
+  },
+  "FanPin -\u003e mqtt:topic:mosquitto:fan:control": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "fan",
+          "control"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "FanPin"
+    }
+  },
+  "Network_WLAN_INFO -\u003e mqtt:topic:mosquitto:networking:wlaninfo": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "networking",
+          "wlaninfo"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:follow"
+        }
+      },
+      "itemName": "Network_WLAN_INFO"
+    }
+  },
+  "MyHumi -\u003e exec:command:gethumi:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "gethumi",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "MyHumi"
+    }
+  },
+  "MyPressure -\u003e exec:command:pressure:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "pressure",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "MyPressure"
+    }
+  },
+  "Network_WLAN_MAC -\u003e exec:command:getwlanmac:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "getwlanmac",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "Network_WLAN_MAC"
+    }
+  },
+  "Network_WAN_IP -\u003e mqtt:topic:mosquitto:networking:wanip": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "networking",
+          "wanip"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:follow"
+        }
+      },
+      "itemName": "Network_WAN_IP"
+    }
+  },
+  "Network_WLAN_MAC -\u003e mqtt:topic:mosquitto:networking:wlanmac": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "networking",
+          "wlanmac"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:follow"
+        }
+      },
+      "itemName": "Network_WLAN_MAC"
+    }
+  },
+  "HeatingRemBoostTime -\u003e mqtt:topic:mosquitto:heating:boost": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "heating",
+          "boost"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "HeatingRemBoostTime"
+    }
+  },
+  "MyHumiProxy -\u003e mqtt:topic:mosquitto:sensors:humidity": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "sensors",
+          "humidity"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "MyHumiProxy"
+    }
+  },
+  "MyTempProxy -\u003e mqtt:topic:mosquitto:sensors:temperature": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "sensors",
+          "temperature"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "MyTempProxy"
+    }
+  },
+  "F2CCommand -\u003e exec:command:f2c:run": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "f2c",
+          "run"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "F2CCommand"
+    }
+  },
+  "TempSetpoint -\u003e mqtt:topic:mosquitto:sensors:tempsetpoint": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "sensors",
+          "tempsetpoint"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "TempSetpoint"
+    }
+  },
+  "HumidityType -\u003e exec:command:gethumiditymode:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "gethumiditymode",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "HumidityType"
+    }
+  },
+  "BackupTimestampCommand -\u003e exec:command:getbackuptimestampcommand:run": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "getbackuptimestampcommand",
+          "run"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "BackupTimestampCommand"
+    }
+  },
+  "MyPressureProxy -\u003e mqtt:topic:mosquitto:sensors:pressure": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "sensors",
+          "pressure"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "MyPressureProxy"
+    }
+  },
+  "TempUnit -\u003e exec:command:gettempunit:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "gettempunit",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "TempUnit"
+    }
+  },
+  "Network_WAN_IP -\u003e exec:command:getpublicip:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "getpublicip",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "Network_WAN_IP"
+    }
+  },
+  "Network_WLAN_IP -\u003e mqtt:topic:mosquitto:networking:wlanip": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "networking",
+          "wlanip"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:follow"
+        }
+      },
+      "itemName": "Network_WLAN_IP"
+    }
+  },
+  "HumiSetpoint -\u003e mqtt:topic:mosquitto:sensors:humisetpoint": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "sensors",
+          "humisetpoint"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "HumiSetpoint"
+    }
+  },
+  "GitLatestVersion -\u003e exec:command:gitlatest:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "gitlatest",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "GitLatestVersion"
+    }
+  },
+  "GitInstalledVersionCommand -\u003e exec:command:gitinstalled:run": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "gitinstalled",
+          "run"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "GitInstalledVersionCommand"
+    }
+  },
+  "SystemType -\u003e exec:command:getsystemtype:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "getsystemtype",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "SystemType"
+    }
+  },
+  "System_Used_Space -\u003e mqtt:topic:mosquitto:system:space": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "system",
+          "space"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:follow"
+        }
+      },
+      "itemName": "System_Used_Space"
+    }
+  },
+  "HumidityRemBoostTime -\u003e mqtt:topic:mosquitto:humidty:boost": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "humidty",
+          "boost"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "HumidityRemBoostTime"
+    }
+  },
+  "System_Used_Space -\u003e exec:command:getuseddiskspace:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "getuseddiskspace",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "System_Used_Space"
+    }
+  },
+  "HotWaterMode -\u003e mqtt:topic:mosquitto:hotwater:mode": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "hotwater",
+          "mode"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "HotWaterMode"
+    }
+  },
+  "System_CPU_TEMP -\u003e mqtt:topic:mosquitto:system:cputemp": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "system",
+          "cputemp"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:follow"
+        }
+      },
+      "itemName": "System_CPU_TEMP"
+    }
+  },
+  "GetHumidityMode -\u003e exec:command:gethumiditymode:run": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "gethumiditymode",
+          "run"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "GetHumidityMode"
+    }
+  },
+  "System_CPU_UPTIME -\u003e exec:command:getuptime:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "getuptime",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "System_CPU_UPTIME"
+    }
+  },
+  "RebootCommand -\u003e exec:command:rebootcommand:run": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "rebootcommand",
+          "run"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "RebootCommand"
+    }
+  },
+  "C2FCommand -\u003e exec:command:c2f:run": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "c2f",
+          "run"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "C2FCommand"
+    }
+  },
+  "GetTempUnit -\u003e exec:command:gettempunit:run": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "gettempunit",
+          "run"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "GetTempUnit"
+    }
+  },
+  "HeatingPin -\u003e mqtt:topic:mosquitto:heating:control": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "heating",
+          "control"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "HeatingPin"
+    }
+  },
+  "GetSystemType -\u003e exec:command:getsystemtype:run": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "getsystemtype",
+          "run"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "GetSystemType"
+    }
+  },
+  "Network_SSID -\u003e mqtt:topic:mosquitto:networking:ssid": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "networking",
+          "ssid"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:follow"
+        }
+      },
+      "itemName": "Network_SSID"
+    }
+  },
+  "ShutdownCommand -\u003e exec:command:shutdowncommand:run": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "shutdowncommand",
+          "run"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "ShutdownCommand"
+    }
+  },
+  "CoolingMode -\u003e mqtt:topic:mosquitto:cooling:mode": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "cooling",
+          "mode"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "CoolingMode"
+    }
+  },
+  "HotWaterPin -\u003e mqtt:topic:mosquitto:hotwater:control": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "hotwater",
+          "control"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "HotWaterPin"
+    }
+  },
+  "System_CPU_LOAD -\u003e mqtt:topic:mosquitto:system:cpuload": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "system",
+          "cpuload"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:follow"
+        }
+      },
+      "itemName": "System_CPU_LOAD"
+    }
+  },
+  "System_TZ_Set -\u003e exec:command:settz:input": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "settz",
+          "input"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "System_TZ_Set"
+    }
+  },
+  "UpgradeCommand -\u003e exec:command:upgrade:run": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "upgrade",
+          "run"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "UpgradeCommand"
+    }
+  },
+  "HeatingMode -\u003e mqtt:topic:mosquitto:heating:mode": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "heating",
+          "mode"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "HeatingMode"
+    }
+  },
+  "MyTemp -\u003e exec:command:gettemp:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "gettemp",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "MyTemp"
+    }
+  },
+  "Network_WLAN_IP -\u003e exec:command:getwlanip:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "getwlanip",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "Network_WLAN_IP"
+    }
+  },
+  "RestoreCommand -\u003e exec:command:restorecommand:run": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "restorecommand",
+          "run"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "RestoreCommand"
+    }
+  },
+  "SystemType -\u003e exec:command:setsystemtype:input": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "setsystemtype",
+          "input"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "SystemType"
+    }
+  },
+  "Network_WLAN_INFO -\u003e exec:command:getwifiinfo:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "getwifiinfo",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "Network_WLAN_INFO"
+    }
+  },
+  "CPUTemperatureCommand -\u003e exec:command:getcputemperature:run": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "getcputemperature",
+          "run"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "CPUTemperatureCommand"
+    }
+  },
+  "HumidityMode -\u003e mqtt:topic:mosquitto:humidty:mode": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "humidty",
+          "mode"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "HumidityMode"
+    }
+  },
+  "CoolingRemBoostTime -\u003e mqtt:topic:mosquitto:cooling:boost": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "cooling",
+          "boost"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "CoolingRemBoostTime"
+    }
+  },
+  "SystemType -\u003e mqtt:topic:mosquitto:types:systype": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "types",
+          "systype"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:follow"
+        }
+      },
+      "itemName": "SystemType"
+    }
+  },
+  "GitInstalledVersion -\u003e exec:command:gitinstalled:output": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "gitinstalled",
+          "output"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "GitInstalledVersion"
+    }
+  },
+  "HumidityType -\u003e exec:command:sethumitype:input": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "sethumitype",
+          "input"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "HumidityType"
+    }
+  }
+}

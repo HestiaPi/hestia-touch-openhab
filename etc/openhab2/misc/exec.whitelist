@@ -1,0 +1,29 @@
+/home/pi/scripts/backup.sh
+/home/pi/scripts/getbackuptimestamp.sh
+/home/pi/scripts/getBMEhumi.sh
+/home/pi/scripts/getBMEtemp.sh
+/home/pi/scripts/getcpuload.sh
+/home/pi/scripts/getcputemperature.sh
+/home/pi/scripts/gethumiditymode.sh
+/home/pi/scripts/getpublicip.sh
+/home/pi/scripts/getssid.sh
+/home/pi/scripts/getsystemtype.sh
+/home/pi/scripts/gettempunit.sh
+/home/pi/scripts/gettz.sh
+/home/pi/scripts/getuptime.sh
+/home/pi/scripts/getuseddiskspace.sh
+/home/pi/scripts/getwifiinfo.sh
+/home/pi/scripts/getwlan0ip.sh
+/home/pi/scripts/getwlan0mac.sh
+/home/pi/scripts/reboot.sh
+/home/pi/scripts/restore.sh &
+/home/pi/scripts/shutdown.sh
+/home/pi/scripts/getBMEpress.sh
+/home/pi/scripts/getgitinstalledversion.sh
+sudo /home/pi/scripts/getgitlatestversion.sh
+/home/pi/scripts/updateone.sh
+sudo /home/pi/scripts/settz.sh %2$s
+/home/pi/scripts/C2F.sh
+/home/pi/scripts/F2C.sh
+echo "%2$s" > /home/pi/scripts/systemtype
+echo "%2$s" > /home/pi/scripts/humiditymode

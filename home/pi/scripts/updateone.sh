@@ -7,20 +7,11 @@ if [ "$ip" == "192.168.4.1" ]
  exit 0;
 fi
 
-LATEST=$(sudo curl --silent "https://api.github.com/repos/hestiapi/hestia-touch-openhab/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-
 ### PREPARE UPDATE FOLDER
 sudo mkdir /home/pi/scripts/gitupdate;
 cd /home/pi/scripts/gitupdate;
-
-if [ "$1" == "dev" ]; then
-    sudo git clone https://github.com/HestiaPi/hestia-touch-openhab.git;
-else
-    sudo git clone --single-branch --branch "${LATEST}" https://github.com/HestiaPi/hestia-touch-openhab.git;
-fi
-
-cd /home/pi/scripts/gitupdate/hestia-touch-openhab;
-sudo mv docs /home/pi/scripts/docs;
+sudo git clone --single-branch --branch ONE https://github.com/HestiaPi/hestia-touch-openhab.git;
+cd /home/pi/scripts/gitupdate/hestia-touch-openhab
 sudo rm -rf .git LICENSE README.md;
 
 ### PREPARE FILES AND OVERWRITE THEM
@@ -43,11 +34,7 @@ sudo chmod 644 openhabloader.blank.html openhabloader.html wpa_supplicant.conf;
 yes | sudo openhab-cli reset-ownership
 
 ### STORE VERSION NUMBER LOCALLY
-if [ "$1" == "dev" ]; then
-    echo "Dev" > /home/pi/scripts/gitinstalledversion
-else
-    echo "${LATEST}" > /home/pi/scripts/gitinstalledversion;
-fi
+sudo curl --silent "https://api.github.com/repos/hestiapi/hestia-touch-openhab/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' > /home/pi/scripts/gitinstalledversion;
 sudo rm -rf /home/pi/scripts/gitupdate;
 sudo reboot;
 

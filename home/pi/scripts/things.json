@@ -1,0 +1,2516 @@
+[
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "WiFi Info",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 600,
+      "autorun": false,
+      "command": "/home/pi/scripts/getwifiinfo.sh",
+      "timeout": 60
+    },
+    "properties": {},
+    "UID": "exec:command:getwifiinfo",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [
+          "Network_WLAN_INFO"
+        ],
+        "uid": "exec:command:getwifiinfo:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getwifiinfo:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getwifiinfo:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getwifiinfo:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getwifiinfo:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Temperature Unit",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 0,
+      "autorun": true,
+      "command": "/home/pi/scripts/gettempunit.sh",
+      "timeout": 60
+    },
+    "properties": {},
+    "UID": "exec:command:gettempunit",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [
+          "TempUnit"
+        ],
+        "uid": "exec:command:gettempunit:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gettempunit:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gettempunit:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gettempunit:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gettempunit:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Hot Water Controls and Settings",
+    "bridgeUID": "mqtt:broker:mosquitto",
+    "configuration": {},
+    "properties": {},
+    "UID": "mqtt:topic:mosquitto:hotwater",
+    "thingTypeUID": "mqtt:topic",
+    "channels": [
+      {
+        "linkedItems": [
+          "HotWaterMode"
+        ],
+        "uid": "mqtt:topic:mosquitto:hotwater:mode",
+        "id": "mode",
+        "channelTypeUID": "mqtt:string",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Hot Water Mode",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/cmnd/hotwatermode",
+          "retained": true,
+          "postCommand": false,
+          "formatBeforePublish": "%s",
+          "stateTopic": "hestia/local/stat/hotwatermode"
+        }
+      },
+      {
+        "linkedItems": [
+          "HotWaterPin"
+        ],
+        "uid": "mqtt:topic:mosquitto:hotwater:control",
+        "id": "control",
+        "channelTypeUID": "mqtt:switch",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Hot Water Switch",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "retained": false,
+          "postCommand": false,
+          "formatBeforePublish": "%s",
+          "commandTopic": "hestia/local/cmnd/hotwaterstate/POWER",
+          "stateTopic": "hestia/local/stat/hotwaterstate/power",
+          "off": "OFF",
+          "on": "ON"
+        }
+      },
+      {
+        "linkedItems": [
+          "HotWaterRemBoostTime"
+        ],
+        "uid": "mqtt:topic:mosquitto:hotwater:boost",
+        "id": "boost",
+        "channelTypeUID": "mqtt:number",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Hot Water Boost Time",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/hotwaterboostremtime",
+          "retained": false,
+          "postCommand": false,
+          "step": 1,
+          "formatBeforePublish": "%s"
+        }
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Sensors and Setpoints",
+    "bridgeUID": "mqtt:broker:mosquitto",
+    "configuration": {},
+    "properties": {},
+    "UID": "mqtt:topic:mosquitto:sensors",
+    "thingTypeUID": "mqtt:topic",
+    "channels": [
+      {
+        "linkedItems": [
+          "MyTempProxy"
+        ],
+        "uid": "mqtt:topic:mosquitto:sensors:temperature",
+        "id": "temperature",
+        "channelTypeUID": "mqtt:number",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Current Temperature",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/temperature",
+          "retained": false,
+          "postCommand": false,
+          "step": 1,
+          "formatBeforePublish": "%s"
+        }
+      },
+      {
+        "linkedItems": [
+          "TempSetpoint"
+        ],
+        "uid": "mqtt:topic:mosquitto:sensors:tempsetpoint",
+        "id": "tempsetpoint",
+        "channelTypeUID": "mqtt:number",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Temperature Setpoint",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/tempsetpoint",
+          "retained": true,
+          "postCommand": false,
+          "step": 1,
+          "formatBeforePublish": "%s",
+          "stateTopic": "hestia/local/settempsetpoint"
+        }
+      },
+      {
+        "linkedItems": [
+          "MyHumiProxy"
+        ],
+        "uid": "mqtt:topic:mosquitto:sensors:humidity",
+        "id": "humidity",
+        "channelTypeUID": "mqtt:number",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Current Humidity",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/humidity",
+          "retained": false,
+          "postCommand": false,
+          "step": 1,
+          "formatBeforePublish": "%s"
+        }
+      },
+      {
+        "linkedItems": [
+          "HumiSetpoint"
+        ],
+        "uid": "mqtt:topic:mosquitto:sensors:humisetpoint",
+        "id": "humisetpoint",
+        "channelTypeUID": "mqtt:number",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Humidity Setpoint",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/humisetpoint",
+          "retained": true,
+          "postCommand": false,
+          "step": 1,
+          "formatBeforePublish": "%s",
+          "stateTopic": "hestia/local/sethumisetpoint"
+        }
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Time Zone",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 3600,
+      "autorun": true,
+      "command": "/home/pi/scripts/gettz.sh",
+      "timeout": 60
+    },
+    "properties": {},
+    "UID": "exec:command:gettz",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [
+          "System_TZ"
+        ],
+        "uid": "exec:command:gettz:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gettz:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gettz:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gettz:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gettz:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Backup",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 0,
+      "autorun": false,
+      "command": "/home/pi/scripts/backup.sh",
+      "timeout": 120
+    },
+    "properties": {},
+    "UID": "exec:command:backupcommand",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [],
+        "uid": "exec:command:backupcommand:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:backupcommand:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:backupcommand:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [
+          "BackupCommand"
+        ],
+        "uid": "exec:command:backupcommand:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:backupcommand:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Humidity Sensor",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 10,
+      "autorun": false,
+      "command": "/home/pi/scripts/getBMEhumi.sh",
+      "timeout": 5
+    },
+    "properties": {},
+    "UID": "exec:command:gethumi",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [
+          "MyHumi"
+        ],
+        "uid": "exec:command:gethumi:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gethumi:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gethumi:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gethumi:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gethumi:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "System Type",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 0,
+      "autorun": true,
+      "command": "/home/pi/scripts/getsystemtype.sh",
+      "timeout": 60
+    },
+    "properties": {},
+    "UID": "exec:command:getsystemtype",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [
+          "SystemType"
+        ],
+        "uid": "exec:command:getsystemtype:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getsystemtype:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getsystemtype:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getsystemtype:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getsystemtype:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "WLAN MAC",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 0,
+      "autorun": false,
+      "command": "/home/pi/scripts/getwlan0mac.sh",
+      "timeout": 60
+    },
+    "properties": {},
+    "UID": "exec:command:getwlanmac",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [
+          "Network_WLAN_MAC"
+        ],
+        "uid": "exec:command:getwlanmac:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getwlanmac:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getwlanmac:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getwlanmac:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getwlanmac:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Shutdown",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 0,
+      "autorun": false,
+      "command": "/home/pi/scripts/shutdown.sh",
+      "timeout": 60
+    },
+    "properties": {},
+    "UID": "exec:command:shutdowncommand",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [],
+        "uid": "exec:command:shutdowncommand:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:shutdowncommand:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:shutdowncommand:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [
+          "ShutdownCommand"
+        ],
+        "uid": "exec:command:shutdowncommand:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:shutdowncommand:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Fan Controls and Settings",
+    "bridgeUID": "mqtt:broker:mosquitto",
+    "configuration": {},
+    "properties": {},
+    "UID": "mqtt:topic:mosquitto:fan",
+    "thingTypeUID": "mqtt:topic",
+    "channels": [
+      {
+        "linkedItems": [
+          "FanMode"
+        ],
+        "uid": "mqtt:topic:mosquitto:fan:mode",
+        "id": "mode",
+        "channelTypeUID": "mqtt:string",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Fan Mode",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/cmnd/fanmode",
+          "retained": true,
+          "postCommand": false,
+          "formatBeforePublish": "%s",
+          "stateTopic": "hestia/local/stat/fanmode"
+        }
+      },
+      {
+        "linkedItems": [
+          "FanPin"
+        ],
+        "uid": "mqtt:topic:mosquitto:fan:control",
+        "id": "control",
+        "channelTypeUID": "mqtt:switch",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Fan Switch",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "retained": false,
+          "postCommand": false,
+          "formatBeforePublish": "%s",
+          "commandTopic": "hestia/local/cmnd/fanstate/POWER",
+          "stateTopic": "hestia/local/stat/fanstate/power",
+          "off": "OFF",
+          "on": "ON"
+        }
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "System Configs",
+    "bridgeUID": "mqtt:broker:mosquitto",
+    "configuration": {},
+    "properties": {},
+    "UID": "mqtt:topic:mosquitto:types",
+    "thingTypeUID": "mqtt:topic",
+    "channels": [
+      {
+        "linkedItems": [
+          "SystemType"
+        ],
+        "uid": "mqtt:topic:mosquitto:types:systype",
+        "id": "systype",
+        "channelTypeUID": "mqtt:string",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "System Type",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/systemtype",
+          "retained": true,
+          "postCommand": false,
+          "formatBeforePublish": "%s"
+        }
+      },
+      {
+        "linkedItems": [
+          "TempUnit"
+        ],
+        "uid": "mqtt:topic:mosquitto:types:tempunit",
+        "id": "tempunit",
+        "channelTypeUID": "mqtt:string",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Temp Unit",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/tempunit",
+          "retained": true,
+          "postCommand": false,
+          "formatBeforePublish": "%s"
+        }
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "SSID",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 600,
+      "autorun": false,
+      "command": "/home/pi/scripts/getssid.sh",
+      "timeout": 60
+    },
+    "properties": {},
+    "UID": "exec:command:getssid",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [
+          "Network_SSID"
+        ],
+        "uid": "exec:command:getssid:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getssid:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getssid:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getssid:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getssid:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "WLAN IP",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 600,
+      "autorun": false,
+      "command": "/home/pi/scripts/getwlan0ip.sh",
+      "timeout": 60
+    },
+    "properties": {},
+    "UID": "exec:command:getwlanip",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [
+          "Network_WLAN_IP"
+        ],
+        "uid": "exec:command:getwlanip:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getwlanip:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getwlanip:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getwlanip:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getwlanip:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "CPU Load",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 300,
+      "autorun": true,
+      "command": "/home/pi/scripts/getcpuload.sh",
+      "timeout": 60
+    },
+    "properties": {},
+    "UID": "exec:command:getcpuload",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [
+          "System_CPU_LOAD"
+        ],
+        "uid": "exec:command:getcpuload:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getcpuload:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getcpuload:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getcpuload:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getcpuload:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Reboot",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 0,
+      "autorun": false,
+      "command": "/home/pi/scripts/reboot.sh",
+      "timeout": 60
+    },
+    "properties": {},
+    "UID": "exec:command:rebootcommand",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [],
+        "uid": "exec:command:rebootcommand:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:rebootcommand:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:rebootcommand:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [
+          "RebootCommand"
+        ],
+        "uid": "exec:command:rebootcommand:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:rebootcommand:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Temperature Sensor",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 10,
+      "autorun": false,
+      "command": "/home/pi/scripts/getBMEtemp.sh",
+      "timeout": 5
+    },
+    "properties": {},
+    "UID": "exec:command:gettemp",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [
+          "MyTemp"
+        ],
+        "uid": "exec:command:gettemp:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gettemp:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gettemp:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gettemp:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gettemp:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Heating Controls and Settings",
+    "bridgeUID": "mqtt:broker:mosquitto",
+    "configuration": {},
+    "properties": {},
+    "UID": "mqtt:topic:mosquitto:heating",
+    "thingTypeUID": "mqtt:topic",
+    "channels": [
+      {
+        "linkedItems": [
+          "HeatingMode"
+        ],
+        "uid": "mqtt:topic:mosquitto:heating:mode",
+        "id": "mode",
+        "channelTypeUID": "mqtt:string",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Heating Mode",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/cmnd/heatingmode",
+          "retained": true,
+          "postCommand": false,
+          "formatBeforePublish": "%s",
+          "stateTopic": "hestia/local/stat/heatingmode"
+        }
+      },
+      {
+        "linkedItems": [
+          "HeatingPin"
+        ],
+        "uid": "mqtt:topic:mosquitto:heating:control",
+        "id": "control",
+        "channelTypeUID": "mqtt:switch",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Heating Switch",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "retained": false,
+          "postCommand": false,
+          "formatBeforePublish": "%s",
+          "commandTopic": "hestia/local/cmnd/heatingstate/POWER",
+          "stateTopic": "hestia/local/stat/heatingstate/power",
+          "off": "OFF",
+          "on": "ON"
+        }
+      },
+      {
+        "linkedItems": [
+          "Heating2Pin"
+        ],
+        "uid": "mqtt:topic:mosquitto:heating:control2",
+        "id": "control2",
+        "channelTypeUID": "mqtt:switch",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Heating2 Switch",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "retained": false,
+          "postCommand": false,
+          "formatBeforePublish": "%s",
+          "commandTopic": "hestia/local/cmnd/heating2state/POWER",
+          "stateTopic": "hestia/local/stat/heating2state/power",
+          "off": "OFF",
+          "on": "ON"
+        }
+      },
+      {
+        "linkedItems": [
+          "HeatingRemBoostTime"
+        ],
+        "uid": "mqtt:topic:mosquitto:heating:boost",
+        "id": "boost",
+        "channelTypeUID": "mqtt:number",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Heating Boost Time",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/heatingboostremtime",
+          "retained": false,
+          "postCommand": false,
+          "step": 1,
+          "formatBeforePublish": "%s"
+        }
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "CPU Temperature",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 600,
+      "autorun": true,
+      "command": "/home/pi/scripts/getcputemperature.sh",
+      "timeout": 60
+    },
+    "properties": {},
+    "UID": "exec:command:getcputemperature",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [
+          "System_CPU_TEMP"
+        ],
+        "uid": "exec:command:getcputemperature:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getcputemperature:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getcputemperature:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getcputemperature:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getcputemperature:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Backup Timestamp",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 0,
+      "autorun": false,
+      "command": "/home/pi/scripts/getbackuptimestamp.sh",
+      "timeout": 150
+    },
+    "properties": {},
+    "UID": "exec:command:getbackuptimestampcommand",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [
+          "BackupTimestampCommand"
+        ],
+        "uid": "exec:command:getbackuptimestampcommand:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getbackuptimestampcommand:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getbackuptimestampcommand:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getbackuptimestampcommand:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getbackuptimestampcommand:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Restore",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 0,
+      "autorun": false,
+      "command": "/home/pi/scripts/restore.sh &",
+      "timeout": 120
+    },
+    "properties": {},
+    "UID": "exec:command:restorecommand",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [],
+        "uid": "exec:command:restorecommand:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:restorecommand:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:restorecommand:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [
+          "RestoreCommand"
+        ],
+        "uid": "exec:command:restorecommand:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:restorecommand:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "System Information",
+    "bridgeUID": "mqtt:broker:mosquitto",
+    "configuration": {},
+    "properties": {},
+    "UID": "mqtt:topic:mosquitto:system",
+    "thingTypeUID": "mqtt:topic",
+    "channels": [
+      {
+        "linkedItems": [
+          "System_CPU_TEMP"
+        ],
+        "uid": "mqtt:topic:mosquitto:system:cputemp",
+        "id": "cputemp",
+        "channelTypeUID": "mqtt:string",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "System CPU Temperature",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/cputemp",
+          "retained": true,
+          "postCommand": false,
+          "formatBeforePublish": "%s"
+        }
+      },
+      {
+        "linkedItems": [
+          "System_CPU_LOAD"
+        ],
+        "uid": "mqtt:topic:mosquitto:system:cpuload",
+        "id": "cpuload",
+        "channelTypeUID": "mqtt:string",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "System CPU Load",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/cpuload",
+          "retained": true,
+          "postCommand": false,
+          "formatBeforePublish": "%s"
+        }
+      },
+      {
+        "linkedItems": [
+          "System_Used_Space"
+        ],
+        "uid": "mqtt:topic:mosquitto:system:space",
+        "id": "space",
+        "channelTypeUID": "mqtt:string",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "System Used Space",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/useddisk",
+          "retained": true,
+          "postCommand": false,
+          "formatBeforePublish": "%s"
+        }
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Used Disk Space",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 600,
+      "autorun": true,
+      "command": "/home/pi/scripts/getuseddiskspace.sh",
+      "timeout": 60
+    },
+    "properties": {},
+    "UID": "exec:command:getuseddiskspace",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [
+          "System_Used_Space"
+        ],
+        "uid": "exec:command:getuseddiskspace:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getuseddiskspace:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getuseddiskspace:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getuseddiskspace:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getuseddiskspace:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Cooling Controls and Settings",
+    "bridgeUID": "mqtt:broker:mosquitto",
+    "configuration": {},
+    "properties": {},
+    "UID": "mqtt:topic:mosquitto:cooling",
+    "thingTypeUID": "mqtt:topic",
+    "channels": [
+      {
+        "linkedItems": [
+          "CoolingMode"
+        ],
+        "uid": "mqtt:topic:mosquitto:cooling:mode",
+        "id": "mode",
+        "channelTypeUID": "mqtt:string",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Cooling Mode",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/cmnd/coolingmode",
+          "retained": true,
+          "postCommand": false,
+          "formatBeforePublish": "%s",
+          "stateTopic": "hestia/local/stat/coolingmode"
+        }
+      },
+      {
+        "linkedItems": [
+          "CoolingPin"
+        ],
+        "uid": "mqtt:topic:mosquitto:cooling:control",
+        "id": "control",
+        "channelTypeUID": "mqtt:switch",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Cooling Switch",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "retained": false,
+          "postCommand": false,
+          "formatBeforePublish": "%s",
+          "commandTopic": "hestia/local/cmnd/coolingstate/POWER",
+          "stateTopic": "hestia/local/stat/coolingstate/power",
+          "off": "OFF",
+          "on": "ON"
+        }
+      },
+      {
+        "linkedItems": [
+          "CoolingRemBoostTime"
+        ],
+        "uid": "mqtt:topic:mosquitto:cooling:boost",
+        "id": "boost",
+        "channelTypeUID": "mqtt:number",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Cooling Boost Time",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/coolingboostremtime",
+          "retained": false,
+          "postCommand": false,
+          "step": 1,
+          "formatBeforePublish": "%s"
+        }
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Mosquitto MQTT Broker",
+    "configuration": {
+      "lwtQos": 0,
+      "publickeypin": true,
+      "clientID": "mosquitto",
+      "retainMessages": true,
+      "keepAlive": 60,
+      "qos": 0,
+      "reconnectTime": 60000,
+      "port": 1883,
+      "host": "localhost",
+      "secure": false,
+      "certificatepin": true,
+      "lwtRetain": true
+    },
+    "properties": {},
+    "UID": "mqtt:broker:mosquitto",
+    "thingTypeUID": "mqtt:broker",
+    "channels": [
+      {
+        "linkedItems": [],
+        "uid": "mqtt:broker:mosquitto:externaltemp",
+        "id": "externaltemp",
+        "channelTypeUID": "mqtt:publishTrigger",
+        "kind": "TRIGGER",
+        "label": "External Temperature",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "stateTopic": "hestia/external/+/temperature",
+          "separator": "#"
+        }
+      },
+      {
+        "linkedItems": [],
+        "uid": "mqtt:broker:mosquitto:externalhumi",
+        "id": "externalhumi",
+        "channelTypeUID": "mqtt:publishTrigger",
+        "kind": "TRIGGER",
+        "label": "External Humidity",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "stateTopic": "hestia/external/+/humidity",
+          "separator": "#"
+        }
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Humidity Mode",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 0,
+      "autorun": true,
+      "command": "/home/pi/scripts/gethumiditymode.sh",
+      "timeout": 60
+    },
+    "properties": {},
+    "UID": "exec:command:gethumiditymode",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [
+          "HumidityType"
+        ],
+        "uid": "exec:command:gethumiditymode:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gethumiditymode:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gethumiditymode:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gethumiditymode:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:gethumiditymode:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "System Uptime",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 300,
+      "autorun": true,
+      "command": "/home/pi/scripts/getuptime.sh",
+      "timeout": 60
+    },
+    "properties": {},
+    "UID": "exec:command:getuptime",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [
+          "System_CPU_UPTIME"
+        ],
+        "uid": "exec:command:getuptime:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getuptime:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getuptime:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getuptime:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getuptime:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Network Information",
+    "bridgeUID": "mqtt:broker:mosquitto",
+    "configuration": {},
+    "properties": {},
+    "UID": "mqtt:topic:mosquitto:networking",
+    "thingTypeUID": "mqtt:topic",
+    "channels": [
+      {
+        "linkedItems": [
+          "Network_WAN_IP"
+        ],
+        "uid": "mqtt:topic:mosquitto:networking:wanip",
+        "id": "wanip",
+        "channelTypeUID": "mqtt:string",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "WAN IP",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/wanip",
+          "retained": true,
+          "postCommand": false,
+          "formatBeforePublish": "%s"
+        }
+      },
+      {
+        "linkedItems": [
+          "Network_WLAN_IP"
+        ],
+        "uid": "mqtt:topic:mosquitto:networking:wlanip",
+        "id": "wlanip",
+        "channelTypeUID": "mqtt:string",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "WLAN IP",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/wlanip",
+          "retained": true,
+          "postCommand": false,
+          "formatBeforePublish": "%s"
+        }
+      },
+      {
+        "linkedItems": [
+          "Network_SSID"
+        ],
+        "uid": "mqtt:topic:mosquitto:networking:ssid",
+        "id": "ssid",
+        "channelTypeUID": "mqtt:string",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "SSID",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/ssid",
+          "retained": true,
+          "postCommand": false,
+          "formatBeforePublish": "%s"
+        }
+      },
+      {
+        "linkedItems": [
+          "Network_WLAN_INFO"
+        ],
+        "uid": "mqtt:topic:mosquitto:networking:wlaninfo",
+        "id": "wlaninfo",
+        "channelTypeUID": "mqtt:string",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "WLAN Info",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/wlaninfo",
+          "retained": true,
+          "postCommand": false,
+          "formatBeforePublish": "%s"
+        }
+      },
+      {
+        "linkedItems": [
+          "Network_WLAN_MAC"
+        ],
+        "uid": "mqtt:topic:mosquitto:networking:wlanmac",
+        "id": "wlanmac",
+        "channelTypeUID": "mqtt:string",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "WLAN MAC",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/wlanmac",
+          "retained": true,
+          "postCommand": false,
+          "formatBeforePublish": "%s"
+        }
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Humidifier Dehumidifier Controls and Settings",
+    "bridgeUID": "mqtt:broker:mosquitto",
+    "configuration": {},
+    "properties": {},
+    "UID": "mqtt:topic:mosquitto:humidty",
+    "thingTypeUID": "mqtt:topic",
+    "channels": [
+      {
+        "linkedItems": [
+          "HumidityMode"
+        ],
+        "uid": "mqtt:topic:mosquitto:humidty:mode",
+        "id": "mode",
+        "channelTypeUID": "mqtt:string",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Humidity Mode",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/local/cmnd/humiditymode",
+          "retained": true,
+          "postCommand": false,
+          "formatBeforePublish": "%s",
+          "stateTopic": "hestia/local/stat/humiditymode"
+        }
+      },
+      {
+        "linkedItems": [
+          "HumidityPin"
+        ],
+        "uid": "mqtt:topic:mosquitto:humidty:control",
+        "id": "control",
+        "channelTypeUID": "mqtt:switch",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Humidity Switch",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "retained": false,
+          "postCommand": false,
+          "formatBeforePublish": "%s",
+          "commandTopic": "hestia/local/cmnd/humiditystate/POWER",
+          "stateTopic": "hestia/local/stat/humiditystate/power",
+          "off": "OFF",
+          "on": "ON"
+        }
+      },
+      {
+        "linkedItems": [
+          "HumidityRemBoostTime"
+        ],
+        "uid": "mqtt:topic:mosquitto:humidty:boost",
+        "id": "boost",
+        "channelTypeUID": "mqtt:number",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Humidity Boost Time",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {
+          "commandTopic": "hestia/humidityboostremtime",
+          "retained": false,
+          "postCommand": false,
+          "step": 1,
+          "formatBeforePublish": "%s"
+        }
+      }
+    ]
+  },
+  {
+    "statusInfo": {
+      "status": "ONLINE",
+      "statusDetail": "NONE"
+    },
+    "editable": false,
+    "label": "Public IP",
+    "configuration": {
+      "transform": "REGEX((.*))",
+      "interval": 600,
+      "autorun": false,
+      "command": "/home/pi/scripts/getpublicip.sh",
+      "timeout": 60
+    },
+    "properties": {},
+    "UID": "exec:command:getpublicip",
+    "thingTypeUID": "exec:command",
+    "channels": [
+      {
+        "linkedItems": [
+          "Network_WAN_IP"
+        ],
+        "uid": "exec:command:getpublicip:output",
+        "id": "output",
+        "channelTypeUID": "exec:output",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Output",
+        "description": "Output of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getpublicip:input",
+        "id": "input",
+        "channelTypeUID": "exec:input",
+        "itemType": "String",
+        "kind": "STATE",
+        "label": "Input",
+        "description": "Input that will be passed as second parameter to the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getpublicip:exit",
+        "id": "exit",
+        "channelTypeUID": "exec:exit",
+        "itemType": "Number",
+        "kind": "STATE",
+        "label": "Exit Value",
+        "description": "The exit value of the last execution of the command",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getpublicip:run",
+        "id": "run",
+        "channelTypeUID": "exec:run",
+        "itemType": "Switch",
+        "kind": "STATE",
+        "label": "Running",
+        "description": "Send ON to execute the command and the current state tells whether it is running or not",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      },
+      {
+        "linkedItems": [],
+        "uid": "exec:command:getpublicip:lastexecution",
+        "id": "lastexecution",
+        "channelTypeUID": "exec:lastexecution",
+        "itemType": "DateTime",
+        "kind": "STATE",
+        "label": "Last Execution",
+        "description": "Time/Date the command was last executed, in yyyy-MM-dd'T'HH:mm:ss.SSSZ format",
+        "defaultTags": [],
+        "properties": {},
+        "configuration": {}
+      }
+    ]
+  }
+]
