@@ -18,5 +18,6 @@ sudo rm -f /var/lib/openhab2/uuid;
 sudo rm -f /var/lib/openhab2/persistence/rrd4j/*.rrd;
 sudo rm -f /var/lib/openhab2/openhabcloud/secret;
 sudo rm -f /var/lib/openhab2/persistence/mapdb/*;
+sudo rm -f /var/lib/openhab2/jsondb/backup/*;
 yes | sudo openhab-cli reset-ownership
 sudo shutdown -h now;
