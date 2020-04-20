@@ -10,7 +10,7 @@ yes | sudo openhab-cli clean-cache
 rm -f /etc/wpa_supplicant/wpa_supplicant.conf;
 cp /home/pi/scripts/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf;
 sudo find /var/log -type f -delete;
-sudo rm -f /home/pi/.bash_history;
+sudo rm -f /home/pi/.bash_history /home/pi/.nano_history;
 sudo rm -f /home/pi/scripts/raspberry-pi-turnkey/pi.id;
 sudo rm -f /home/pi/scripts/raspberry-pi-turnkey/status.json;
 sudo rm -f /home/pi/scripts/backup.zip;
