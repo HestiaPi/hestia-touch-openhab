@@ -8,43 +8,43 @@ sitemap default label="Main Menu"
   }
 
   Frame label="Heating" visibility=[SystemType=="US"] {
-    Switch item=HeatingMode mappings=[ "ON"="AUTO", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
-    Setpoint item=HeatingBoostTime minValue=10 maxValue=1440 step=10 icon="clock" visibility=[HeatingRemBoostTime<=0]
-    Setpoint item=HeatingRemBoostTime minValue=0 maxValue=1440 step=1 icon="clock" visibility=[HeatingRemBoostTime>0]
+    Switch item=HeatingMode label="Heating Mode []" mappings=[ "ON"="AUTO", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
+    Setpoint item=HeatingBoostTime minValue=10 maxValue=1440 step=10 visibility=[HeatingMode!=Boost]
+    Setpoint item=HeatingRemBoostTime minValue=0 maxValue=1440 step=1 visibility=[HeatingMode==Boost]
   }
 
   Frame label="Cooling" visibility=[SystemType=="US"] {
-    Switch item=CoolingMode mappings=[ "ON"="AUTO", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
-    Setpoint item=CoolingBoostTime minValue=10 maxValue=1440 step=10 icon="clock" visibility=[CoolingRemBoostTime<=0]
-    Setpoint item=CoolingRemBoostTime minValue=0 maxValue=1440 step=1 icon="clock" visibility=[CoolingRemBoostTime>0]
+    Switch item=CoolingMode label="Cooling Mode []" mappings=[ "ON"="AUTO", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
+    Setpoint item=CoolingBoostTime minValue=10 maxValue=1440 step=10 visibility=[CoolingMode!=Boost]
+    Setpoint item=CoolingRemBoostTime minValue=0 maxValue=1440 step=1 visibility=[CoolingMode==Boost]
   }
 
   Frame label="Fan" visibility=[SystemType=="US"] {
     Text item=FanPin label="Fan [%s]" icon="switch" visibility=[FanCtrl==OFF]
-    Switch item=FanMode mappings=[ "ON"="ON", "OFF"="OFF" ] visibility=[FanCtrl!=OFF]
+    Switch item=FanMode label="Fan Mode []" mappings=[ "ON"="ON", "OFF"="OFF" ] visibility=[FanCtrl!=OFF]
   }
 
   Frame label="Heating" visibility=[SystemType=="EU"] {
-    Switch item=HeatingMode mappings=[ "ON"="AUTO", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
+    Switch item=HeatingMode label="Heating Mode []" mappings=[ "ON"="AUTO", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
     Setpoint item=TempSetpointC minValue=0 maxValue=40 step=0.5 icon="temperature" visibility=[TempUnit=="C"]
     Setpoint item=TempSetpointF minValue=32 maxValue=100 step=1 icon="temperature" visibility=[TempUnit=="F"]
-    Setpoint item=HeatingBoostTime minValue=10 maxValue=1440 step=10 icon="clock" visibility=[HeatingRemBoostTime<=0]
-    Setpoint item=HeatingRemBoostTime minValue=1 maxValue=1440 step=1 icon="clock" visibility=[HeatingRemBoostTime>0]
+    Setpoint item=HeatingBoostTime minValue=10 maxValue=1440 step=10 visibility=[HeatingMode!=Boost]
+    Setpoint item=HeatingRemBoostTime minValue=1 maxValue=1440 step=1 visibility=[HeatingMode==Boost]
     Text item=MyTempProxyC visibility=[TempUnit=="C"]
     Text item=MyTempProxyF visibility=[TempUnit=="F"]
   }
 
   Frame label="Hot Water" visibility=[SystemType=="EU"] {
-    Switch item=HotWaterMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
-    Setpoint item=HotWaterBoostTime minValue=10 maxValue=120 step=10 icon="clock" visibility=[HotWaterRemBoostTime<=0]
-    Setpoint item=HotWaterRemBoostTime minValue=0 maxValue=120 step=1 icon="clock" visibility=[HotWaterRemBoostTime>0]
+    Switch item=HotWaterMode label="Hot Water Mode []" mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
+    Setpoint item=HotWaterBoostTime minValue=10 maxValue=120 step=10 visibility=[HotWaterMode!=Boost]
+    Setpoint item=HotWaterRemBoostTime minValue=0 maxValue=120 step=1 visibility=[HotWaterMode==Boost]
   }
 
   Frame label="Humidity" visibility=[SystemType=="EU"] {
-    Switch item=HumidityMode mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
+    Switch item=HumidityMode label="Humidity Mode []" mappings=[ "ON"="ON", "OFF"="OFF"/*, "Schedule"="SCHEDULE"*/, "Boost"="BOOST"]
     Text item=MyHumiProxy
-    Setpoint item=HumidityBoostTime minValue=10 maxValue=120 step=10 icon="clock" visibility=[HumidityRemBoostTime<=0]
-    Setpoint item=HumidityRemBoostTime minValue=0 maxValue=120 step=1 icon="clock" visibility=[HumidityRemBoostTime>0]
+    Setpoint item=HumidityBoostTime minValue=10 maxValue=120 step=10 visibility=[HumidityMode!=Boost]
+    Setpoint item=HumidityRemBoostTime minValue=0 maxValue=120 step=1 visibility=[HumidityMode==Boost]
     Setpoint item=HumiSetpoint minValue=0 maxValue=100 step=1 icon="humidity"
   }
 
@@ -68,14 +68,14 @@ sitemap default label="Main Menu"
         }
         Text label="2nd Stage Heating" icon="heating" {
           Frame {
-            Switch item=Heating2 mappings=[ "ON"="ON", "OFF"="OFF"]
+            Switch item=Heating2 label="2nd Stage Heating []" mappings=[ "ON"="ON", "OFF"="OFF"]
             Setpoint item=Heating2Delta minValue=0 maxValue=20 step=1 icon="temperature"
             Setpoint item=Heating2Time minValue=0 maxValue=120 step=1 icon="clock"
           }
         }
-        Switch item=TempUnit mappings=["F"="°F", "C"="°C"]
-        Switch item=HumidityType mappings=["Dehumidify"="Dehumidify", "Humidify"="Humidify"] visibility=[SystemType=="EU"]
-        Switch item=SystemType mappings=["US"="HVAC", "EU"="Generic"]
+        Switch item=TempUnit label="Temperature Unit []" mappings=["F"="°F", "C"="°C"]
+        Switch item=HumidityType label="Humidity Type []" mappings=["Dehumidify"="Dehumidify", "Humidify"="Humidify"] visibility=[SystemType=="EU"]
+        Switch item=SystemType label="System Type []" mappings=["US"="HVAC", "EU"="Generic"]
         Selection item=System_TZ_Set mappings=[  // THIS IS UNAVOIDABLY UGLY - START SCROLLING NOW
           "Africa/Abidjan"="Africa/Abidjan +00:00",
           "Africa/Accra"="Africa/Accra +00:00",
