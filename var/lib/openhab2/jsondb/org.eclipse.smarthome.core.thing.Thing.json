@@ -2007,135 +2007,6 @@
       "location": "System"
     }
   },
-  "mqtt:topic:mosquitto:hotwater": {
-    "class": "org.eclipse.smarthome.core.thing.internal.ThingImpl",
-    "value": {
-      "label": "Hot Water Controls and Settings",
-      "bridgeUID": {
-        "segments": [
-          "mqtt",
-          "broker",
-          "mosquitto"
-        ]
-      },
-      "channels": [
-        {
-          "acceptedItemType": "String",
-          "kind": "STATE",
-          "uid": {
-            "segments": [
-              "mqtt",
-              "topic",
-              "mosquitto",
-              "hotwater",
-              "mode"
-            ]
-          },
-          "channelTypeUID": {
-            "segments": [
-              "mqtt",
-              "string"
-            ]
-          },
-          "label": "Hot Water Mode",
-          "configuration": {
-            "properties": {
-              "commandTopic": "hestia/local/cmnd/hotwatermode",
-              "retained": true,
-              "postCommand": false,
-              "formatBeforePublish": "%s",
-              "stateTopic": "hestia/local/stat/hotwatermode"
-            }
-          },
-          "properties": {},
-          "defaultTags": []
-        },
-        {
-          "acceptedItemType": "Switch",
-          "kind": "STATE",
-          "uid": {
-            "segments": [
-              "mqtt",
-              "topic",
-              "mosquitto",
-              "hotwater",
-              "control"
-            ]
-          },
-          "channelTypeUID": {
-            "segments": [
-              "mqtt",
-              "switch"
-            ]
-          },
-          "label": "Hot Water Switch",
-          "configuration": {
-            "properties": {
-              "retained": false,
-              "postCommand": false,
-              "formatBeforePublish": "%s",
-              "commandTopic": "hestia/local/cmnd/hotwaterstate/POWER",
-              "stateTopic": "hestia/local/stat/hotwaterstate/power",
-              "off": "OFF",
-              "on": "ON"
-            }
-          },
-          "properties": {},
-          "defaultTags": []
-        },
-        {
-          "acceptedItemType": "Number",
-          "kind": "STATE",
-          "uid": {
-            "segments": [
-              "mqtt",
-              "topic",
-              "mosquitto",
-              "hotwater",
-              "boost"
-            ]
-          },
-          "channelTypeUID": {
-            "segments": [
-              "mqtt",
-              "number"
-            ]
-          },
-          "label": "Hot Water Boost Time",
-          "configuration": {
-            "properties": {
-              "commandTopic": "hestia/hotwaterboostremtime",
-              "retained": false,
-              "postCommand": false,
-              "step": 1.0,
-              "formatBeforePublish": "%s"
-            }
-          },
-          "properties": {},
-          "defaultTags": []
-        }
-      ],
-      "configuration": {
-        "properties": {}
-      },
-      "properties": {},
-      "uid": {
-        "segments": [
-          "mqtt",
-          "topic",
-          "mosquitto",
-          "hotwater"
-        ]
-      },
-      "thingTypeUID": {
-        "segments": [
-          "mqtt",
-          "topic"
-        ]
-      },
-      "location": "Controls"
-    }
-  },
   "mqtt:topic:mosquitto:cooling": {
     "class": "org.eclipse.smarthome.core.thing.internal.ThingImpl",
     "value": {
@@ -2254,6 +2125,135 @@
           "topic",
           "mosquitto",
           "cooling"
+        ]
+      },
+      "thingTypeUID": {
+        "segments": [
+          "mqtt",
+          "topic"
+        ]
+      },
+      "location": "Controls"
+    }
+  },
+  "mqtt:topic:mosquitto:hotwater": {
+    "class": "org.eclipse.smarthome.core.thing.internal.ThingImpl",
+    "value": {
+      "label": "Hot Water Controls and Settings",
+      "bridgeUID": {
+        "segments": [
+          "mqtt",
+          "broker",
+          "mosquitto"
+        ]
+      },
+      "channels": [
+        {
+          "acceptedItemType": "String",
+          "kind": "STATE",
+          "uid": {
+            "segments": [
+              "mqtt",
+              "topic",
+              "mosquitto",
+              "hotwater",
+              "mode"
+            ]
+          },
+          "channelTypeUID": {
+            "segments": [
+              "mqtt",
+              "string"
+            ]
+          },
+          "label": "Hot Water Mode",
+          "configuration": {
+            "properties": {
+              "commandTopic": "hestia/local/cmnd/hotwatermode",
+              "retained": true,
+              "postCommand": false,
+              "formatBeforePublish": "%s",
+              "stateTopic": "hestia/local/stat/hotwatermode"
+            }
+          },
+          "properties": {},
+          "defaultTags": []
+        },
+        {
+          "acceptedItemType": "Switch",
+          "kind": "STATE",
+          "uid": {
+            "segments": [
+              "mqtt",
+              "topic",
+              "mosquitto",
+              "hotwater",
+              "control"
+            ]
+          },
+          "channelTypeUID": {
+            "segments": [
+              "mqtt",
+              "switch"
+            ]
+          },
+          "label": "Hot Water Switch",
+          "configuration": {
+            "properties": {
+              "retained": false,
+              "postCommand": false,
+              "formatBeforePublish": "%s",
+              "commandTopic": "hestia/local/cmnd/hotwaterstate/POWER",
+              "stateTopic": "hestia/local/stat/hotwaterstate/power",
+              "off": "OFF",
+              "on": "ON"
+            }
+          },
+          "properties": {},
+          "defaultTags": []
+        },
+        {
+          "acceptedItemType": "Number",
+          "kind": "STATE",
+          "uid": {
+            "segments": [
+              "mqtt",
+              "topic",
+              "mosquitto",
+              "hotwater",
+              "boost"
+            ]
+          },
+          "channelTypeUID": {
+            "segments": [
+              "mqtt",
+              "number"
+            ]
+          },
+          "label": "Hot Water Boost Time",
+          "configuration": {
+            "properties": {
+              "commandTopic": "hestia/hotwaterboostremtime",
+              "retained": false,
+              "postCommand": false,
+              "step": 1.0,
+              "formatBeforePublish": "%s"
+            }
+          },
+          "properties": {},
+          "defaultTags": []
+        }
+      ],
+      "configuration": {
+        "properties": {}
+      },
+      "properties": {},
+      "uid": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "hotwater"
         ]
       },
       "thingTypeUID": {
@@ -4998,7 +4998,7 @@
               "retained": false,
               "postCommand": false,
               "step": 1.0,
-              "formatBeforePublish": "%s"
+              "formatBeforePublish": "%.1f"
             }
           },
           "properties": {},
