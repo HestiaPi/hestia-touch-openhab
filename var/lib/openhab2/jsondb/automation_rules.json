@@ -1,4 +1,41 @@
 {
+  "7e280df7-a69e-4cd1-b863-4492cfa123bc": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "1",
+          "label": "Comfort_Mode changed",
+          "description": "",
+          "configuration": {
+            "itemName": "Comfort_Mode"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        }
+      ],
+      "conditions": [
+        {
+          "inputs": {},
+          "id": "2",
+          "label": "Is the new mode valid",
+          "description": "If not revert to the previous value",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar logName \u003d \"comfortmode\";\n\nvar ok \u003d (newState \u003d\u003d \"COMFORT\" || newState \u003d\u003d \"ECO\");\nif(!ok){\n  var revert \u003d (oldState !\u003d NULL || oldState !\u003d UNDEF) ? oldState : \"COMFORT\";\n  logWarn(logName, newState + \" is not a valid mode, reverting to \" + revert);\n  events.postUpdate(\"Comfort_Mode\", revert);\n}\nok;"
+          },
+          "type": "script.ScriptCondition"
+        }
+      ],
+      "actions": [],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "7e280df7-a69e-4cd1-b863-4492cfa123bc",
+      "name": "Comfort Mode Changed",
+      "tags": [],
+      "visibility": "VISIBLE",
+      "description": "Called when switching between COMFORT and ECO mode"
+    }
+  },
   "10aa9679-eddb-4c5b-b101-d3abefcad1e6": {
     "class": "org.openhab.core.automation.dto.RuleDTO",
     "value": {
@@ -448,7 +485,7 @@
           "description": "",
           "configuration": {
             "type": "application/javascript",
-            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/defaults.js\u0027);\n\nvar logName \u003d \"systemtype\";\n\n// Turn everything OFF\nevents.sendCommand(\"MainSwitch\", OFF);\n\n// Waiting for all the modes to turn OFF\nvar notOff \u003d function(i) { return items[i.name] !\u003d \"OFF\"; }\nwhile(ir.getItem(\"Modes\").members.stream().filter(notOff).size \u003e 0) {\n  logInfo(logName, \"Waiting for everything to become OFF.\");\n  sleep(1);\n}\n\n// Reset the setpoints\nevents.sendCommand(\"TempSetpoint\", DEFAULTS.get(items[\"TempUnit\"]+\"_DEF\"));\nevents.sendCommand(\"HumiSetpoint\", DEFAULTS.get(\"Humi_DEF\"));\n\n// Executing the sed to update the systemtype file is now done by\n// the Exec binding when the SystemType Item received the command\n// to change.\nlogInfo(logName, \"Rebooting...\");\nsleep(20); // give everything time to settle down\nevents.sendCommand(\"RebootButton\", ON);\nlogInfo(logName, \"Done\");"
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/defaults.js\u0027);\n\nvar logName \u003d \"systemtype\";\n\n// Turn everything OFF\nevents.sendCommand(\"MainSwitch\", OFF);\n\n// Waiting for all the modes to turn OFF\nvar notOff \u003d function(i) { return items[i.name] !\u003d \"OFF\"; }\nwhile(ir.getItem(\"Modes\").members.stream().filter(notOff).size \u003e 0) {\n  logInfo(logName, \"Waiting for everything to become OFF.\");\n  sleep(1);\n}\n\n// Reset the setpoints\nvar tempUnit \u003d items[\"TempUnit\"];\nvar comfMode \u003d items[\"Comfort_Mode\"];\nevents.sendcommand(\"MinTempSetpoint\", DEFAULTS.get(tempUnit+\"_\"+comfMode+\"_DEF\"));\nevents.sendCommand(\"MaxTempSetpoint\", DEFAULTS.get(tempUnit+\"_\"+comfMode+\"_DEF\"));\nevents.sendCommand(\"HumiSetpoint\", DEFAULTS.get(\"Humi_DEF\"));\n\n// Executing the sed to update the systemtype file is now done by\n// the Exec binding when the SystemType Item received the command\n// to change.\nlogInfo(logName, \"Rebooting...\");\nsleep(20); // give everything time to settle down\nevents.sendCommand(\"RebootButton\", ON);\nlogInfo(logName, \"Done\");"
           },
           "type": "script.ScriptAction"
         }
@@ -635,7 +672,7 @@
           "description": "Use defaults to initialize those Items that are not restored on startup",
           "configuration": {
             "type": "application/javascript",
-            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/defaults.js\u0027);\n\nvar logName \u003d \"initialization\";\n\n// Set the flag to indicate initialization is in progress\nevents.postUpdate(\"Initialized\", OFF);\n\nlogInfo(logName, \"Initializing settings...\");\n\nvar initFromScript \u003d function(i){\n  // This shouldn\u0027t be possible, the Exec binding should have\n  // called the script already. But we will try to kick it off\n  // again here.\n  if(items[i] \u003d\u003d NULL || items[i] \u003d\u003d UNDEF){\n    logInfo(logName, i + \" is undefined, initializing from script \" + cmd);\n    events.sendCommand(\"Get\"+i, ON);\n    waitForUpdate(i, 5);\n  }\n  else {\n    logDebug(logName, i + \" is \" + items[i]);\n    events.sendCommand(i, items[i]);\n  }\n}\n\nvar initState \u003d function(i, st) {\n  if(items[i] \u003d\u003d NULL || items[i] \u003d\u003d UNDEF){\n    logInfo(logName, i + \" is undefined, initializing to \" + st);\n    events.sendCommand(i, st);\n  }\n  else {\n    logDebug(logName, i + \" is \" + items[i]);\n    events.sendCommand(i, items[i]);\n  }\n}\n\nvar initSetpoint \u003d function(i, value, max, min) {\n  if(items[i] \u003d\u003d NULL || items[i] \u003d\u003d UNDEF || \n     items[i].floatValue() \u003e max || items[i].floatValue() \u003c min){\n    logInfo(logName, i + \" is \" + items[i] + \", initializing to \" + value);\n    events.sendCommand(i, value);\n  }\n  else {\n    logDebug(i + \" is \" + items[i]);\n    events.sendCommand(i, items[i]);\n  }\n}\n\n// Initialize type Items first\ninitFromScript(\"SystemType\");\ninitFromScript(\"TempUnit\");\ninitFromScript(\"HumidityType\");\n\n// Get the current temp reading\nevents.sendCommand(\"GetTemp\", ON);\n\n// Initialize the mode Items\ninitState(\"FanMode\", \"OFF\");\ninitState(\"MainSwitch\", \"OFF\");\ninitState(\"HeatingMode\", \"OFF\");\ninitState(\"CoolingMode\", \"OFF\");\ninitState(\"HotWaterMode\", \"OFF\");\ninitState(\"HumidityMode\", \"OFF\");\ninitState(\"Heating2\", \"OFF\");\n\n\n// Initialize setpoint Items\nvar unit \u003d items[\"TempUnit\"];\nvar def \u003d DEFAULTS.get(unit+\"_DEF\");\nvar min \u003d DEFAULTS.get(unit+\"_MIN\");\nvar max \u003d DEFAULTS.get(unit+\"_MAX\");\ninitSetpoint(\"TempSetpoint\", def, max, min);\ninitSetpoint(\"TempSetpoint\"+unit, def, max, min);\n\ndef \u003d DEFAULTS.get(\"Humi_DEF\");\nmin \u003d DEFAULTS.get(\"Humi_MIN\");\nmax \u003d DEFAULTS.get(\"Humi_MAX\");\ninitSetpoint(\"HumiSetpoint\", 50, 100, 0);\n\n// Initialize misc settings\ninitState(\"HeatingBoostTime\", DEFAULTS.get(\"HeatingBoostTime\"));\ninitState(\"HotWaterBoostTime\",DEFAULTS.get(\"HotWaterBoostTime\"));\ninitState(\"HumidityBoostTime\", DEFAULTS.get(\"HumidityBoostTime\"));\ninitState(\"CoolingBoostTime\", DEFAULTS.get(\"CoolingBoostTime\"));\ninitState(\"PreviousTempReading\", 0);\ninitState(\"PreviousHumiReading\", 0);\ninitState(\"PreviousPressureReading\", 0);\ninitState(\"Heating2Time\", DEFAULTS.get(\"Heating2Time\"));\ninitState(\"Heating2Delta\", DEFAULTS.get(\"Heating2Delta\"));\ninitState(\"FanCtrl\", ON);\n\n// Let the Exec binding init the network and system info Items\n\n// We are initialized enough to operate, set the flag\nevents.postUpdate(\"Initialized\", ON);\nlogInfo(logName, \"System is ready to operate, kicking off restored behaviors\");\n\n// Update PrevMode Items and cancel Boosts\nlogDebug(logName, \"Updating PrevModes\");\nfor each(var i in ir.getItem(\"Modes\").members){\n  if(items[i.name] !\u003d \"Boost\"){\n    var prevName \u003d i.name.replace(\"Mode\", \"PrevMode\");\n    logDebug(logName, i.name + \" is \" + items[i.name] + \", updating \" + prevName + \" to \" + items[i.name]);\n    events.postUpdate(prevName, items[i.name]);\n  }\n  else {\n    var prev \u003d items[i.name.replace(\"Mode\", \"PrevMode\")]\n    var resetVal \u003d (prev !\u003d NULL \u0026\u0026 prev !\u003d UNDEF)? prev : \"OFF\";\n    logInfo(logName, \"Cancelling Boost mode for \" + i.name + \", restoring to \" + resetVal);\n    events.sendCommand(i.name, resetVal);\n  }\n}\n\n// Sometimes the timing works out that MyTemp is updated before the\n// rule that synchronizes it with the proxy Items is loaded, leaving \n// the temp proxy Items NULL until the temp changes enough to register.\n//if(items[\"MyTempProxy\"] \u003d\u003d NULL || items[\"MyTempProxy\"+items[\"TempUnit\"]] \u003d\u003d NULL) {\n//  logDebug(logName, \"MyTempProxy is not set, initializing it with MyTemp.\");\n//  events.sendCommand(\"MyTempProxy\", items[\"MyTemp\"]);\n//}\n\n// Sometimes the timing works out that MyTemp is updated before the\n// rule that synchronizes it with the proxy Items is loaded, leaving\n// the temp proxy Items NULL until the next large temperature change. \n// The timing might also work where the temp is read before the LCD is\n// ready to receive it. So we resend the current reading so everything \n// gets in sync.\nevents.sendCommand(\"MyTempProxy\", items[\"MyTemp\"]);\n\nevents.postUpdate(\"Initialized\", ON); // Allow changes to run\n\nlogDebug(logName, \"Triggering devices\");\n// Do the fan mode first so screen ends up at Heating or Cooling\n// if either are on\nif(items[\"SystemType\"] \u003d\u003d \"US\" \u0026\u0026 items[\"FanMode\"] !\u003d \"OFF\"){\n  events.sendCommand(\"FanMode\", ON);\n}\n\nif(items[\"HeatingMode\"] !\u003d \"OFF\") events.sendCommand(\"HeatingCheck\", ON);\n\nif(items[\"SystemType\"] \u003d\u003d \"EU\"){\n  if(items[\"HotWaterMode\"] !\u003d \"OFF\") events.sendCommand(\"HotWaterCheck\", ON);\n  if(items[\"HumidityMode\"] !\u003d \"OFF\") events.sendCommand(\"HumidityCheck\", ON);\n}\n\n// Heating and cooling are handled by the same rule. We only need\n// to command CoolingMode if it wasn\u0027t already triggered by HeatingMode.\nif(items[\"CoolingMode\"] !\u003d \"OFF\") events.sendCommand(\"CoolingCheck\", ON);\n\nevents.sendCommand(\"GitInstalledVersionCommand\", \"ON\");\n\nlogDebug(logName, \"Done initializing settings\");"
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/defaults.js\u0027);\n\nvar logName \u003d \"initialization\";\n\n// Set the flag to indicate initialization is in progress\nevents.postUpdate(\"Initialized\", OFF);\n\nlogInfo(logName, \"Initializing settings...\");\n\nvar initFromScript \u003d function(i){\n  // This shouldn\u0027t be possible, the Exec binding should have\n  // called the script already. But we will try to kick it off\n  // again here.\n  if(items[i] \u003d\u003d NULL || items[i] \u003d\u003d UNDEF){\n    logInfo(logName, i + \" is undefined, initializing from script \" + cmd);\n    events.sendCommand(\"Get\"+i, ON);\n    waitForUpdate(i, 5);\n  }\n  else {\n    logDebug(logName, i + \" is \" + items[i]);\n    events.sendCommand(i, items[i]);\n  }\n}\n\nvar initState \u003d function(i, st) {\n  if(items[i] \u003d\u003d NULL || items[i] \u003d\u003d UNDEF){\n    logInfo(logName, i + \" is undefined, initializing to \" + st);\n    events.sendCommand(i, st);\n  }\n  else {\n    logDebug(logName, i + \" is \" + items[i]);\n    events.sendCommand(i, items[i]);\n  }\n}\n\nvar initSetpoint \u003d function(i, value, max, min) {\n  if(items[i] \u003d\u003d NULL || items[i] \u003d\u003d UNDEF || \n     items[i].floatValue() \u003e max || items[i].floatValue() \u003c min){\n    logInfo(logName, i + \" is \" + items[i] + \", initializing to \" + value);\n    events.sendCommand(i, value);\n  }\n  else {\n    logDebug(i + \" is \" + items[i]);\n    events.sendCommand(i, items[i]);\n  }\n}\n\n// Initialize type Items first\ninitFromScript(\"SystemType\");\ninitFromScript(\"TempUnit\");\ninitFromScript(\"HumidityType\");\n\n// Get the current temp reading\nevents.sendCommand(\"GetTemp\", ON);\n\n// Initialize the mode Items\ninitState(\"FanMode\", \"OFF\");\ninitState(\"MainSwitch\", \"OFF\");\ninitState(\"HeatingMode\", \"OFF\");\ninitState(\"CoolingMode\", \"OFF\");\ninitState(\"HotWaterMode\", \"OFF\");\ninitState(\"HumidityMode\", \"OFF\");\ninitState(\"Heating2\", \"OFF\");\ninitState(\"Comfort_Mode\", \"COMFORT\");\n\n\n// Initialize setpoint Items\nvar unit \u003d items[\"TempUnit\"];\nvar min \u003d DEFAULTS.get(unit+\"_MIN\");\nvar max \u003d DEFAULTS.get(unit+\"_MAX\");\nvar minDef \u003d DEFAULTS.get(unit+\"_MIN_DEF\");\nvar maxDef \u003d DEFAULTS.get(unit+\"_MAX_DEF\");\ninitSetpoint(\"MinTempSetpoint\", minDef, max, min);\ninitSetpoint(\"MinTempSetpoint\"+unit, minDef, max, min);\ninitSetpoint(\"MaxTempSetpoint\", maxDef, max, min);\ninitSetpoint(\"MaxTempSetpoint\"+unit, maxDef, max, min);\n\nif(items[\"Comfort_Mode\"].class \u003d\u003d UnDefType.class){\n  logWarn(logName, \"Waiting for Comfort_Mode to update\");\n  waitForUpdate(\"Comfort_Mode\", 10);\n  logWarn(logName, \"Comfort_Mode finally updated to \" + items[\"Comfort_Mode\"]);\n}\nvar comfMode \u003d items[\"Comfort_Mode\"];\nvar comfDef \u003d DEFAULTS.get(unit+\"_\"+comfMode+\"_DEF\");\nlogInfo(logName, \"Comfort_Mode is \" + comfMode + \", Default is \" + comfDef);\ninitSetpoint(\"Comfort_Value\", comfDef, max, min);\ninitSetpoint(\"Comfort_Value\"+unit, comfDef, max, min);\n\ndef \u003d DEFAULTS.get(\"Humi_DEF\");\nmin \u003d DEFAULTS.get(\"Humi_MIN\");\nmax \u003d DEFAULTS.get(\"Humi_MAX\");\ninitSetpoint(\"HumiSetpoint\", 50, 100, 0);\n\n// Initialize misc settings\ninitState(\"HeatingBoostTime\", DEFAULTS.get(\"HeatingBoostTime\"));\ninitState(\"HotWaterBoostTime\",DEFAULTS.get(\"HotWaterBoostTime\"));\ninitState(\"HumidityBoostTime\", DEFAULTS.get(\"HumidityBoostTime\"));\ninitState(\"CoolingBoostTime\", DEFAULTS.get(\"CoolingBoostTime\"));\ninitState(\"PreviousTempReading\", 0);\ninitState(\"PreviousHumiReading\", 0);\ninitState(\"PreviousPressureReading\", 0);\ninitState(\"Heating2Time\", DEFAULTS.get(\"Heating2Time\"));\ninitState(\"Heating2Delta\", DEFAULTS.get(\"Heating2Delta\"));\ninitState(\"FanCtrl\", ON);\n\n// Let the Exec binding init the network and system info Items\n\n// We are initialized enough to operate, set the flag\nevents.postUpdate(\"Initialized\", ON);\nlogInfo(logName, \"System is ready to operate, kicking off restored behaviors\");\n\n// Update PrevMode Items and cancel Boosts\nlogDebug(logName, \"Updating PrevModes\");\nfor each(var i in ir.getItem(\"Modes\").members){\n  if(items[i.name] !\u003d \"Boost\"){\n    var prevName \u003d i.name.replace(\"Mode\", \"PrevMode\");\n    logDebug(logName, i.name + \" is \" + items[i.name] + \", updating \" + prevName + \" to \" + items[i.name]);\n    events.postUpdate(prevName, items[i.name]);\n  }\n  else {\n    var prev \u003d items[i.name.replace(\"Mode\", \"PrevMode\")]\n    var resetVal \u003d (prev !\u003d NULL \u0026\u0026 prev !\u003d UNDEF)? prev : \"OFF\";\n    logInfo(logName, \"Cancelling Boost mode for \" + i.name + \", restoring to \" + resetVal);\n    events.sendCommand(i.name, resetVal);\n  }\n}\n\n// Sometimes the timing works out that MyTemp is updated before the\n// rule that synchronizes it with the proxy Items is loaded, leaving \n// the temp proxy Items NULL until the temp changes enough to register.\n//if(items[\"MyTempProxy\"] \u003d\u003d NULL || items[\"MyTempProxy\"+items[\"TempUnit\"]] \u003d\u003d NULL) {\n//  logDebug(logName, \"MyTempProxy is not set, initializing it with MyTemp.\");\n//  events.sendCommand(\"MyTempProxy\", items[\"MyTemp\"]);\n//}\n\n// Sometimes the timing works out that MyTemp is updated before the\n// rule that synchronizes it with the proxy Items is loaded, leaving\n// the temp proxy Items NULL until the next large temperature change. \n// The timing might also work where the temp is read before the LCD is\n// ready to receive it. So we resend the current reading so everything \n// gets in sync.\nevents.sendCommand(\"MyTempProxy\", items[\"MyTemp\"]);\n\nevents.postUpdate(\"Initialized\", ON); // Allow changes to run\n\nlogDebug(logName, \"Triggering devices\");\n// Do the fan mode first so screen ends up at Heating or Cooling\n// if either are on\nif(items[\"SystemType\"] \u003d\u003d \"US\" \u0026\u0026 items[\"FanMode\"] !\u003d \"OFF\"){\n  events.sendCommand(\"FanMode\", ON);\n}\n\nif(items[\"HeatingMode\"] !\u003d \"OFF\") events.sendCommand(\"HeatingCheck\", ON);\n\nif(items[\"SystemType\"] \u003d\u003d \"EU\"){\n  if(items[\"HotWaterMode\"] !\u003d \"OFF\") events.sendCommand(\"HotWaterCheck\", ON);\n  if(items[\"HumidityMode\"] !\u003d \"OFF\") events.sendCommand(\"HumidityCheck\", ON);\n}\n\n// Heating and cooling are handled by the same rule. We only need\n// to command CoolingMode if it wasn\u0027t already triggered by HeatingMode.\nif(items[\"CoolingMode\"] !\u003d \"OFF\") events.sendCommand(\"CoolingCheck\", ON);\n\nevents.sendCommand(\"GitInstalledVersionCommand\", \"ON\");\n\nlogDebug(logName, \"Done initializing settings\");"
           },
           "type": "script.ScriptAction"
         }
@@ -986,29 +1023,56 @@
           "type": "core.ItemStateChangeTrigger"
         },
         {
-          "id": "4",
-          "label": "TempSetpoint changed",
+          "id": "8",
+          "label": "MaxTempSetpoint changed",
           "description": "",
           "configuration": {
-            "itemName": "TempSetpoint"
+            "itemName": "MaxTempSetpoint"
           },
           "type": "core.ItemStateChangeTrigger"
         },
         {
-          "id": "5",
-          "label": "TempSetpointF changed",
+          "id": "9",
+          "label": "MaxTempSetpointF changed",
           "description": "",
           "configuration": {
-            "itemName": "TempSetpointF"
+            "itemName": "MaxTempSetpointF"
           },
           "type": "core.ItemStateChangeTrigger"
         },
         {
-          "id": "6",
-          "label": "TempSetpointC changed",
+          "id": "10",
+          "label": "MaxTempSetpointC changed",
           "description": "",
           "configuration": {
-            "itemName": "TempSetpointC"
+            "itemName": "MaxTempSetpointC"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "11",
+          "label": "MinTempSetpoint changed",
+          "description": "",
+          "configuration": {
+            "itemName": "MinTempSetpoint"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "12",
+          "label": "MinTempProxyF changed",
+          "description": "",
+          "configuration": {
+            "itemName": "MinTempSetpointF"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "13",
+          "label": "MinTempSetpointC changed",
+          "description": "",
+          "configuration": {
+            "itemName": "MinTempSetpointC"
           },
           "type": "core.ItemStateChangeTrigger"
         }
@@ -1082,7 +1146,7 @@
         {
           "id": "1",
           "label": "TempSetpoint changed",
-          "description": "This triggers the rule if an item state has changed.",
+          "description": "",
           "configuration": {
             "itemName": "TempSetpoint"
           },
@@ -1091,7 +1155,7 @@
         {
           "id": "2",
           "label": "PreviousTempReading changed",
-          "description": "This triggers the rule if an item state has changed.",
+          "description": "",
           "configuration": {
             "itemName": "PreviousTempReading"
           },
@@ -1100,7 +1164,7 @@
         {
           "id": "3",
           "label": "HumiSetpoint",
-          "description": "This triggers the rule if an item state has changed.",
+          "description": "",
           "configuration": {
             "itemName": "HumiSetpoint"
           },
@@ -1109,9 +1173,45 @@
         {
           "id": "4",
           "label": "PreviousHumiReading",
-          "description": "This triggers the rule if an item state has changed.",
+          "description": "",
           "configuration": {
             "itemName": "PreviousHumiReading"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "8",
+          "label": "MaxTempSetpoint changed",
+          "description": "",
+          "configuration": {
+            "itemName": "MaxTempSetpoint"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "9",
+          "label": "MinTempSetpoint changed",
+          "description": "",
+          "configuration": {
+            "itemName": "MinTempSetpoint"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "11",
+          "label": "Comfort_Value changed",
+          "description": "",
+          "configuration": {
+            "itemName": "Comfort_Value"
+          },
+          "type": "core.ItemStateChangeTrigger"
+        },
+        {
+          "id": "12",
+          "label": "Comfort_Mode changed",
+          "description": "",
+          "configuration": {
+            "itemName": "Comfort_Mode"
           },
           "type": "core.ItemStateChangeTrigger"
         }
@@ -1139,6 +1239,28 @@
             "script": "(oldState !\u003d NULL \u0026\u0026 oldState !\u003d UNDEF);"
           },
           "type": "script.ScriptCondition"
+        },
+        {
+          "inputs": {},
+          "id": "10",
+          "label": "Prevent MaxTempSetpoint \u003c\u003d MinTempSetpoint",
+          "description": "If an invalid Max or Min TempSetpoint is attempted, move to keep them appart",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var min \u003d items[\"MinTempSetpoint\"].floatValue();\nvar max \u003d items[\"MaxTempSetpoint\"].floatValue();\n\nif(min \u003e\u003d max){\n  var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\n  load(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\n  logWarn(\"sensor\", \"MinTempSetpoint \" + min + \" \u003e\u003d MaxTempSetpoint \" + max +\n          \"! Adjusting to maintain valid setpoints!\");\n  var toAdjust \u003d (event.itemName.contains(\"Min\")) ? \"Max\" : \"Min\";\n  var value \u003d (items[\"TempUnit\"] \u003d\u003d \"C\") ? 0.5 : 1;\n  value \u003d (toAdjust \u003d\u003d \"Min\") ? value * -1 : value;\n  value \u003d value + items[toAdjust+\"TempSetpoint\"].floatValue();\n  \n  logWarn(\"sensor\", \"MinTempSetpoint \" + min + \" \u003e\u003d MaxTempSetpoint \" + max +\n          \"! Adjusting \" + toAdjust + \"TempSetpoint to \" + value + \" to maintain valid setpoints!\");\n  events.sendCommand(toAdjust+\"TempSetpoint\", value);\n}\n\n// We still want to run the Rule\n(true);"
+          },
+          "type": "script.ScriptCondition"
+        },
+        {
+          "inputs": {},
+          "id": "13",
+          "label": "Keep Comfort_Value in range",
+          "description": "Enforce 0.5 \u003c\u003d Comfort_Value \u003c\u003d 10",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "var curr \u003d items[\"Comfort_Value\"].floatValue();\nvar update \u003d curr;\n\nif(curr \u003c 0.5) update \u003d 0.5;\nif(curr \u003e 10) update \u003d 10;\n\nvar ok \u003d (curr \u003d\u003d update);\n\nif(!ok) {\n  var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\n  load(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n  logInfo(\"comfortvalue\", \"curr \u003d \" + curr + \" update \u003d \" + update + \" ok \u003d \" + ok);\n  logInfo(\"comfortvalue\", curr + \" is outside the allowed range of 0.5 and 10, setting to \" + update);\n  events.postUpdate(\"Comfort_Value\", update);\n}\n\n(ok);"
+          },
+          "type": "script.ScriptCondition"
         }
       ],
       "actions": [
@@ -1146,10 +1268,10 @@
           "inputs": {},
           "id": "6",
           "label": "Checks to see if we need to turn on/off the device.",
-          "description": "Allows the execution of a user-defined script.",
+          "description": "Triggers the appropriate check rule based on what setting or sensor value changed.",
           "configuration": {
             "type": "application/javascript",
-            "script": "var heating \u003d items[\"HeatingMode\"];\nvar cooling \u003d items[\"CoolingMode\"];\nvar humidity \u003d items[\"HumidityMode\"];\nvar type \u003d items[\"SystemType\"];\n\nif(event.itemName.contains(\"Temp\")){\n  if(heating \u003d\u003d \"ON\" || heating \u003d\u003d \"Boost\" || heating \u003d\u003d \"AUTO\"){\n    events.sendCommand(\"HeatingCheck\", ON);\n  }\n  if(type \u003d\u003d \"US\" \u0026\u0026 (cooling \u003d\u003d \"ON\" || cooling \u003d\u003d \"Boost\" || cooling \u003d\u003d \"AUTO\")){\n    events.sendCommand(\"CoolingCheck\", ON);\n  }\n}\nelse if(type \u003d\u003d \"EU\" \u0026\u0026 event.itemName.contains(\"Humi\")){\n  if(humidity \u003d\u003d \"ON\" || humidity \u003d\u003d \"Boost\" || humidity \u003d\u003d \"AUTO\") {\n    events.sendCommand(\"HumidityCheck\", ON);\n  }\n}"
+            "script": "var heating \u003d items[\"HeatingMode\"];\nvar cooling \u003d items[\"CoolingMode\"];\nvar humidity \u003d items[\"HumidityMode\"];\nvar type \u003d items[\"SystemType\"];\n\nif(event.itemName.contains(\"Temp\") || event.itemName.contains(\"Comfort\")){\n\n  if((heating \u003d\u003d \"ON\" || \n      heating \u003d\u003d \"Boost\" || \n      heating \u003d\u003d \"AUTO\") \u0026\u0026 \n     (event.itemName \u003d\u003d \"PreviousTempReading\" || \n      event.itemName \u003d\u003d \"MinTempSetpoint\" ||\n      event.itemName.contains(\"Comfort\"))){\n    events.sendCommand(\"HeatingCheck\", ON);\n  }\n  if(type \u003d\u003d \"US\" \u0026\u0026 \n     (cooling \u003d\u003d \"ON\" || \n      cooling \u003d\u003d \"Boost\" || \n      cooling \u003d\u003d \"AUTO\") \u0026\u0026\n     (event.itemName \u003d\u003d \"PreviousTempReading\" || \n      event.itemName \u003d\u003d \"MaxTempSetpoint\" ||\n      event.itemName.contains(\"Comfort\"))){\n    events.sendCommand(\"CoolingCheck\", ON);\n  }\n}\nelse if(type \u003d\u003d \"EU\" \u0026\u0026 event.itemName.contains(\"Humi\")){\n  if(humidity \u003d\u003d \"ON\" || humidity \u003d\u003d \"Boost\" || humidity \u003d\u003d \"AUTO\") {\n    events.sendCommand(\"HumidityCheck\", ON);\n  }\n}"
           },
           "type": "script.ScriptAction"
         }
@@ -1157,7 +1279,7 @@
       "configuration": {},
       "configDescriptions": [],
       "uid": "bb0b73b3-a99b-4f57-b441-e0265c37813a",
-      "name": "Sensor Setpoint Changed",
+      "name": "Sensor or Setpoint Changed",
       "tags": [],
       "visibility": "VISIBLE",
       "description": "When the temp or humidity sensor reading or setpoint changes, check to see if a device needs to turn on"
@@ -1262,6 +1384,17 @@
             "script": "var ok \u003d true;\n\nif(items[\"CoolingPin\"] \u003d\u003d command) ok \u003d false;\nif(command \u003d\u003d ON){\n  if(items[\"FanPin\"] \u003d\u003d ON \u0026\u0026\n     items[\"FanMode\"] \u003d\u003d \"AUTO\" \u0026\u0026\n     items[\"MainSwitch\"] \u003d\u003d ON \u0026\u0026\n     items[\"FanCtrl\"] \u003d\u003d ON)\n    ok \u003d false;\n}\n(ok);"
           },
           "type": "script.ScriptCondition"
+        },
+        {
+          "inputs": {},
+          "id": "5",
+          "label": "Prevent the Heating and Cooling from being ON at the same time",
+          "description": "If Cooling is commanded on and Heating is ON, turn off and wait for Heating to OFF",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "if(items[\"HeatingPin\"] \u003d\u003d ON \u0026\u0026 \n   event.itemCommand \u003d\u003d ON) {\n  var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\n  load(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n  \n  logWarn(\"cooling\", \"Cooling has been commanded ON but Heating is ON! Turning off the Heating!\");\n  events.sendCommand(\"HeatingCtrl\", OFF);\n  waitForUpdateState(\"HeatingPin\", OFF, 10);\n}\n\n\n(true);"
+          },
+          "type": "script.ScriptCondition"
         }
       ],
       "actions": [
@@ -1272,7 +1405,7 @@
           "description": "Allows the",
           "configuration": {
             "type": "application/javascript",
-            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nlogInfo(\"cooling\", \"Turning \" + command + \" the cooling: curr temp \u003d \" + items[\"MyTemp\"] +\n                 \" setpoint \u003d \" + items[\"TempSetpoint\"] +\n                 \" mode \u003d \" + items[\"CoolingMode\"]);\n\nif(command \u003d\u003d ON){\n  commandIfDifferent(\"MainSwitch\", ON);\n  commandIfDifferent(\"FanMode\", \"AUTO\");\n  commandIfDifferent(\"FanCtrl\", OFF);\n  createTimerSecs(10, function(){ commandIfDifferent(\"CoolingPin\", ON); });\n  events.sendCommand(\"CoolingMode\", items[\"CoolingMode\"]); // update the LCD\n}\nelse {\n  commandIfDifferent(\"CoolingPin\", OFF);\n  createTimerSecs(10, function(){\n    events.sendCommand(\"FanMode\", (items[\"FanPrevMode\"] !\u003d \"ON\") ? \"OFF\" : \"ON\");\n    events.sendCommand(\"FanCtrl\", ON);\n  });\n}"
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nlogInfo(\"cooling\", \"Turning \" + command + \" the cooling: curr temp \u003d \" + items[\"MyTemp\"] +\n                 \" setpoint \u003d \" + items[\"MaxTempSetpoint\"] +\n                 \" mode \u003d \" + items[\"CoolingMode\"]);\n\nif(command \u003d\u003d ON){\n  commandIfDifferent(\"MainSwitch\", ON);\n  commandIfDifferent(\"FanMode\", \"AUTO\");\n  commandIfDifferent(\"FanCtrl\", OFF);\n  createTimerSecs(10, function(){ commandIfDifferent(\"CoolingPin\", ON); });\n  events.sendCommand(\"CoolingMode\", items[\"CoolingMode\"]); // update the LCD\n}\nelse {\n  commandIfDifferent(\"CoolingPin\", OFF);\n  createTimerSecs(10, function(){\n    events.sendCommand(\"FanMode\", (items[\"FanPrevMode\"] !\u003d \"ON\") ? \"OFF\" : \"ON\");\n    events.sendCommand(\"FanCtrl\", ON);\n  });\n}"
           },
           "type": "script.ScriptAction"
         }
@@ -1416,11 +1549,11 @@
         {
           "inputs": {},
           "id": "2",
-          "label": "TempSetpoint and MyTempProxy are valid",
+          "label": "Setpoints and Temp are valid",
           "description": "Allows the definition of a condition through a script.",
           "configuration": {
             "type": "application/javascript",
-            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar logName\u003d\"heatcool\";\n\nvar ok \u003d (items[\"TempSetpoint\"] !\u003d NULL || items[\"TempSetpoint\"] !\u003d UNDEF ||\n          items[\"MyTempProxy\"] !\u003d NULL || items[\"MyTempProxy\"] !\u003d UNDEF);\n\nif(!ok){\n  logError(logName, \"Cannot determine heating/cooling: TempSetpoint \u003d \" + items[\"TempSetpoint\"] + \" MyTempProxy \u003d \" + items[\"MyTempProxy\"]);\n}\n\n(ok);"
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar logName\u003d\"heatcool\";\n\nvar minSP \u003d items[\"MinTempSetpoint\"].class;\nvar maxSP \u003d items[\"MaxTempSetpoint\"].class;\nvar hyst \u003d items[\"Comfort_Value\"].class;\nvar temp \u003d items[\"MyTempProxy\"].class;\nvar comfMode \u003d items[\"Comfort_Mode\"].class;\n\nvar ok \u003d (minSP !\u003d UnDefType.class \u0026\u0026\n          hyst !\u003d UnDefType.class \u0026\u0026\n          temp !\u003d UnDefType.class \u0026\u0026\n          comfMode !\u003d UnDefType.class);\nif(items[\"SystemType\"] \u003d\u003d \"US\") ok \u003d (ok \u0026\u0026 maxSP !\u003d UnDefType.class);\n\nif(!ok){\n  if(items[\"SystemType\"] \u003d\u003d \"US\"){\n    logError(logName, \"Cannot determine heating/cooling: MinTempSetpoint \u003d \" + items[\"MinTempSetpoint\"] + \" MaxTempSetpoint \u003d \" + items[\"MaxTempSetpoint\"] + \" MyTempProxy \u003d \" + items[\"MyTempProxy\"] + \" Comfort_Value \u003d \" + items[\"Comfort_Value\"]);\n  }\n  else {\n    logError(logName, \"Cannot determine heating: MinTempSetpoint \u003d \" + items[\"MinTempSetpoint\"] + \" MyTempProxy \u003d \" + items[\"MyTempProxy\"] + \" Comfort_Value \u003d \" + items[\"Comfort_Value\"]);\n  }\n}\n\n(ok);"
           },
           "type": "script.ScriptCondition"
         }
@@ -1433,7 +1566,7 @@
           "description": "Sends command to Heating/CoolingCtrl to change device\u0027s state.",
           "configuration": {
             "type": "application/javascript",
-            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar mode \u003d event.itemName.replace(\"Check\", \"\");\nvar delta \u003d items[\"TempSetpoint\"].floatValue() - items[\"MyTempProxy\"].floatValue();\n\n// TODO: Replace 0 with hysteresis, if heating check for \n// positive dela, if cooling check for negative delta\nvar turnOn \u003d (mode \u003d\u003d \"Heating\") ? (delta \u003e 0) : (delta \u003c 0);\n\nvar cmd \u003d (items[mode+\"Mode\"] \u003d\u003d \"Boost\" || turnOn) ? ON : OFF;\nevents.sendCommand(mode+\"Ctrl\", cmd);\n\nsleep(10); // keep the rule from running again too soon"
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/defaults.js\u0027);\n\nvar mode \u003d event.itemName.replace(\"Check\", \"\");\nvar temp \u003d items[\"MyTempProxy\"].floatValue();\n\nvar minDelta \u003d items[\"MinTempSetpoint\"].floatValue() - temp; // positive means below setpoint, heating\nvar maxDelta \u003d temp - items[\"MaxTempSetpoint\"].floatValue(); // positive means above setpoint\nvar delta \u003d (mode \u003d\u003d \"Heating\") ? minDelta : maxDelta;\n\nvar comfHyst \u003d DEFAULTS.get(items[\"TempUnit\"]+\"_COMFORT_DEF\");\nvar ecoHyst \u003d items[\"Comfort_Value\"].floatValue();\nvar hysteresis \u003d (items[\"Comfort_Mode\"] \u003d\u003d \"COMFORT\") ? comfHyst : ecoHyst;\n\nvar turnOn \u003d (items[mode+\"Mode\"] \u003d\u003d \"Boost\" || delta \u003e\u003d hysteresis);\nvar turnOff \u003d delta \u003c\u003d 0;\n\nif(turnOn) {\n  logInfo(\"heatingcooling\", \"TURN ON \" + mode + \": heating delta is \" + minDelta + \" cooling delta is \" + maxDelta + \" hysteresis is \" + hysteresis);\n  events.sendCommand(mode+\"Ctrl\", \"ON\");\n}\nelse if(turnOff){\n  logInfo(\"heatingcooling\", \"TURN OFF \" + mode + \": heating delta is \" + minDelta + \" cooling delta is \" + maxDelta + \" hysteresis is \" + hysteresis);\n  events.sendCommand(mode+\"Ctrl\", \"OFF\");\n}\nelse {\n  logInfo(\"heatingcooling\", \"Nothing to do: mode \u003d \" + mode + \" temp \u003d  \" + temp + \" hysteresis \u003d \" + hysteresis + \" min delta \u003d \" + minDelta + \" max delta \u003d \" + maxDelta);\n}\n\nsleep(10); // keep the rule from running again too soon"
           },
           "type": "script.ScriptAction"
         }
@@ -1522,6 +1655,17 @@
             "script": "var ok \u003d true;\n\nif(items[\"HeatingPin\"] \u003d\u003d command) ok \u003d false;\nif(command \u003d\u003d ON){\n  if(items[\"FanPin\"] \u003d\u003d ON \u0026\u0026\n     items[\"FanMode\"] \u003d\u003d \"AUTO\" \u0026\u0026\n     items[\"MainSwitch\"] \u003d\u003d ON \u0026\u0026\n     items[\"FanCtrl\"] \u003d\u003d ON)\n    ok \u003d false;\n}\n(ok);"
           },
           "type": "script.ScriptCondition"
+        },
+        {
+          "inputs": {},
+          "id": "4",
+          "label": "Prevent Heating and Cooling to be ON at the same time",
+          "description": "If the Cooling is ON and Heating commanded ON, turn OFF and wait for Cooling to turn OFF before continuing.",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "if(items[\"SystemType\"] \u003d\u003d \"US\" \u0026\u0026 \n   items[\"CoolingPin\"] \u003d\u003d ON \u0026\u0026 \n   event.itemCommand \u003d\u003d ON) {\n  var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\n  load(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n  \n  logWarn(\"heating\", \"Heating has been commanded ON but Cooling is ON! Turning off the Cooling!\");\n  events.sendCommand(\"CoolingCtrl\", OFF);\n  waitForUpdateState(\"CoolingPin\", OFF, 10);\n}\n\n\n(true);"
+          },
+          "type": "script.ScriptCondition"
         }
       ],
       "actions": [
@@ -1532,7 +1676,7 @@
           "description": "Turns on heating/ 2nd stage heating when ON is received, OFF when OFF is received",
           "configuration": {
             "type": "application/javascript",
-            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar logName \u003d \"heating\";\n\nlogInfo(logName, \"Turning \" + command + \" the heater: curr temp \u003d \" + items[\"MyTemp\"] +\n                 \" setpoint \u003d \" + items[\"TempSetpoint\"] +\n                 \" mode \u003d \" + items[\"HeatingMode\"]);\n\nvar turnedOn \u003d false;\n\n// Turns ON/OFF heating and the Fan (if US type) if it isn\u0027t already\nif(command \u003d\u003d ON) {\n  commandIfDifferent(\"MainSwitch\", ON);\n\n  // Also turn on the Fan if US mode\n  if(items[\"SystemType\"] \u003d\u003d \"US\") {\n    commandIfDifferent(\"FanMode\", \"AUTO\");\n    commandIfDifferent(\"FanCtrl\", OFF);\n    createTimerSecs(10, function(){ commandIfDifferent(\"HeatingPin\", ON); });\n  }\n  else {\n    commandIfDifferent(\"HeatingPin\", ON);\n  }\n  if(items[\"HeatingPin\"] !\u003d ON) turnedOn \u003d true;\n  events.sendCommand(\"HeatingMode\", items[\"HeatingMode\"]); // Update the LCD if necessary\n}\nelse {\n  commandIfDifferent(\"HeatingPin\", OFF);\n  if(items[\"SystemType\"] \u003d\u003d \"US\") {\n    createTimerSecs(10, function() {\n      commandIfDifferent(\"FanCtrl\", ON);\n      var mode \u003d (items[\"FanPrevMode\"] !\u003d \"ON\") ? \"OFF\" : \"ON\";\n      events.sendCommand(\"FanMode\", mode);\n    });\n  }\n}\n\n// Second stage heating\nif(items[\"Heating2\"] \u003d\u003d ON) {\n\n  logInfo(logName, \"Second stage heating\");\n\n  var heating2Off \u003d function(){\n    if(items[\"Heating2Pin\"] !\u003d OFF){\n      logInfo(logName, \"Turning off second stage heating\");\n      events.sendCommand(\"Heating2Pin\", OFF);\n    }\n    else {\n      logInfo(logName, \"Second stage heating is already off\");\n    }\n  };\n\n  // Heating turned on, schedule second stage heating if not already\n  if(command \u003d\u003d ON) {\n  \n    // It\u0027s too warm, turn off the second stage heating\n    if(items[\"MyTempProxy\"].floatValue() + items[\"Heating2Delta\"].floatValue() \u003e\u003d items[\"TempSetpoint\"].floatValue()){\n      heating2Off();\n    }\n\n    // It\u0027s cold, schedule second stage to turn on later if not already on or shceduled to come on\n    else if(turnedOn \u0026\u0026 items[\"Heating2Pin\"] !\u003d ON){\n      var heat2StartMins \u003d items[\"Heating2Time\"].intValue();\n      logInfo(logName, \"Scheduling second stage heating to start in \" + heat2StartMins + \" minutes.\");\n\n      createTimerSecs(heat2StartMins*60, function(){\n        // It\u0027s later now, still too cold? If so, turn on 2nd stage heating\n        if(items[\"HeatingPin\"] \u003d\u003d ON \u0026\u0026\n           items[\"MyTempProxy\"].floatValue() + items[\"Heating2Delta\"].floatValue() \u003c items[\"TempSetpoint\"].floatValue()) {\n          logInfo(logName, \"Turning on second stage heating\");\n          events.sendCommand(\"Heating2Pin\", ON);\n        }\n      });\n    } // end schedule\n  }\n  \n  else { // command \u003d\u003d OFF\n    heating2Off();\n  }\n}"
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nvar logName \u003d \"heating\";\n\nlogInfo(logName, \"Turning \" + command + \" the heater: curr temp \u003d \" + items[\"MyTemp\"] +\n                 \" setpoint \u003d \" + items[\"MinTempSetpoint\"] +\n                 \" mode \u003d \" + items[\"HeatingMode\"]);\n\nvar turnedOn \u003d false;\n\n// Turns ON/OFF heating and the Fan (if US type) if it isn\u0027t already\nif(command \u003d\u003d ON) {\n  commandIfDifferent(\"MainSwitch\", ON);\n\n  // Also turn on the Fan if US mode\n  if(items[\"SystemType\"] \u003d\u003d \"US\") {\n    commandIfDifferent(\"FanMode\", \"AUTO\");\n    commandIfDifferent(\"FanCtrl\", OFF);\n    createTimerSecs(10, function(){ commandIfDifferent(\"HeatingPin\", ON); });\n  }\n  else {\n    commandIfDifferent(\"HeatingPin\", ON);\n  }\n  if(items[\"HeatingPin\"] !\u003d ON) turnedOn \u003d true;\n  events.sendCommand(\"HeatingMode\", items[\"HeatingMode\"]); // Update the LCD if necessary\n}\nelse {\n  commandIfDifferent(\"HeatingPin\", OFF);\n  if(items[\"SystemType\"] \u003d\u003d \"US\") {\n    createTimerSecs(10, function() {\n      commandIfDifferent(\"FanCtrl\", ON);\n      var mode \u003d (items[\"FanPrevMode\"] !\u003d \"ON\") ? \"OFF\" : \"ON\";\n      events.sendCommand(\"FanMode\", mode);\n    });\n  }\n}\n\n// Second stage heating\nif(items[\"Heating2\"] \u003d\u003d ON) {\n\n  logInfo(logName, \"Second stage heating\");\n\n  var heating2Off \u003d function(){\n    if(items[\"Heating2Pin\"] !\u003d OFF){\n      logInfo(logName, \"Turning off second stage heating\");\n      events.sendCommand(\"Heating2Pin\", OFF);\n    }\n    else {\n      logInfo(logName, \"Second stage heating is already off\");\n    }\n  };\n\n  // Heating turned on, schedule second stage heating if not already\n  if(command \u003d\u003d ON) {\n  \n    // It\u0027s too warm, turn off the second stage heating\n    if(items[\"MyTempProxy\"].floatValue() + items[\"Heating2Delta\"].floatValue() \u003e\u003d items[\"MinTempSetpoint\"].floatValue()){\n      heating2Off();\n    }\n\n    // It\u0027s cold, schedule second stage to turn on later if not already on or shceduled to come on\n    else if(turnedOn \u0026\u0026 items[\"Heating2Pin\"] !\u003d ON){\n      var heat2StartMins \u003d items[\"Heating2Time\"].intValue();\n      logInfo(logName, \"Scheduling second stage heating to start in \" + heat2StartMins + \" minutes.\");\n\n      createTimerSecs(heat2StartMins*60, function(){\n        // It\u0027s later now, still too cold? If so, turn on 2nd stage heating\n        if(items[\"HeatingPin\"] \u003d\u003d ON \u0026\u0026\n           items[\"MyTempProxy\"].floatValue() + items[\"Heating2Delta\"].floatValue() \u003c items[\"MinTempSetpoint\"].floatValue()) {\n          logInfo(logName, \"Turning on second stage heating\");\n          events.sendCommand(\"Heating2Pin\", ON);\n        }\n      });\n    } // end schedule\n  }\n  \n  else { // command \u003d\u003d OFF\n    heating2Off();\n  }\n}"
           },
           "type": "script.ScriptAction"
         }
@@ -1592,7 +1736,7 @@
           "description": "Turn everything off and update the scripts.",
           "configuration": {
             "type": "application/javascript",
-            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/defaults.js\u0027);\n\nvar logName \u003d \"tempunit\";\n\nlogInfo(logName, \"Turning everything off\");\nevents.sendCommand(\"MainSwitch\", OFF);\nsleep(20); // give everything time to turn off\n\nlogInfo(logName, \"Executing the X2X script\");\nvar cmd \u003d (newState \u003d\u003d \"F\"? \"C2FCommand\" : \"F2CCommand\");\nevents.sendCommand(cmd, ON);\nevents.sendCommand(\"TempSetpoint\", DEFAULTS.get(newState+\"_DEF\"));\n\nlogInfo(logName, \"Getting CPU Temp\");\ncreateTimerSecs(15, function(){ \n  events.sendCommand(\"CPUTemperatureCommand\", ON); \n  logInfo(logName, \"Done changing temp unit\");\n});"
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/defaults.js\u0027);\n\nvar logName \u003d \"tempunit\";\n\nlogInfo(logName, \"Turning everything off\");\nevents.sendCommand(\"MainSwitch\", OFF);\nsleep(20); // give everything time to turn off\n\nlogInfo(logName, \"Executing the X2X script\");\nvar cmd \u003d (newState \u003d\u003d \"F\"? \"C2FCommand\" : \"F2CCommand\");\nevents.sendCommand(cmd, ON);\nevents.sendCommand(\"MinTempSetpoint\", DEFAULTS.get(newState+\"_MIN_DEF\"));\nevents.sendCommand(\"MaxTempSetpoint\", DEFAULTS.get(newState+\"_MAX_DEF\"));\nvar comfMode \u003d items[\"Comfort_Mode\"];\nvar comfDef \u003d DEFAULTS.get(newState+\"_\"+comfMode+\"_DEF);\nevents.sendCommand(\"Comfort_Value\", comfDef);\n\nlogInfo(logName, \"Getting CPU Temp\");\ncreateTimerSecs(15, function(){ \n  events.sendCommand(\"CPUTemperatureCommand\", ON); \n  logInfo(logName, \"Done changing temp unit\");\n});"
           },
           "type": "script.ScriptAction"
         }

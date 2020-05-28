@@ -753,3 +753,171 @@
 1585088887412:smarthome:send CoolingMode Boost
 1585088912189:logout
 1585090384670:smarthome:send CoolingMode Boost
+1585602658560:smarthome:send FanMode OFF
+1585602665502:logout
+1585661883078:smarthome:status HeatingMode
+1585661902745:smarthome:send TempSetpoint 70
+1585662079785:smarthome:send HeatingMode OFF
+1585662085585:smarthome:send HeatingMode ON
+1585662112126:logout
+1585663019346:smarthome:send HeatingMode OFF
+1585663035642:smarthome:send CoolingMode OFF
+1585663043103:smarthome:send FanMode OFF
+1585663050544:smarthome:send CoolingMode ON
+1585663058866:smarthome:send HeatingMode ON
+1585663557164:logout
+1587590064264:smarthome:status MyTemp
+1588966934427:smarthome:send MaxTempSetpoint 72
+1588966947541:smarthome:status MaxTempSetpoint
+1588966968394:smarthome:status MaxTempSetpointF
+1588966981923:smarthome:send MinTempSetpoint 68
+1588966992989:smarthome:status MinTempSetpoint
+1588967000668:smarthome:status MinTempSetpointF
+1588970141286:smarthome:status MyTemp
+1588970177504:smarthome:send MinTempSetpoint 65
+1588970228832:smarthome:send FanMode OFF
+1588970241071:smarthome:send HeatingMode ON
+1588970295033:smarthome:send MinTempStepoint 67
+1588970302726:smarthome:send MinTempSetpoint 67
+1588971747116:smarthome:status MinTempSetpoint
+1588971775173:smarthome:send MaxTempSetpoint 69
+1588971784692:smarthome:send MaxTempSetpoint 68
+1588971853433:smarthome:send MaxTempSetpoint 69
+1588971956261:smarthome:send MaxTempSetpoint 68
+1588972041477:smarthome:send MaxTempSetpoint 69
+1588972077961:smarthome:send MaxTempSetpoint 68
+1588972093416:smarthome:send MaxTempSetpoint 67
+1588972132309:smarthome:send MaxTempSetpoint 66
+1588972171046:smarthome:status MinTempSetpoint
+1588972179547:smarthome:status MaxTempSetpoint
+1588972199692:smarthome:send MaxTempSetpoint 65
+1588972263475:smarthome:send MaxTempSetpoint 66
+1588972286393:smarthome:status MyTemp
+1588972316074:smarthome:send MaxTempSetpoint 70
+1588972326206:smarthome:send MinTempSetpoint 67
+1588972354481:smarthome:send MinTempSetpoint 68
+1588972370827:smarthome:send MinTempSetpoint 65
+1588972398117:smarthome:send MinTempSetpoint 66
+1588972408114:smarthome:send MinTempSetpoint 67
+1588972416701:smarthome:send MinTempSetpoint 68
+1588972431373:smarthome:send MinTempSetpoint 69
+1588972440823:smarthome:send MinTempSetpoint 70
+1588972459285:smarthome:status MaxTempSetpoint
+1588972471580:smarthome:send MinTempSetpoint 71
+1588972478224:smarthome:status MaxTempSetpoint
+1588972488098:smarthome:send MinTempSetpoint 72
+1588972702754:smarthome:send MinTempSetpoint 73
+1588972731142:smarthome:send MinTempSetpoint 74
+1588973065188:smarthome:send MinTempSetpoint 75
+1588973142120:smarthome:send MinTempSetpoint 68
+1588973151048:smarthome:send MaxTempSetpoint 70
+1588974229662:smarthome:send MaxSetpoint 66
+1588974236595:smarthome:send MaxTempSetpoint 66
+1588974449694:smarthome:send MinTempSetpoint 68
+1588974549238:smarthome:send MinTempSetpoint 64
+1588974578107:smarthome:send MinTempSetpoint 68
+1588974662290:smarthome:send MaxTempSetpoint 64
+1588974967937:smarthome:send MinTempSetpoint 68
+1588975130051:smarthome:send MinTempSetpoint 64
+1588975138536:smarthome:send MinTempSetpoint 68
+1588975147065:smarthome:send MaxTempSetpoint 68
+1589227468108:smarthome:status MinTempSetpoint
+1589227476099:smarthome:status MaxTempSetpoint
+1589227519992:smarthome:send MinTempSetpoint 65
+1589480802108:smarthome:send MaxTempSetpoint 70
+1589480822228:smarthome:send MinTempSetpoint 65
+1589480830605:smarthome:send MinTempSetpoint 66
+1590607826554:smarthome:send StartInitialization ON
+1590608026657:smarthome:update Initialized NULL
+1590608036093:smarthome:send StartInitialization ON
+1590608059558:smarthome:update Initialized NULL
+1590608078218:smarthome:update Comfort_Mode NULL
+1590608085109:smarthome:update Comfort_Value NULL
+1590608091754:smarthome:update Comfort_ValueF NULL
+1590608105441:smarthome:send StartInitialization ON
+1590608279020:smarthome:send HeatingCheck ON
+1590608318297:smarthome
+1590608324847:status HeatingCheck
+1590608348631:status MaxTempSetpoint
+1590608355519:status MinTempSetpoint
+1590608369917:exit
+1590608371893:logout
+1590609054399:smarthome
+1590609456376:logout
+1590616690025:smarthome
+1590616703409:status MaxTempSetpoint
+1590616712060:status Comfort_Value
+1590616737804:send MaxTempSetpoint 74
+1590616762967:send FanMode OFF
+1590616798324:send MyTemp 75
+1590616809506:send MyTemp 76
+1590616827255:send MyTemp 77
+1590616845758:send MyTemp 76
+1590616852462:send MyTemp 75
+1590616858925:send MyTemp 74
+1590617401214:send MyTemp 76
+1590617407590:send MyTemp 74
+1590617542751:status MaxTempSetpoint
+1590617560471:send MyTemp 73
+1590617631138:send MinTempSetpoint 75
+1590617677308:send MyTemp 74
+1590617682620:send MyTemp 73
+1590617745639:send Comfort_Mode FOO
+1590617755520:send Comfort_Mode ECO
+1590617792164:send MyTemp 73
+1590617825132:send MyTemp 72
+1590617984180:status MinTempSetpoint
+1590617997686:send MyTemp 74
+1590618070135:send MinTempSetpoint 76
+1590618101716:send MinTempSetpoint 77
+1590618147544:status MinTempSetpoint
+1590618655569:send MinTempSetpoint 75
+1590618664456:send MinTempSetpoint 76
+1590618763517:send MinTempSetpoint 77
+1590618769807:send MinTempSetpoint 78
+1590618808517:send MinTempSetpoint 79
+1590618971455:send MinTempSetpoint 75
+1590619031879:send MinTempSetpoint 76
+1590619052688:send MinTempSetpoint 77
+1590619067160:send MinTempSetpoint 78
+1590619140520:send MinTempSetpoint 74
+1590619178053:send MinTempSetpoint 75
+1590619187661:send MinTempSetpoint 76
+1590619198608:send MinTempSetpoint 77
+1590619205649:send MinTempSetpoint 78
+1590619236395:send MinTempSetpoint 77
+1590619241198:send MinTempSetpoint 76
+1590619254040:send MinTempSetpoint 75
+1590619281564:send MaxTempSetpoint 75
+1590619330533:send MaxTempSetpoint 76
+1590619348253:send MaxTempSetpoint 77
+1590619354136:send MaxTempSetpoint 78
+1590619911172:send MaxTempSetpoint 74
+1590619926849:send MaxTempSetpoint 73
+1590619940903:send MaxTempSetpoint 72
+1590619951340:send MaxTempSetpoint 71
+1590619961605:send MaxTempSetpoint 70
+1590620065182:send MaxTempSetpoint 74
+1590620141450:send MaxTempSetpoint 73
+1590620151201:send MaxTempSetpoint 72
+1590620159942:send MaxTempSetpoint 71
+1590620191199:send MaxTempSetpoint 72
+1590620195692:send MaxTempSetpoint 73
+1590620209067:send MaxTempSetpoint 74
+1590620220319:send MaxTempSetpoint 78
+1590620232532:send MinTempSetpoint 74
+1590620247832:send MinTempSetpoint 75
+1590620251811:send MinTempSetpoint 76
+1590620263499:send MinTempSetpoint 77
+1590620311088:send MinTempSetpoint 76
+1590620315638:send MinTempSetpoint 75
+1590620325572:send MinTempSetpoint 74
+1590620347582:send MinTempSetpoint 65
+1590620364089:send MaxTempSetpoint 70
+1590699231506:smarthome
+1590699233599:status Comfort_Mode
+1590699295886:status Comfort_Value
+1590699308169:send Comfort_Value 1
+1590702579606:smarthome
+1590702597395:send MinTempSetpoint 73
+1590702898713:logout
