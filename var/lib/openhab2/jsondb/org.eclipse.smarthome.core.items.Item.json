@@ -95,16 +95,6 @@
       "category": "time"
     }
   },
-  "MyHumiProxy": {
-    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
-    "value": {
-      "groupNames": [],
-      "itemType": "Number",
-      "tags": [],
-      "label": "Humidity [%.0f %%]",
-      "category": "humidity"
-    }
-  },
   "RestoreButton": {
     "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
     "value": {
@@ -115,17 +105,14 @@
       "category": "switch"
     }
   },
-  "TempSetpoint": {
+  "MyHumiProxy": {
     "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
     "value": {
-      "groupNames": [
-        "RestoreOnStartup",
-        "Proxies"
-      ],
+      "groupNames": [],
       "itemType": "Number",
       "tags": [],
-      "label": "Proxy Temperature Setpoint [%.1f °]",
-      "category": "temperature"
+      "label": "Humidity [%.0f %%]",
+      "category": "humidity"
     }
   },
   "FanModeCtrl": {
@@ -214,6 +201,16 @@
       "category": "pressure"
     }
   },
+  "GitLatestVersionCommand": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [],
+      "itemType": "Switch",
+      "tags": [],
+      "label": "Get latest version",
+      "category": "switch"
+    }
+  },
   "HotWaterBoostTime": {
     "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
     "value": {
@@ -225,16 +222,6 @@
       "tags": [],
       "label": "Hot Water Boost Time [%.0f min]",
       "category": "time"
-    }
-  },
-  "GitLatestVersionCommand": {
-    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
-    "value": {
-      "groupNames": [],
-      "itemType": "Switch",
-      "tags": [],
-      "label": "Get latest version",
-      "category": "switch"
     }
   },
   "TempUnit": {
@@ -365,6 +352,18 @@
       "tags": [],
       "label": "Hot Water Mode [%s]",
       "category": "heating"
+    }
+  },
+  "Comfort_Value": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Comfort Value [%.1f]",
+      "category": "temperature"
     }
   },
   "MainSwitch": {
@@ -596,6 +595,19 @@
       "category": "switch"
     }
   },
+  "MaxTempSetpointF": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "Proxies"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Maximum Temperature Setpoint [%.0f °F]",
+      "category": "temperature"
+    }
+  },
   "Network": {
     "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
     "value": {
@@ -700,19 +712,6 @@
       "label": "Enable Fan Controls"
     }
   },
-  "TempSetpointC": {
-    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
-    "value": {
-      "groupNames": [
-        "RestoreOnStartup",
-        "Proxies"
-      ],
-      "itemType": "Number",
-      "tags": [],
-      "label": "Temperature Setpoint [%.1f °C]",
-      "category": "temperature"
-    }
-  },
   "FanPin": {
     "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
     "value": {
@@ -723,19 +722,6 @@
       "tags": [],
       "label": "Fan",
       "category": "fan"
-    }
-  },
-  "TempSetpointF": {
-    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
-    "value": {
-      "groupNames": [
-        "RestoreOnStartup",
-        "Proxies"
-      ],
-      "itemType": "Number",
-      "tags": [],
-      "label": "Temperature Setpoint [%.0f °F]",
-      "category": "temperature"
     }
   },
   "FanBoostTimer": {
@@ -792,6 +778,19 @@
       "tags": [],
       "label": "Humidity Boost Time [%.0f min]",
       "category": "time"
+    }
+  },
+  "MaxTempSetpointC": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "Proxies"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Maximum Temperature Setpoint [%.1f °C]",
+      "category": "temperature"
     }
   },
   "Network_WLAN_IP": {
@@ -868,6 +867,58 @@
       "itemType": "Number",
       "tags": [],
       "label": "External Min Temperature [%.0f °]",
+      "category": "temperature"
+    }
+  },
+  "MinTempSetpointC": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "Proxies"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Minimum Temperature Setpoint [%.1f °C]",
+      "category": "temperature"
+    }
+  },
+  "MinTempSetpoint": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "Proxies"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Proxy Minimum Temperature Setpoint [%.1f °]",
+      "category": "temperature"
+    }
+  },
+  "MaxTempSetpoint": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "Proxies"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Proxy Maximum Temperature Setpoint [%.1f °]",
+      "category": "temperature"
+    }
+  },
+  "MinTempSetpointF": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup",
+        "Proxies"
+      ],
+      "itemType": "Number",
+      "tags": [],
+      "label": "Minimum Temperature Setpoint [%.0f °F]",
       "category": "temperature"
     }
   },
@@ -1121,6 +1172,18 @@
       "tags": [],
       "label": "Humidity",
       "category": "flow"
+    }
+  },
+  "Comfort_Mode": {
+    "class": "org.eclipse.smarthome.core.items.ManagedItemProvider$PersistedItem",
+    "value": {
+      "groupNames": [
+        "RestoreOnStartup"
+      ],
+      "itemType": "String",
+      "tags": [],
+      "label": "Comfort Mode [%s]",
+      "category": "heating"
     }
   },
   "System_CPU_UPTIME": {

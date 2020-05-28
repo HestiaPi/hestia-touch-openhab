@@ -233,25 +233,6 @@
       "itemName": "FanMode"
     }
   },
-  "BackupCommand -\u003e exec:command:backupcommand:run": {
-    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
-    "value": {
-      "channelUID": {
-        "segments": [
-          "exec",
-          "command",
-          "backupcommand",
-          "run"
-        ]
-      },
-      "configuration": {
-        "properties": {
-          "profile": "system:default"
-        }
-      },
-      "itemName": "BackupCommand"
-    }
-  },
   "GitLatestVersionCommand -\u003e exec:command:gitlatest:run": {
     "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
     "value": {
@@ -269,6 +250,25 @@
         }
       },
       "itemName": "GitLatestVersionCommand"
+    }
+  },
+  "BackupCommand -\u003e exec:command:backupcommand:run": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "exec",
+          "command",
+          "backupcommand",
+          "run"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "BackupCommand"
     }
   },
   "FanPin -\u003e mqtt:topic:mosquitto:fan:control": {
@@ -309,6 +309,26 @@
         }
       },
       "itemName": "Network_WLAN_INFO"
+    }
+  },
+  "Comfort_Value -\u003e mqtt:topic:mosquitto:sensors:hysteresis": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "sensors",
+          "hysteresis"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "Comfort_Value"
     }
   },
   "MyHumi -\u003e exec:command:gethumi:output": {
@@ -446,6 +466,26 @@
         }
       },
       "itemName": "MyHumiProxy"
+    }
+  },
+  "Comfort_Mode -\u003e mqtt:topic:mosquitto:sensors:comfortmode": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "sensors",
+          "comfortmode"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "Comfort_Mode"
     }
   },
   "MyTempProxy -\u003e mqtt:topic:mosquitto:sensors:temperature": {
@@ -1051,6 +1091,26 @@
       "itemName": "System_TZ_Set"
     }
   },
+  "MinTempSetpoint -\u003e mqtt:topic:mosquitto:sensors:mintempsetpoint": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "sensors",
+          "mintempsetpoint"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "MinTempSetpoint"
+    }
+  },
   "UpgradeCommand -\u003e exec:command:upgrade:run": {
     "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
     "value": {
@@ -1164,6 +1224,26 @@
         }
       },
       "itemName": "SystemType"
+    }
+  },
+  "MaxTempSetpoint -\u003e mqtt:topic:mosquitto:sensors:maxtempsetpoint": {
+    "class": "org.eclipse.smarthome.core.thing.link.ItemChannelLink",
+    "value": {
+      "channelUID": {
+        "segments": [
+          "mqtt",
+          "topic",
+          "mosquitto",
+          "sensors",
+          "maxtempsetpoint"
+        ]
+      },
+      "configuration": {
+        "properties": {
+          "profile": "system:default"
+        }
+      },
+      "itemName": "MaxTempSetpoint"
     }
   },
   "Network_WLAN_INFO -\u003e exec:command:getwifiinfo:output": {
