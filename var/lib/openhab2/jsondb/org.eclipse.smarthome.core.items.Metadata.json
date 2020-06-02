@@ -1,11 +1,63 @@
 {
-  "autoupdate:TempSetpoint": {
+  "autoupdate:HumidityRemBoostTime": {
     "class": "org.eclipse.smarthome.core.items.Metadata",
     "value": {
       "key": {
         "segments": [
           "autoupdate",
-          "TempSetpoint"
+          "HumidityRemBoostTime"
+        ]
+      },
+      "value": "true",
+      "configuration": {}
+    }
+  },
+  "autoupdate:HeatingRemBoostTime": {
+    "class": "org.eclipse.smarthome.core.items.Metadata",
+    "value": {
+      "key": {
+        "segments": [
+          "autoupdate",
+          "HeatingRemBoostTime"
+        ]
+      },
+      "value": "true",
+      "configuration": {}
+    }
+  },
+  "autoupdate:MinTempSetpointF": {
+    "class": "org.eclipse.smarthome.core.items.Metadata",
+    "value": {
+      "key": {
+        "segments": [
+          "autoupdate",
+          "MinTempSetpointF"
+        ]
+      },
+      "value": "true",
+      "configuration": {}
+    }
+  },
+  "autoupdate:HotWaterMode": {
+    "class": "org.eclipse.smarthome.core.items.Metadata",
+    "value": {
+      "key": {
+        "segments": [
+          "autoupdate",
+          "HotWaterMode"
+        ]
+      },
+      "value": "true",
+      "configuration": {}
+    }
+  },
+  "autoupdate:MinTempSetpointC": {
+    "class": "org.eclipse.smarthome.core.items.Metadata",
+    "value": {
+      "key": {
+        "segments": [
+          "autoupdate",
+          "MinTempSetpointC"
         ]
       },
       "value": "true",
@@ -25,13 +77,13 @@
       "configuration": {}
     }
   },
-  "autoupdate:HumidityRemBoostTime": {
+  "autoupdate:MaxTempSetpointC": {
     "class": "org.eclipse.smarthome.core.items.Metadata",
     "value": {
       "key": {
         "segments": [
           "autoupdate",
-          "HumidityRemBoostTime"
+          "MaxTempSetpointC"
         ]
       },
       "value": "true",
@@ -45,19 +97,6 @@
         "segments": [
           "autoupdate",
           "HumiSetpoint"
-        ]
-      },
-      "value": "true",
-      "configuration": {}
-    }
-  },
-  "autoupdate:HeatingRemBoostTime": {
-    "class": "org.eclipse.smarthome.core.items.Metadata",
-    "value": {
-      "key": {
-        "segments": [
-          "autoupdate",
-          "HeatingRemBoostTime"
         ]
       },
       "value": "true",
@@ -103,13 +142,52 @@
       "configuration": {}
     }
   },
-  "autoupdate:HotWaterMode": {
+  "autoupdate:FanMode": {
     "class": "org.eclipse.smarthome.core.items.Metadata",
     "value": {
       "key": {
         "segments": [
           "autoupdate",
-          "HotWaterMode"
+          "FanMode"
+        ]
+      },
+      "value": "true",
+      "configuration": {}
+    }
+  },
+  "autoupdate:MaxTempSetpointF": {
+    "class": "org.eclipse.smarthome.core.items.Metadata",
+    "value": {
+      "key": {
+        "segments": [
+          "autoupdate",
+          "MaxTempSetpointF"
+        ]
+      },
+      "value": "true",
+      "configuration": {}
+    }
+  },
+  "autoupdate:MinTempSetpoint": {
+    "class": "org.eclipse.smarthome.core.items.Metadata",
+    "value": {
+      "key": {
+        "segments": [
+          "autoupdate",
+          "MinTempSetpoint"
+        ]
+      },
+      "value": "true",
+      "configuration": {}
+    }
+  },
+  "autoupdate:MaxTempSetpoint": {
+    "class": "org.eclipse.smarthome.core.items.Metadata",
+    "value": {
+      "key": {
+        "segments": [
+          "autoupdate",
+          "MaxTempSetpoint"
         ]
       },
       "value": "true",
@@ -123,19 +201,6 @@
         "segments": [
           "autoupdate",
           "CoolingMode"
-        ]
-      },
-      "value": "true",
-      "configuration": {}
-    }
-  },
-  "autoupdate:FanMode": {
-    "class": "org.eclipse.smarthome.core.items.Metadata",
-    "value": {
-      "key": {
-        "segments": [
-          "autoupdate",
-          "FanMode"
         ]
       },
       "value": "true",

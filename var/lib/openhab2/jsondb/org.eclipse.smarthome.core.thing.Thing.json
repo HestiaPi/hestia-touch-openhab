@@ -5013,38 +5013,6 @@
               "topic",
               "mosquitto",
               "sensors",
-              "tempsetpoint"
-            ]
-          },
-          "channelTypeUID": {
-            "segments": [
-              "mqtt",
-              "number"
-            ]
-          },
-          "label": "Temperature Setpoint",
-          "configuration": {
-            "properties": {
-              "commandTopic": "hestia/local/tempsetpoint",
-              "retained": true,
-              "postCommand": false,
-              "step": 1.0,
-              "formatBeforePublish": "%s",
-              "stateTopic": "hestia/local/settempsetpoint"
-            }
-          },
-          "properties": {},
-          "defaultTags": []
-        },
-        {
-          "acceptedItemType": "Number",
-          "kind": "STATE",
-          "uid": {
-            "segments": [
-              "mqtt",
-              "topic",
-              "mosquitto",
-              "sensors",
               "humidity"
             ]
           },
@@ -5121,6 +5089,122 @@
           "configuration": {
             "properties": {
               "commandTopic": "hestia/local/pressure"
+            }
+          },
+          "properties": {},
+          "defaultTags": []
+        },
+        {
+          "acceptedItemType": "Number",
+          "kind": "STATE",
+          "uid": {
+            "segments": [
+              "mqtt",
+              "topic",
+              "mosquitto",
+              "sensors",
+              "maxtempsetpoint"
+            ]
+          },
+          "channelTypeUID": {
+            "segments": [
+              "mqtt",
+              "number"
+            ]
+          },
+          "label": "Maximum Temperature Setpoint",
+          "configuration": {
+            "properties": {
+              "commandTopic": "hestia/local/maxtempsetpoint",
+              "stateTopic": "hestia/local/cmnd/setmaxtempsetpoint",
+              "retained": true
+            }
+          },
+          "properties": {},
+          "defaultTags": []
+        },
+        {
+          "acceptedItemType": "Number",
+          "kind": "STATE",
+          "uid": {
+            "segments": [
+              "mqtt",
+              "topic",
+              "mosquitto",
+              "sensors",
+              "mintempsetpoint"
+            ]
+          },
+          "channelTypeUID": {
+            "segments": [
+              "mqtt",
+              "number"
+            ]
+          },
+          "label": "Minimum Temperature Setpoint",
+          "configuration": {
+            "properties": {
+              "commandTopic": "hestia/local/mintempsetpoint",
+              "stateTopic": "hestia/local/cmnd/setmintempsetpoint",
+              "retained": true
+            }
+          },
+          "properties": {},
+          "defaultTags": []
+        },
+        {
+          "acceptedItemType": "Number",
+          "kind": "STATE",
+          "uid": {
+            "segments": [
+              "mqtt",
+              "topic",
+              "mosquitto",
+              "sensors",
+              "hysteresis"
+            ]
+          },
+          "channelTypeUID": {
+            "segments": [
+              "mqtt",
+              "number"
+            ]
+          },
+          "label": "Hysteresis",
+          "configuration": {
+            "properties": {
+              "commandTopic": "hestia/local/hysteresis",
+              "stateTopic": "hestai/local/cmnd/hysteresis",
+              "retained": true
+            }
+          },
+          "properties": {},
+          "defaultTags": []
+        },
+        {
+          "acceptedItemType": "String",
+          "kind": "STATE",
+          "uid": {
+            "segments": [
+              "mqtt",
+              "topic",
+              "mosquitto",
+              "sensors",
+              "comfortmode"
+            ]
+          },
+          "channelTypeUID": {
+            "segments": [
+              "mqtt",
+              "string"
+            ]
+          },
+          "label": "Comfort Mode",
+          "configuration": {
+            "properties": {
+              "commandTopic": "hestia/local/comfortmode",
+              "stateTopic": "hestia/local/cmnd/comfortmode",
+              "retained": true
             }
           },
           "properties": {},
