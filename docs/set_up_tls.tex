@@ -108,5 +108,56 @@ Once complete, there should be a directory in \texttt{/etc/letsencrypt/live}
 for your hostname which contains links to the TLS certificates.
 
 \subsubsection{Configure HestiaPi to use new Certificate}
-TODO: Document configuring the HestiaPi to use the newly obtained certificate
+In order to use your new certificate, it needs to be converted from PEM format
+to pkcs12 format and imported to the Java keystore, after deleting the previous
+certificate.  At this point you should have two files: one with the private key
+for your certification, and the other should be your public certificate and any
+intermediate certificates that browsers will need to verify your certificate.
+With letsencrypt, these files are named privkey.pem and fullchain.pem.
+
+First, we convert these to pkcs12 format and put them into a single file, with
+the password that the HestiaPi is going to expect (``openhab'').
+
+\begin{verbatim}
+openssl pkcs12 -export -inkey privkey.pem -in fullchain.pem -out openhab.p12 -passout pass:openhab
+\end{verbatim}
+
+Next, we want to stop openhab so we aren't modifying a file that is in use, and
+we delete the key that is there (whose alias is mykey), and add the .p12 file
+that we just created.
+
+\begin{verbatim}
+# Lets not modify a keystore that is in use...
+sudo systemctl stop openhab2
+# Delete the old key
+sudo /opt/jdk/zulu8.40.0.178-ca-jdk1.8.0_222-linux_aarch32hf/bin/keytool \
+        -keystore /var/lib/openhab2/etc/keystore \
+        -v -storepass openhab -delete -alias mykey
+# Import the new key
+sudo /opt/jdk/zulu8.40.0.178-ca-jdk1.8.0_222-linux_aarch32hf/bin/keytool \
+        -keystore /var/lib/openhab2/etc/keystore -importkeystore \
+        -srckeystore ~/openhab.p12 -srcstoretype PKCS12 \
+        -destkeystore /var/lib/openhab2/etc/keystore -deststoretype jks \
+        -destalias mykey -srcalias 1 -srcstorepass openhab -deststorepass openhab
+\end{verbatim}
+
+In the event you want to look to see what is in the keystore, you can do so
+with the following command:
+
+\begin{verbatim}
+# List keys (for debugging)
+/opt/jdk/zulu8.40.0.178-ca-jdk1.8.0_222-linux_aarch32hf/bin/keytool \
+       -keystore /var/lib/openhab2/etc/keystore \
+       -v -storepass openhab -list
+\end{verbatim}
+
+Finally, we start openhab2 and it may take a while for the web server to start,
+but when it does, it should be using the new certificate.
+
+\begin{verbatim}
+sudo systemctl start openhab2
+\end{verbatim}
+
+Navigate to your hostname (e.g., \texttt{http://hestia1.debuntu.foo:8443/}) and
+you should have an encryped connection to your HestiPi!
 
