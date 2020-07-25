@@ -7,7 +7,10 @@ If you bought your HestiaPi with an SD card, skip this step.
 
 With the image file downloaded, you need to use an image writing tool (we prefer Etcher from below links) to install it on your SD card. You can't simply copy-paste it. If you downloaded a ZIP version, unzip the .img file first before the next step.
 
-Choose the right guide for your system below (courtesy of Raspberry Pi website  thanks):
+For experienced Linux users, just use dd to write to the block device (SD card)
+and use the conv=fsync to make sure everything gets written.  For a more
+detailed set of instructions, choose the right guide for your system below
+(courtesy of Raspberry Pi website -- thanks):
 
 \begin{itemize}
 \item \href{http://www.raspberrypi.org/documentation/installation/installing-images/linux.md}{Linux}
