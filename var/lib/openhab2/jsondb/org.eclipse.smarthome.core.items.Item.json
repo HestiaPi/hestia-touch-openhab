@@ -1269,7 +1269,7 @@
       "groupNames": [],
       "itemType": "Switch",
       "tags": [],
-      "label": "Get SystemTyupe",
+      "label": "Get System Type",
       "category": "switch"
     }
   },
@@ -1323,7 +1323,7 @@
       "groupNames": [],
       "itemType": "Switch",
       "tags": [],
-      "label": "Get HumidityMode",
+      "label": "Get Humidity Mode",
       "category": "switch"
     }
   }
