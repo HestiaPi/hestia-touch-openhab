@@ -14,5 +14,4 @@ hestiapi-one.pdf: *.tex
 deps: deps-debian
 
 deps-debian:
-	sudo apt install -y texlive
-
+	sudo apt install -y texlive-full

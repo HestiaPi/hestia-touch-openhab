@@ -1,0 +1,27 @@
+This is the bill of materials to make your own HestiaPi.  The AC/DC converter
+allows your HestiPi to be powered by the HVAC unit, but it requires that your
+HVAC system has a common wire.  If your system does not have a common wire
+(e.g., if it only has Red, Green, White, and Yellow wires), the AC/DC converter
+will not work.  In that case, you will need a 5V/1A DC power supply, and your
+hestia will need to be plugged into a wall outlet.
+
+The LCD headers need to be 15mm long, with 12mm of that being on the top of the
+board.  Standard headers are not long enough to allow the LCD to clear the
+relays.
+
+\begin{enumerate}
+  \item Printed Circuit Board -- Send the 
+        \href{https://github.com/HestiaPi/hestia-touch-pcb-dev/tree/master/HestiaPi-ONE/Gerber}{Gerber Files}
+        to a shop like \href{https://jlcpcb.com/}{JLCPCB} (or use them to etch
+        your own board)
+  \item Raspberry Pi Zero W \href{https://www.adafruit.com/product/3400}{AdaFruit} \href{https://smile.amazon.com/Raspberry-Pi-Zero-Wireless-model/dp/B06XFZC3BX/}{Amazon}
+  \item 3.5 inch touch screen for Raspberry Pi \href{https://smile.amazon.com/gp/product/B01CNJVG8K/}{Amazon}
+  \item 4 relays capabile of handling 24V / 2A -- G3MC-202P-DC5 \href{https://www.mouser.com/ProductDetail/653-G3MC-202P-DC5}{Mouser}
+  \item At least 40 standard male 0.1" headers -- \href{https://www.adafruit.com/product/3009}{AdaFruit}
+  \item Reset switch -- TL1105WF160Q \href{https://www.mouser.com/ProductDetail/612-TL1105W}{Mouser}
+  \item A six-post terminal block -- TB003-500-P06BE \href{https://www.mouser.com/ProductDetail/490-TB003-500-P06BE}{Mouser}
+  \item BME280 sensor -- SEN0372 \href{https://www.mouser.com/ProductDetail/426-SEN0372}{Mouser}
+  \item Cable for BME280 sensor \href{https://smile.amazon.com/dp/B0789F523N/}{Amazon}
+  \item LCD headers, 2x13 extra long headers (total length should be 15mm, 12mm from board to tip) \href{https://www.adafruit.com/product/400}{AdaFruit} (requires adjusting pins)
+  \item AC/DC converter -- \href{https://smile.amazon.com/dp/B00RE6QN4U/}{Amazon}
+\end{enumerate}
