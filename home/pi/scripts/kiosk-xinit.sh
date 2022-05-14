@@ -65,7 +65,7 @@ do
   fi
 
   distro=$(sed 's/\..*//' /etc/debian_version)
-  if [ $distro -eq 9 ]; then
+  if [ $distro -ge 9 ]; then
     wlan=$(/sbin/ifconfig wlan0 | grep inet\  | wc -l)
   else
     wlan=$(/sbin/ifconfig wlan0 | grep inet\ addr | wc -l)
