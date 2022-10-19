@@ -24,11 +24,20 @@ from ctypes import c_short
 from ctypes import c_byte
 from ctypes import c_ubyte
 
-DEVICE = 0x76 # Default device I2C address
-
 
 bus = smbus.SMBus(1) # Rev 2 Pi, Pi 2 & Pi 3 uses bus 1
                      # Rev 1 Pi uses bus 0
+
+try:
+    (chip_id, chip_version) = bus.read_i2c_block_data(0x76, 0xD0, 2)
+    DEVICE = 0x76 # Default device I2C address
+except IOError as e:
+    try:
+        (chip_id, chip_version) = bus.read_i2c_block_data(0x77, 0xD0, 2)
+        DEVICE = 0x77
+    except IOError as e:
+        # This should never happen, but if it does, fall back to device 0x76
+        DEVICE = 0x76 # Default device I2C address
 
 def getShort(data, index):
   # return two bytes from data as a signed 16-bit value
