@@ -1962,7 +1962,7 @@
           "description": "Allows the execution of a user-defined script.",
           "configuration": {
             "type": "application/javascript",
-            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nlogInfo(\"hotwater\", \"Turning \" + command + \" the hot water: mode \u003d \" +\n        items[\"HotWaterMode\"]);\nif(command \u003d\u003d ON) commandIfDifferent(\"MainSwitch\", ON);"
+            "script": "var OPENHAB_CONF \u003d Java.type(\u0027java.lang.System\u0027).getenv(\u0027OPENHAB_CONF\u0027);\nload(OPENHAB_CONF + \u0027/automation/lib/hestia/utils.js\u0027);\n\nlogInfo(\"hotwater\", \"Turning \" + command + \" the hot water: mode \u003d \" +\n        items[\"HotWaterMode\"]);\nif(command \u003d\u003d ON) commandIfDifferent(\"MainSwitch\", ON);\ncommandIfDifferent(\"HotWaterPin\", command);\nevents.sendCommand(\"HotWaterMode\", items[\"HotWaterMode\"]); // update the LCD"
           },
           "type": "script.ScriptAction"
         }
