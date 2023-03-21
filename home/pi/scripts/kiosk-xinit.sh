@@ -111,7 +111,7 @@ do
 
   kweb -KJ /home/pi/scripts/openhabloader.html &
 
-  sleep 20;
+  if grep -q "hostapd" /home/pi/scripts/raspberry-pi-turnkey/status.json; then sleep 500; else sleep 21; fi
   while :
   do
     if (($(echo "$(top -b -n1 | grep "load average:" | awk '{print $(NF-2)}' | cut -d, -f1) > 2.00" | bc -l))); then
