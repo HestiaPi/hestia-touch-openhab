@@ -168,15 +168,15 @@ def readBME280All(addr=DEVICE):
 def main():
 
   (chip_id, chip_version) = readBME280ID()
-  print "Chip ID     :", chip_id
-  print "Version     :", chip_version
+  print("Chip ID     :", chip_id)
+  print("Version     :", chip_version)
 
   temperature,pressure,humidity = readBME280All()
 
-#  print "Temperature : ", temperature, "C"
-  print "Temperature : ", int((temperature*1.8)+32), "F"
-  print "Pressure : ", pressure, "hPa"
-  print "Humidity : ", humidity, "%"
+#  print("Temperature : ", temperature, "C")
+  print("Temperature : ", int((temperature*1.8)+32), "F")
+  print("Pressure : ", pressure, "hPa")
+  print("Humidity : ", humidity, "%")
 
 if __name__=="__main__":
    main()
