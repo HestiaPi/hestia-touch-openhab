@@ -1,0 +1,23 @@
+The Ruuvi tags require a Ruuvi Gateway device in order to support MQTT. If you
+do not have a Ruuvi Gateway, there is a project which will effectively make
+one out of a Raspberry Pi here: \url{https://github.com/Scrin/ruuvi-go-gateway}
+
+Unfortunately, the Ruuvi Gateway does not publish the data in a usable format
+and the ruuvi-go-gateway outputs the data in that same unusable format in
+order to maintain compatibility.  This mean a bridge is required to decode the
+data and then output it in a usable format.  The code for the bridge can be
+found at: \url{https://github.com/Scrin/RuuviBridge/}
+
+Both of these can be installed on a Raspberry Pi to get the data into a usable
+format. They can even be installed on the HestiaPi itself, if you're so
+inclined. Consult the documentation for these projects on how to install and
+configure them.
+
+A typical configuration is to have the ruuvi-go-gateway publish the encoded
+data to a local MQTT server and have RuuviBridge subscribe to that local MQTT
+server and then publish the properly formatted data to the HestiaPi.
+
+After you have ruuvi-go-gateway and RuuviBridge configured, the temperature
+data will be going to your HestiaPi. The next step is to configure the HestiaPi
+to use this data. See \ref{Remote Temperature Sensors} for more information on
+how to do this.

@@ -1,0 +1,177 @@
+Sometimes the thermostat wires are poorly located. This may mean near a door
+that throws off the temperature, in a room that gets a lot of sun and therefore
+runs hotter than the other rooms, or any number of other problems. If this
+sounds familiar, you may be interested in having a remote temperature sensor.
+
+There are many different models of remote temperature sensors to choose from.
+The main feature that you will want to look for when selecting a sensor is that
+it supports MQTT. MQTT is the protocol that will allow the temperature sensor
+to send the current temperature to HestiaPi.
+
+To get the IP address of your HestiaPi, click the information icon (i) in the
+top right of your HestiaPi. Consult the documentation of your temperature
+sensor on how to configure it to publish temperature data to the HestiaPi. It
+should be publishing to port 1883 on the HestiaPi, which is a standard port for
+MQTT. There are some notes on how to set this up for Ruuvi tags in the section
+on \ref{Ruuvi Temperature Sensors}.
+
+After you've done this, the data is being sent to the HestiaPi, but we need to
+reconfigure the thermostat to use this new data. This will be done via the web
+interface, and specifically the PaperUI. You can get to this by navigating to
+http://[YOUR-HESTIAPI-IP]:8080/paperui (where you insert the IP address of your
+HestiaPi in labeled location).
+
+We will walk through an example which sets up a temperature sensor in the living
+room. You can use a different names for your sensor if appropriate.
+
+First, we need to make an Item to store the data. Go to Configuration -> Items
+and click the (+).  Enter the following settings, leaving anything not mentioned
+at its default value:
+
+\begin{itemize}
+\item Name (can’t have spaces): livingroomtemp
+\item Label (human readable, can have spaces): Living Room Temperature
+\item Type: Number
+\item Dimension: Temperature
+\end{itemize} 
+
+Click the plus in the blue circle at the top to save. For more information
+about what an ``item'' is in OpenHAB terminology, see the OpenHAB documentation
+at: \url{https://v2.openhab.org/docs/concepts/items.html}
+
+Second, we need to make a Thing to represent the sensor. Go to Configuration ->
+Things -> (+) -> MQTT Binding -> Add manually -> Generic MQTT Thing.
+
+\begin{itemize}
+\item Name (human readable, can have spaces): Living room sensor
+\item Thing ID: livingroomsensor
+\item Location: Sensors
+\item Bridge selection: Mosquitto MQTT Broker
+\end{itemize}
+
+Click the checkmark in the blue circle at the top to save. For more information
+about what a ``thing'' is in OpenHAB terminology, see the OpenHAB documentation
+at: \url{https://v2.openhab.org/docs/concepts/things.html}
+
+Third, we need to add a Channel to the Thing. We will just go over how to make
+one channel for temperature, but additional channels could be made for humidity,
+barometric pressure and anything else that your sensor can measure. Go to
+Configuration -> Things -> Living room sensor -> Channels (+)
+
+\begin{itemize}
+\item Channel type: Number Value
+\item Channel ID (no spaces): temp
+\item Label (human readable): Temperature
+\item MQTT State Topic: <see notes below>
+\end{itemize}
+
+The MQTT State Topic will depend on what topic your specific temperature sensor
+is using when it is publishing the data. For example, the RuuviBridge will use
+a prefix of ``ruuvi'' and then the BlueTooth MAC address of the Ruuvi tag. So
+the MQTT State Topic would be something like ``ruuvi/AA:BB:CC:DD:EE:FF''.
+
+Each MQTT topic \textbf{should} only have one value. For example, it would be
+nice if the RuuviBridge published temperature data to the topic:
+``ruuvi/AA:BB:CC:DD:EE:FF/temperature''. Then the humidity could go to
+``ruuvi/AA:BB:CC:DD:EE:FF/humidity'' and so forth.  Unfortunately, that's not
+how it currently works. Instead, RuuviBridge publishs all of the fields to a
+single topic in JSON format. There are other temperarure sensors that also
+follow this pattern.
+
+To convert the entire JSON string to just the temperature data, click ``Show
+More'' and enter ``JSONPATH:\$.temperature'' in the ``Incoming Value
+Transformations'' field. This will extract just the temperature field. The
+same can be done for ``humidity'' and ``pressure'' if you are interested in
+making that information avilable to your thermostat.
+
+If you configured the Channel to use the JSONPATH transformation, you'll need
+to install that add-on. Go to Add-On -> Transformations tab, and click install
+next to ``JSONPath Transformation''. It will take several minutes to install.
+Please be patient.
+
+Next, we want to create an Item to hold the temperature that is being recorded
+by the temperature sensor on the HestiaPi, just in case we decide we want to
+see it or use it in the future. Configuration -> Items -> (+)
+
+\begin{itemize}
+\item Name (can’t have spaces): localtemp
+\item Label (human readable, can have spaces): Local Temperature
+\item Category (optional, leave blank)
+\item Type: String
+\end{itemize}
+
+Click the plus in the blue circle at the top to save.
+
+Now we want to configure the local temperature sensor to send data to this new
+Item and stop sending it to the ``MyTemp'' Item that is displayed on the
+HestiaPi and is used to determine when to turn the heating and cooling on and
+off. Go to Configuration -> Things -> Temperature Sensor
+
+Under channels, click the blue concentric circles to the left of the ``Output''
+channel, then click the trash can icon to the right of the linked item
+``Temperature (MyTemp)''. This will cause the temperature on the HestiaPi to
+stop updating (until we reconfigure it).
+
+While still in the Output channel of the Temperature Thing: Next to Linked
+Items -> (+)
+
+\begin{itemize}
+\item Profile: Default
+\item Item to link: Local Temperature (localtemp)
+\end{itemize}
+
+Click the Link button to save. Now the temperature sensor on the HestiaPi
+is going to this localtemp Item.
+
+Now we need to change the type of the MyTemp Item from a String to a Number.
+Go to Configuration -> Items -> Temperature (MyTemp) -> Pencil icon
+
+\begin{itemize}
+\item Type: Number
+\end{itemize}
+
+Click the check mark in the blue circle at the top to save.
+
+It's important to leave the Dimension blank here. Setting it to Temperature
+will result in an incorrect conversion from Celsius to Fahrenheit (so it would
+display 32F when it is actually 0F).
+
+Finally, we want to use a Channel to our new sensor Thing to the Item where the
+data is stored. Specifically, we want our Living room sensor to update both the
+livingroomsensor item as well as the MyTemp item.
+
+Go to Configuration -> Things -> Living room sensor.
+
+Under channels, click the blue concentric circles to the left of the
+Temperature channel.
+
+\begin{itemize}
+\item Profile: Follow
+\item Item to link: Temperature (MyTemp)
+\end{itemize}
+
+Then click on the concentric circles and edit the linked item.
+
+\begin{itemize}
+\item Profile: Default
+\end{itemize}
+
+The reason we have to choose Follow first is because MyTemp is not available
+under the Default profile. However we can get to it under Follow and then
+switch it back to the correct profile type of ``Default''.
+
+Repeat this process to also link the Living room sensor to the ``Living Room
+Temperature (livingroomtemp)'' item.
+
+If you'd like to learn more about linking things and items with channels, the
+OpenHAB documentation covers that here:
+\url{https://v2.openhab.org/docs/configuration/paperui.html}
+
+At this point, we should be all done. Go to Control -> SENSORS and you should
+see the items you added (Local temperature, Living room temperature) and the
+Temperature (which is what is used to actually control the HVAC) should match
+the Living room temperature. The LCD on the HestiaPi should also be displaying
+the Temperature, which should now be coming from the remote sensor.
+
+Congratulations, you now have configured your HestiaPi to use your remote
+temperature sensor!
