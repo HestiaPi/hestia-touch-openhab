@@ -1,3 +1,90 @@
+\subsubsection{Taps do not register on the touchscreen}
+If the screen doesn't turn on, see the entry below about that. These steps are
+to troubleshoot situations where the display is working correctly, but just not
+responding to touches.
+
+This most often is caused by a pinched screen. This can be either the tabs of
+the case pinching the screen too tightly or the case pinching down on the front
+of the screen. First, look for any wires that may have gotten pinched between
+the relays or power supply (the tall components) and the screen when the case
+was snapped into place. This is the most common cause of this issue and
+fortunately it is easily resolved.
+
+To confirm that it is a pinch, connect the screen without the shell of the case
+and power on the HestiaPi. If it works correctly, this tells us that the case
+is to blame.
+
+To determine if it's the shell pinching down when it is closed, remove the
+HestiaPi from the case's backplate, then connect the screen while it is in the
+case's shell. Do not snap on the backplate. If the touchscreen works in this
+configuration, we know the tabs that hold the LCD to the shell are not the
+problem.
+
+If the screen does not work with the backplate off, we know that the tabs are
+pinching the screen too tightly. In this case, the tabs can be very carefully
+scraped down with a hobby knife, box cutter, file or something of this nature.
+Take care not to break of the tabs or hurt yourself.
+
+If you are in a situation where the shell of the case is pinching down on the
+screen only when it's connected with the backplate (and there are no wires
+getting in between the screen and the rest of the HestiaPi), it means the case
+is a bad fit. One option is to not quite snap the case completely shut. The LCD
+pins will hold the shell in place and it should work fine. The next option is
+to run without the shell on, which will give you a very punk look to your
+thermostat. Or you can get a custom printed shell for your case that is slightly
+taller.
+
+If you are an advanced user and want to try to try to resolve this issue, the
+tails of the headers on the back of the main PCB can sometimes be trimmed to
+get just a tiny bit more room, which is often all that is needed. The PCB
+should generally be as close to the backplate as possible. Another possibility
+is to trim all of the LCD headers to make them just a little bit shorter. This
+will make it even more difficult to align the pins when putting the case on,
+but people have successfully repaired their thermostats by doing this.
+
+Other causes of the touchscreen not registering taps include: the Raspberry Pi
+was powered on when the LCD screen was connected improperly, someone pushed on
+the screen too hard, or only some of the pins are fully connected to the
+screen. If the touch part of the screen is broken, the above tests will all
+have the same results (no response to taps). At this point, your options are to
+replace the screen or just use the screen for viewing information and make all
+the changes to the thermostat over wifi.
+
+\subsubsection{Screen doesn't turn on}
+If you see lights illuminated on the pi, but the screen doesn't turn on at all,
+the screen is not receiving power, which means it is likely not connected
+properly. Look in through the side of the case and see if you can tell if the
+pins are aligned correctly. If you can not determine this, try removing the
+shell of the case and connect the screen on without the shell of the case. The
+screen should light up slightly when powered on. If this still doesn't work, it
+is likely a defective screen. If you have another Raspberry Pi available, you
+can connect it to the top left pins of the Pi (when the SD card is on the left)
+and see if the screen lights up when that Pi is powered on with the HestiaPi's
+SD card in it.
+
+If the screen lights up slightly, but is blank, this is a different issue. In
+this case, the screen is likely working and it's an issue with the software.
+You should see the screen flicker within 60 seconds and you should see the
+boot messages after a few minutes.
+
+The fastest and easiest fix is to just copy the image onto the SD card again
+and try again. If you are an advanced user and want to spend time
+troubleshooting the issue to determine the root cause, we encourage you to
+share whatever you find with the community at
+\url{https://community.hestiapi.com}.
+
+\subsubsection{Screen is slow to respond to taps}
+The HestiaPi should respond to touches within a second. If it's responding
+to taps, but it taking a long time, it's likely a software issue. In this
+case, copying a fresh image onto the SD card will likely fix it. The other
+thing that can be done to get it to respond faster to touches is to get the
+fastest SD card available.
+
+A video has been made to demonstrate how quickly the screen should respond to
+taps. A stylus is used here to make it clear when the tap is occurring versus
+when the screen is updating, but it should work the same when tapping with your
+finger. \url{https://peertube.gsugambit.com/w/1AhKQByTrAg38HKSQUJFR3}
+
 \subsubsection{How to edit files via SSH}
 If you are very new to command line interface we would advise you taking a
 short online course by searching for ``linux command line interface'' on your
