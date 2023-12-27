@@ -1,21 +1,29 @@
-\subsubsection{GPIO pin mappings}
+\subsubsection{GPIO pin mappings} \label{GPIO pin mappings}
 
 \textbf{Relays}
 
-\begin{tabular}{|c|c|c|}
+The relays are used for different things depending on whether the thermostat is
+in HVAC mode (aka US mode) or Generic mode (aka EU mode). The default is US
+mode, so unless you changed it, this is what you can expect.
+
+\begin{tabular}{|c|c|c|c|c|}
 \rowcolor{lightgray}
 \hline
-         & \textbf{Pin} & \textbf{GPIO} \\ 
+         & \textbf{Pin} & \textbf{GPIO} & US & EU \\
 \hline
- Relay 1 & 32           & GPIO12 \\ 
+Relay 1 & 32           & GPIO12 & Heating (W) & Hot Water (W) \\
 \hline
- Relay 2 & 16           & GPIO23 \\  
+Relay 2 & 16           & GPIO23 & Cooling (Y) & Heating (H) \\
 \hline
- Relay 3 & 12           & GPIO18 \\
+Relay 3 & 12           & GPIO18 & Fan (G) & Humitity (Hum) \\
 \hline
- Relay 4 & 36           & GPIO16 \\
+Relay 4 & 36           & GPIO16 & 2nd stage heating (W2) & 2nd stage heating (W2) \\
 \hline
 \end{tabular}
+
+The letters in parenthesis is the symbol that is used in the wiring diagrams
+for climate control systems. For more information on that, see section
+\ref{Wall Installation ONE} about installation.
 
 \textbf{Temperature sensor}
 
@@ -25,9 +33,9 @@ will check both addresses, in this order.
 \begin{tabular}{|c|c|c|}
 \rowcolor{lightgray}
 \hline
-     & \textbf{Pin} & \textbf{GPIO} \\ 
+     & \textbf{Pin} & \textbf{GPIO} \\
 \hline
- SDA & 3            & GPIO02 \\ 
+ SDA & 3            & GPIO02 \\
 \hline
  SCL & 5            & GPIO03 \\ 
 \hline
@@ -38,17 +46,17 @@ will check both addresses, in this order.
 \begin{tabular}{|c|c|c|}
 \rowcolor{lightgray}
 \hline
-\textbf{Pin no.} & \textbf{Symbol} & \textbf{Description} \\ 
+\textbf{Pin no.} & \textbf{Symbol} & \textbf{Description} \\
 \hline
-1, 17 & 3.3V & Power positive (3.3V power input) \\ 
+1, 17 & 3.3V & Power positive (3.3V power input) \\
 \hline
-2, 4 & 5V & Power positive (5V power input) \\ 
+2, 4 & 5V & Power positive (5V power input) \\
 \hline
-3, 5, 7, 8, 10, 12, 13, 15, 16 & NC & Not connected \\ 
+3, 5, 7, 8, 10, 12, 13, 15, 16 & NC & Not connected \\
 \hline
-6, 9, 14, 20, 25 & GND & Ground \\ 
+6, 9, 14, 20, 25 & GND & Ground \\
 \hline
-11 & TP\_IRQ & Touch Panel interrupt, low level while the Touch Panel detects touching \\ 
+11 & TP\_IRQ & Touch Panel interrupt, low level while the Touch Panel detects touching \\
 \hline
 18 & LCD\_RS & Instruction/Data Register selection \\
 \hline
