@@ -1,3 +1,81 @@
+\subsubsection{General issues}
+For those who are having problems and don't want to read the entire
+troubleshooting section, just try reflashing the SD card with the latest image
+from \url{https://hestiapi.com/downloads}. This really will fix nearly every
+problem! So if your issue isn't listed, or you just want a quick fix, re-flash
+that SD card and you'll likely be back in business in no time.
+
+\subsubsection{Verifying relay status}
+If you are unsure if the relays are turning on or off when they should, this
+can be checked in software. To do so, you will need to be able to SSH into the
+HestiaPi.
+
+To determine if a relay on, SSH into the pi and then look at the GPIO value.
+The mappings of which GPIO pins are connected to which relays are in section
+\ref{GPIO pin mappings}.
+
+As an example, relay 1 is GPIO12, which is the fan for HVAC systems and
+humidity when in Generic (EU) mode. After SSHing into the HestiaPi, the command
+below would display a ``1'' if that function was on, or a ``0'' if it was off.
+
+\texttt{cat /sys/class/gpio/gpio12/value}
+
+If this reports that the relay is on, but the the fan (or humidity for EU
+systems) is not on, it indicates that there's likely an issue with wiring or
+with your HVAC system.
+
+If this reports that the functionality is off, when you think it should be on,
+you may want to manually turn it on. After SSHing into the HestiaPi, you will
+need to become root, and then set the GPIO value. To continue with the fan
+example on HVAC systems, here are commands you would run after SSHing into the
+pi in order to turn the fan on, and then turn it back off again.
+
+\texttt{sudo su -\\
+echo 1 | /sys/class/gpio/gpio12/value \# turn on\\
+echo 0 | /sys/class/gpio/gpio12/value \# turn off\\
+}
+
+As soon as you run the ``echo 1'' command, the fan should turn on. There should
+not be any delay. The same should be true when running the command to turn off
+the relay.
+
+Turning on relays in this manner bypasses the thermostat logic, which means
+that the function will never turn off. That's why it's important to make sure
+to manually turn off the functionality after you manually turn it on. If you
+forgot to turn off the cooling system after manually turning it on, it'd likely
+burn out the compressor, which would be a very expensive repair.
+
+Running these commands should help you in determining if there is an issue with
+the hardware or with the software. If these command do not cause the functions
+to turn on, it points to a hardware issue, such as incorrect wiring.
+
+If these commands work as expected but the heat does not turn on when the
+heating set point is higher than the temperature, and the heating system is
+turned on, it indicates that something is going wrong in the software (more
+specifically, in OpenHAB). If that's the case, you can get help on the forum
+at \url{https://community.hestiapi.com/}. Please be patient, as we are all
+volunteers and it may be a few days before we see your message and have time to
+investigate and reply.
+
+\subsubsection{Eternal loading screen}
+If your thermostat ever reboots and the loading countdown on the screen goes
+all the way down to the point where it just says ``Loading...'' and stays there
+for hours, it's either a software issue or a slow micro SD card.
+
+First, reflash the SD card and this will almost certainly have you back up and
+running.
+
+If that does not work, the only other potential cause we have seen is using an
+old, generic, or slow SD card. Using a card rated at 10MB/sec should be
+sufficient, and 30MB/sec would be ideal. Unlabeled cards, or ones rated at
+lower speeds may work. We have not found a card that will consistently cause
+this issue, so we can't say for sure what the minimum acceptable speed is.
+
+An icon that looks like a 10 inside a circle, a 1 inside a letter U, or a V10
+are all icons that mean it's 10MB/sec. A 3 inside a U, or V30 indicated it is
+a 30MB/sec card. There are faster cards, labeled V60 and V90, but getting a
+card that fast is not necessary.
+
 \subsubsection{Taps do not register on the touchscreen}
 If the screen doesn't turn on, see the entry below about that. These steps are
 to troubleshoot situations where the display is working correctly, but just not
