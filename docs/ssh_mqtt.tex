@@ -1,0 +1,17 @@
+\subsubsection{Default SSH Username and Password}
+
+Username: pi
+
+Password: hestia
+
+SSH port: 22
+
+\subsubsection{MQTT Configuration}
+All the topics are defined in the .things
+\href{https://github.com/HestiaPi/hestia-touch-openhab/wiki/File-Structure-&-Paths-ONE}{file}.
+
+Confirm by subscribing from another laptop to all (\#) MQTT IDs and listen for
+published messages while you play with your HestiaPi. For Linux users, run this
+in a terminal:
+
+\texttt{mosquitto\_sub -h [HESTIA\_PI\_IP] -d -t hestia/\#}

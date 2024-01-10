@@ -1,8 +1,21 @@
+By default, the HestiaPi does not connect to any external servers. If you want
+the thermostat to tell a dynamic DNS service about the its publis IP address,
+the
 \href{https://github.com/HestiaPi/hestia-touch-openhab/blob/ONE/home/pi/scripts/getpublicip.sh}
-{getpublicip.sh} does just that.
+{getpublicip.sh} script can help you do just that.
 
-Stored with instructions here:
+The file is already on your HestiaPi at:
 
-\texttt{    /home/pi/scripts/getpublicip.sh}
+\texttt{/home/pi/scripts/getpublicip.sh.bak}
 
-You would need an account depending on the service you choose to use inside the script.
+You will need an account with whatever service you choose to use inside the
+script, and the will need to be modified to specify your username, password
+and possibly domain name. There are some example in the script near the bottom
+which are commented out. Customize and uncomment them and then rename the
+script to \texttt{getpubliship.sh} and you should be good to go. This file is
+already run periodically by OpenHAB.
+
+Note: Old versions of the HestiaPi software automatically reached out to
+ipinfo.io to determine your public IP address. For these versions, the script
+is already named \texttt{getpublicip.sh} and so you just have to edit that
+file to get it to report the public IP to your dynamic DNS provider.
