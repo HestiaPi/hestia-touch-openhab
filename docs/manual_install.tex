@@ -1,1 +1,29 @@
-For people who want to install everything step-by-step from their terminal we include all commands here. To be added...
+For people who want to install everything step-by-step, or just see how it is
+done, the process is automated in
+\url{https://gitlab.hax0rbana.org/public-repos/raspberrypi-automation/}.
+
+That repo is not specific to the HestiaPi, it automates building multiple
+Raspberry Pi images that someone might want for their projects. The main file
+that is relevant to the HestiaPi project is hestiapi.yml.
+
+The README file in that repo has the latest information on exactly how to build
+the image, but the general process to build this at the time of writing is as
+follows:
+
+\begin{verbatim}
+# Install the necessary software
+apt-get update && apt-get install -y ansible xz-utils ansible
+
+# Get a fully patched Raspberry Pi image
+PLAYBOOK=upgrade.yml ./build_emulator.sh arm1176 bullseye wrapper_ansible.sh
+
+# Configure that image to be a HestiaPi
+PLAYBOOK=hestiapi.yml EXTRA_VARS="hestiapi_version=v1.4-dev" \
+        ./build\_emulator.sh arm1176 bullseye wrapper_ansible.sh
+
+# At this point you will have your HestiaPi image at the following location
+ls -l qemu-rpi/2022-09-22-raspios-bullseye-armhf-lite.img
+\end{verbatim}
+
+These instructions were tested on Ubuntu and should work on any Debian-based
+Linux distribution.

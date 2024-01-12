@@ -2,28 +2,24 @@ HestiaPi's case comes in 2 parts. The backplate that goes to the wall and
 should not be visible and the front cover. The backplate should have 4 small
 holes, 3 larger holes and an opening for the wires coming from the wall.
 
-If you bought HestiaPi, all internal screws are replaced with plastic rivets.
-Otherwise you would need:
-
 \begin{itemize}
-\item 4 x 2.5Mx25mm hex screws
-\item 4 x 2.5M hex nuts
+\item 4x 2.5Mx8mm hex screws
+\item 4x 2.5M hex nuts
 \end{itemize}
 
 For attaching to the wall you need:
 \begin{itemize}
-\item 4 x 3.5Mx40mm non-countersunk screws
+\item 3x 3.5Mx40mm non-countersunk screws (or whatever you have that fits)
 \end{itemize}
 
-Place the hex screws through the 4 small holes entering from the side facing
-the wall. Secure them in the hex slot and make sure they are sit flush. Remove
-the LCD from the PCB and insert the PCB alone guiding the 4 screws through the
-4 corner holes of the Pi and secure with the nuts. Avoid using a large tool.
-You can simply tighten them by hand. Don't overtighten.
+Place the hex nuts in the 4 small recesses on the side of the backplate that
+will face the wall. Bolt the HestiaPi PCB to the backplate using the hex
+screws. They should just be snug. Do not overtighten.
 
-With the remaining 3 larger holes mark your wall and drill according to the
-location of the wires. The opening of the backplate should match the location
-of the wires. Secure the backplate and PCB with the 3 larger screws.
+Plave the backplate on the wall with the opening of the backplate lining up
+with the location of the wires from your HVAC system. With the larger three
+holes, mark your wall and drill holes smaller than your remaining screws.
+Secure the backplate to the wall with the 3 larger screws.
 
 Complete wiring according to your model instructions (for US see Figure
 \ref{fig:us}; for EU see Figure \ref{fig:eu})
@@ -43,15 +39,25 @@ Complete wiring according to your model instructions (for US see Figure
 Remove any protective film from the LCD if present and lock the LCD on the
 cover from the inside making sure the LCD's header is at the top.
 
+Attach the 4 wire cable to the temperature sensor, making sure that the red
+wire is connected to the Vin pin.
+
 Guide the 4 wires through the slit of bottom partition of the cover and secure
 the sensor in it so that it is thermally protected from the rest of the
-circuit.
-
-If you installed the bottom screw it may block the cover to fully insert. Clip
-off part of the sensor partition to allow enough clearance.
+circuit. Note that the sensor, the little shiny square, should ideally be
+placed facing outwards and not be blocked by any plastic piece of the case. The
+red wire (Vin) goes to the top pin (Vin) on the PCB.
 
 Hold the front cover aligned to the backplate and bring closer while you make
 sure the pin header of the PCB is aligned to the header of the LCD. Push firmly
-from the sides of the cover and not from the LCD till it locks in place. Make
-sure no wires are caught in between as this may block the cover from locking in
-place securely.
+from the sides of the cover (not on the LCD screen) until it locks in place.
+
+Make sure no wires are squished between as this may block the cover from
+locking in place securely, or could cause issues with the touch screen.
+
+It is critical that the pins for the LCD are lined up correctly before powering
+on your HVAC system. If they are offset, there's a risk of damaging the screen.
+
+Once everything is connected, turn on the breaker to your HVAC system. If your
+HVAC unit can not power the HestiaPi and need to plug the thermostat into an
+outlet, plug it into the wall now.

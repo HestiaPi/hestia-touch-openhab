@@ -1,11 +1,11 @@
-\subsubsection{General issues}
+\subsection{General issues}
 For those who are having problems and don't want to read the entire
 troubleshooting section, just try reflashing the SD card with the latest image
 from \url{https://hestiapi.com/downloads}. This really will fix nearly every
 problem! So if your issue isn't listed, or you just want a quick fix, re-flash
 that SD card and you'll likely be back in business in no time.
 
-\subsubsection{Verifying relay status}
+\subsection{Verifying relay status}
 If you are unsure if the relays are turning on or off when they should, this
 can be checked in software. To do so, you will need to be able to SSH into the
 HestiaPi.
@@ -57,7 +57,7 @@ at \url{https://community.hestiapi.com/}. Please be patient, as we are all
 volunteers and it may be a few days before we see your message and have time to
 investigate and reply.
 
-\subsubsection{Eternal loading screen}
+\subsection{Eternal loading screen}
 If your thermostat ever reboots and the loading countdown on the screen goes
 all the way down to the point where it just says ``Loading...'' and stays there
 for hours, it's either a software issue or a slow micro SD card.
@@ -76,7 +76,7 @@ are all icons that mean it's 10MB/sec. A 3 inside a U, or V30 indicated it is
 a 30MB/sec card. There are faster cards, labeled V60 and V90, but getting a
 card that fast is not necessary.
 
-\subsubsection{Taps do not register on the touchscreen}
+\subsection{Taps do not register on the touchscreen}
 If the screen doesn't turn on, see the entry below about that. These steps are
 to troubleshoot situations where the display is working correctly, but just not
 responding to touches.
@@ -128,7 +128,7 @@ have the same results (no response to taps). At this point, your options are to
 replace the screen or just use the screen for viewing information and make all
 the changes to the thermostat over wifi.
 
-\subsubsection{Screen doesn't turn on}
+\subsection{Screen doesn't turn on}
 If you see lights illuminated on the pi, but the screen doesn't turn on at all,
 the screen is not receiving power, which means it is likely not connected
 properly. Look in through the side of the case and see if you can tell if the
@@ -151,7 +151,7 @@ troubleshooting the issue to determine the root cause, we encourage you to
 share whatever you find with the community at
 \url{https://community.hestiapi.com}.
 
-\subsubsection{Screen is slow to respond to taps}
+\subsection{Screen is slow to respond to taps}
 The HestiaPi should respond to touches within a second. If it's responding
 to taps, but it taking a long time, it's likely a software issue. In this
 case, copying a fresh image onto the SD card will likely fix it. The other
@@ -163,7 +163,7 @@ taps. A stylus is used here to make it clear when the tap is occurring versus
 when the screen is updating, but it should work the same when tapping with your
 finger. \url{https://peertube.gsugambit.com/w/1AhKQByTrAg38HKSQUJFR3}
 
-\subsubsection{How to edit files via SSH}
+\subsection{How to edit files via SSH}
 If you are very new to command line interface we would advise you taking a
 short online course by searching for ``linux command line interface'' on your
 favourite website.
@@ -176,7 +176,7 @@ Then leave your mouse alone as it does not control you cursor anymore
 
 Use only your keyboard and once you are done, press Ctrl+O to save and Ctrl+X to close.
 
-\subsubsection{Start OpenHAB2 in Debug Mode}
+\subsection{Start OpenHAB2 in Debug Mode}
 
 For OpenHAB2 (v10.x image -- July 2018)
 To monitor the OpenHAB logs without stopping the service run
