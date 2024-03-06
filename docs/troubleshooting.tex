@@ -5,7 +5,7 @@ from \url{https://hestiapi.com/downloads}. This really will fix nearly every
 problem! So if your issue isn't listed, or you just want a quick fix, re-flash
 that SD card and you'll likely be back in business in no time.
 
-\subsection{Verifying relay status}
+\subsection{Verifying relay status} \label{Verifying relay status}
 If you are unsure if the relays are turning on or off when they should, this
 can be checked in software. To do so, you will need to be able to SSH into the
 HestiaPi.
@@ -56,6 +56,35 @@ specifically, in OpenHAB). If that's the case, you can get help on the forum
 at \url{https://community.hestiapi.com/}. Please be patient, as we are all
 volunteers and it may be a few days before we see your message and have time to
 investigate and reply.
+
+\subsection{Temperature doesn't show up on the LCD screen}
+The most common cause of this problem is that the Pi can't get the temperature
+value from the temperature sensor. This will likely cause the heating and
+cooling to not turn on, but the fan may turn on (e.g. when using boost). For
+information about how to determine if your relays are working, see section
+\ref{Verifying relay status}. Confirming that the relays work properly and that
+you are only dealing with an issue of temperature sensing can be helpful in
+keeping troubleshooting as simple as possible.
+
+The two reasons we've seen for this problem are both hardware failures. It's
+always been either a faulty sensor, or a faulty i2c controller on the Pi.
+Unfortunately there's no way to tell which it is other than to replace one of
+these two components and see if it fixes the issue. However, if you are
+comfortable using SSH to log onto the HestiaPi, you can run some commands to
+confirm that the problem has been correctly diagnosed before buying additional
+hardware.
+
+The command \texttt{i2cdetect -y 1} should show you a grid which should have
+the number 76 or 77 in it. If the grid is all dashes, it indicates that you are
+running into this problem of faulty hardware. In that case, running the command
+\texttt{/home/pi/scripts/getBMEtemp.sh} is expected to result in an I/O error.
+As a final check, if you look at\\
+\texttt{/var/log/openhab2/openhab.log}, you should see the same error message
+you saw when you ran \texttt{getBMEtemp.sh} manually.
+
+Of the failures we have seen, it seems to be evenly split between the problem
+being on the sensor side versus being on the pi side. Our suggestion would be
+to replace whichever component is cheaper first.
 
 \subsection{Eternal loading screen}
 If your thermostat ever reboots and the loading countdown on the screen goes
