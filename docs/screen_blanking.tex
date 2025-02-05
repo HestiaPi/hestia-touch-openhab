@@ -1,0 +1,63 @@
+By default, the LCD screen is always on. This allows you to see the temperature
+from across the room without having to get up.
+
+If you would prefer that the screen is off unless you are trying to adjust the
+set points, there are two options: change some software settings so the screen
+will be black with backlight still on, or upgrade the screen and make some
+hardware modifications to have the backlight turn off entirely.
+
+\subsubsection{Software modification}
+To blank out the screen when not in use, you'll want to turn on Display Power
+Management Signaling (DPMS). This can be done by logging in via SSH and running
+\texttt{set +dpms} from the command line. After 10 minutes of not using the screen,
+you should see the screen go black. In order to make sure this is set each time
+the system reboots, add this command to \texttt{/etc/rc.local} before the
+\texttt{exit 0} line at the end.
+
+\subsubsection{Hardware modifications}
+This is an advanced topic which requires familiarity with electronics,
+soldering equipment, and a multimeter. Please read this entire section before
+you start ordering parts or making modifications to be sure you will be
+comfortable with making these changes.
+
+First, you will need a Waveshare screen. The 3.5inch RPi LCD (B) and 3.5inch
+RPi LCD (C) have both been tested and confirmed to be compatible. Please note
+that the 3.5inch RPi LCD (A) does NOT have the ability to turn off the
+backlight. The Waveshare documentation shows how to modify the screen in order
+to enable the ability to control the backlight:
+\url{https://www.waveshare.com/wiki/3.5inch\_RPi\_LCD\_(B)\#Control\_Backlight\_Brightness\_with\_GPIO}
+
+Next comes the hard part: modifying the HestiaPi PCB. The LCD screen has 26
+pins, all of which are connected to the the LCD header pins. However, pin 12
+(GPIO 18) is used to control one of the relays (relay 3), which means this
+can't be used to also control the LCD backlight.
+
+The modifications that need to be made are to scrape the trace off the PCB that
+connect pin 12 on the pi to pin 12 on the LCD as well as the trace between pin
+12 of the LCD and relay 3. After these are no longer connected, you'll need to
+solder a wire onto the PCB to reconnect pin 12 on the pi to relay 3. You'll
+also need to connect pin 10 on the pi (GPIO 15) to pin 12 on the LCD. This will
+allow GPIO 15 to control the LCD backlight. A future version of the PCB will
+integrate this change, but unless your board has v2.53 or later printed on the
+back, you will need to make these hardware modifications.
+
+Now that the hardware modifications are done, we need to set up a script that
+will actually turn off the backlight any time that the screen is blanked out by
+the power management system. This will require downloading a shell script that
+will run in the background. The script is called backlight.sh and can be
+downloaded from the home/pi/scripts directory in
+\url{https://github.com/HestiaPi/hestia-touch-openhab}. You will need to make
+it executable with:
+
+\texttt{chmod +x /home/pi/scripts/backlight.sh}.
+
+This script will be included in the HestiaPi SD card image as of version 1.5.
+
+Finally, we need to make sure this script is run when the pi boots up. To do
+this, add the following line to \texttt{/etc/rc.local} before the
+\texttt{exit 0} line:
+
+\texttt{/home/pi/scripts/backlight.sh \&}
+
+Note the ampersand at the end of the line. This is important, as it is what
+causes the script to be run in the background.
