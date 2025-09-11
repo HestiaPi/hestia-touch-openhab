@@ -33,8 +33,8 @@ example on HVAC systems, here are commands you would run after SSHing into the
 pi in order to turn the fan on, and then turn it back off again.
 
 \texttt{sudo su -\\
-echo 1 | /sys/class/gpio/gpio12/value \# turn on\\
-echo 0 | /sys/class/gpio/gpio12/value \# turn off\\
+echo 1 > /sys/class/gpio/gpio12/value \# turn on\\
+echo 0 > /sys/class/gpio/gpio12/value \# turn off\\
 }
 
 As soon as you run the ``echo 1'' command, the fan should turn on. There should

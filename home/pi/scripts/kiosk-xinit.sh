@@ -3,6 +3,11 @@
 # Copied from https://www.raspberrypi.org/forums/viewtopic.php?f=29&t=174434&start=25#p1307919
 # Expand the filesystem if < 3.5 GB
 PARTSIZE=$( df | sed -n '/root/{s/  */ /gp}' | cut -d ' ' -f2 )
+# That command only works on Debian 11 and earlier, $PARTSIZE will be empty.
+# When this happens, we'll use the command below to get the partition size
+if [ -z "$PARTSIZE" ]; then
+	PARTSIZE=$( df | grep '/$' | sed 's/ */ /' | cut -d ' ' -f2 )
+fi
 THRESHOLD=3679731
 
 if (("$PARTSIZE" < "$THRESHOLD")) ; then
@@ -42,7 +47,11 @@ do
   # Disable DPMS / Screen blanking
   echo "Starting xset with opts...";
   xset -dpms
-  xset -nocursor
+  # As of Debian 12, -nocursor has been removed
+  ver=`lsb_release -rs`
+  if [ $ver -lt 12 ]; then
+    xset -nocursor
+  fi
   xset s off
 
   # Reset the framebuffer's colour-depth
