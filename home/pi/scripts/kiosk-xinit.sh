@@ -47,7 +47,11 @@ do
   # Disable DPMS / Screen blanking
   echo "Starting xset with opts...";
   xset -dpms
-  xset -nocursor
+  # As of Debian 12, -nocursor has been removed
+  ver=`lsb_release -rs`
+  if [ $ver -lt 12 ]; then
+    xset -nocursor
+  fi
   xset s off
 
   # Reset the framebuffer's colour-depth
