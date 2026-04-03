@@ -39,7 +39,23 @@ Complete wiring according to your model instructions (for US see Figure
 There have been various version of PCBs for the HestiaPi ONE, but all of the
 PCBs have the labels printed on the board. However it can be hard to read them,
 so we document them here. If there are six terminals, they will be in the
-following order: C(N), R(L), W(W), Y(H), G(Hum), W2.
+following order:
+
+\footnotesize{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\rowcolor{lightgray}
+\hline
+\textbf{Mode} & \textbf{Terminal 1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} \\
+\hline
+HVAC (US) & Common (C) & 24V AC (R) & Heating (W) & Cooling (Y) & Fan (G) & 2nd stage (W2) & n/a \\
+\hline
+Generic (EU) & Neutral (N) & 240V AC (L) & Hot Water (W) & Heating (H) & Humidity (Hum) & 2nd stage (W2) & n/a \\
+\hline
+Heat Pump & Common (C) & 24V AC (R) & Stage 1 (Y1) & Reversing (O/B) & Fan (G) & 2nd stage (Y2) & E-Heat (E) \\
+\hline
+\end{tabular}
+}
+
 
 Remove any protective film from the LCD if present and lock the LCD on the
 cover from the inside making sure the LCD's header is at the top.
