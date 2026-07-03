@@ -1,4 +1,4 @@
 #!/bin/bash
 
-used=$(df | grep root  | awk '{print $5}' | sed 's/%.*//g')
+used=$(df -P / | awk 'NR==2 {print $5}' | tr -d '%')
 echo $used "%"
